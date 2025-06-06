@@ -32,6 +32,7 @@ set(
   src/item_bag.cc
   src/exceptions.cc
   src/perk_deck.cc
+  src/monster_card_deck.cc
 )
 
 include_directories(./include)

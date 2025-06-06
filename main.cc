@@ -1,16 +1,16 @@
-#include "perk_deck.hpp"
+#include "monster_card_deck.hpp"
 #include <iostream>
 
 using namespace std;
 
 int main(){
     try {
-        PerkDeck temp;
-        Perk i = temp.pickOneRandomly();
-        cout << i.name << '\n';
+        MonsterCardDeck temp;
+        MonsterCard i = temp.pickOneRandomly();
+        cout << i.strikePriorities.size() << '\n';
+        if (!i.strikePriorities.size()) cout << i.name << '\n';
     }
     catch ( ... ) {
-        cout << "fuck you !! error in file openning\n";
     }
     return 0;
 }
