@@ -1,0 +1,1 @@
+- [ ] implement perk and monster and item card with inheritance and polymorphism !!

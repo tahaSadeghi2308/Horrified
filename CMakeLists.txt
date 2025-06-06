@@ -31,6 +31,7 @@ set(
   src/utility.cc
   src/item_bag.cc
   src/exceptions.cc
+  src/perk_deck.cc
 )
 
 include_directories(./include)
