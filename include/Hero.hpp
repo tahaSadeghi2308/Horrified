@@ -18,8 +18,6 @@ public:
 
 
     virtual void Move() = 0;
-
-
     void Guid();
 
 

@@ -1,5 +1,5 @@
 #include "Hero.hpp"
-
+#include <map>
     void Hero::Guid()
     {
         std::vector<std::shared_ptr<Villager>> temp = loc->getVillage(); 
@@ -13,17 +13,80 @@
 
         if(choice == 1)
         {
-            //not completed
+            //the problem is that when a player choose a wrong number fo place or villager it will throw a exeption
+
+            std::vector<Place*> places;
+
+            for(Place* item:neighbors)
+            {
+                std::vector<std::shared_ptr<Villager>> possibleVillager = item->getVillage();
+                if(!possibleVillager.empty())
+                {
+                    places.push_back(item);
+                }
+            }
+
+            if(places.empty())
+            {
+                throw std::invalid_argument("there is no villager for you to guid it to your location\n");
+            }
+
+            std::cout << "from which place you want to guid\n";
+
+            for(int i=0;i<places.size();i++)
+            {
+                std::cout << i+1 << " - " << places[i]->getName() << std::endl;
+            }
+
+            int placeChoice;
+            std::cin >> placeChoice;
+
+            if(placeChoice < 1 || placeChoice > places.size())
+            {
+                throw std::out_of_range("invalid place choice\n");
+            }
+
+            Place* selectedPlace = places[placeChoice - 1];
+            std::vector<std::shared_ptr<Villager>> villagers = selectedPlace->getVillage();
+        
+            std::cout << "select a villager to guide \n";
+            for(int i = 0; i < villagers.size(); i++)
+            {
+                std::cout << i + 1 << " - " << villagers[i]->getName() << std::endl;
+            }
+        
+            int villagerChoice;
+            std::cin >> villagerChoice;
+        
+            if(villagerChoice < 1 || villagerChoice > villagers.size())
+            {
+                throw std::out_of_range("invalid villager selection\n");
+            }
+        
+            std::shared_ptr<Villager> selectedVillager = villagers[villagerChoice - 1];
+        
+            selectedPlace->rmVill(selectedVillager);
+            loc->addVill(selectedVillager);
+            selectedVillager->changeLoc(loc);
+        
+            //
+
+            decreaseAction(); 
+        
+
         }
         else if(choice == 2)
         {
-            if (temp.empty()) {
+            if(temp.empty())
+            {
                 std::cout << "no villagers here to guide\n";
                 return;
             }
     
             std::cout << "select a villager to move\n";
-            for (int i = 0; i < temp.size(); i++) {
+
+            for(int i = 0; i < temp.size(); i++)
+            {
                 std::cout << i + 1 << "-" << temp[i]->getName() << std::endl;
             }
             
