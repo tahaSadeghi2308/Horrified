@@ -25,6 +25,17 @@ project(Horrified
 # FetchContent_MakeAvailable(ftxui)
 
 # ------------------------------ Execution part ------------------------------------------------
+
+# Enable testing
+enable_testing()
+
+# Find GTest package
+find_package(GTest REQUIRED)
+
+# Include directories
+include_directories(./include)
+
+# Main executable
 set(
   PROJECT_SOURCES
   main.cc
@@ -35,11 +46,21 @@ set(
   src/monster_card_deck.cc
 )
 
-include_directories(./include)
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})
-# target_include_directories(ftxui-starter PRIVATE src)
-# ------------------------------------------------------------------------
 
+# ========================= Test executable =====================
+add_executable(deck_test test/deck_test.cc
+  src/item_bag.cc
+  src/exceptions.cc
+  src/perk_deck.cc
+  src/monster_card_deck.cc
+)
+
+# Link test executable with GTest
+target_link_libraries(deck_test GTest::GTest GTest::Main)
+
+# Add test
+add_test(NAME deck_test COMMAND deck_test)
 
 # target_link_libraries(ftxui-starter
 #   PRIVATE ftxui::screen
