@@ -63,7 +63,13 @@
 
    void Place::rmVill(std::shared_ptr<Villager> vill)
    {
-      // village.erase(vill);
+        for(auto target = village.begin(); target != village.end(); target++)
+        {
+            if (*target == vill) {
+                village.erase(target);
+                break;
+            }
+        }
    }
 
    std::vector<std::shared_ptr<Villager>> Place::getVillage() const
@@ -86,5 +92,13 @@
 
    void Place::removeItem(Item num)
    {
-        //
+        for (auto target = items.begin(); target != items.end(); target++)
+        {
+            if (target->name == num.name)
+            {
+                items.erase(target);
+                break;
+            }
+        }
    }
+    

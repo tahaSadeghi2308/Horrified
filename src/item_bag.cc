@@ -18,7 +18,7 @@ ItemBag::ItemBag() {
             for (int i {}; i < ITEM_COUNT; i++){
                 temp.power = stoi(power);
                 temp.name = name;
-                temp.place = place;
+                //temp.place = place;
                 if (color == "red") temp.color = Color::RED;
                 if (color == "blue") temp.color = Color::BLUE;
                 if (color == "yellow") temp.color = Color::YELLOW;

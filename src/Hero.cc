@@ -2,9 +2,11 @@
 #include <map>
 
 
+    
 
 
 
+    //----pickup----
 
 
     void Hero::pick()
@@ -176,7 +178,25 @@
     }
 
 
+    //-----setter getter----
+
     
+    void Hero::addItem(Item a)
+    {
+        ITEMS.push_back(a);
+    }
+
+    void Hero::rmitem(Item a)
+    {
+        for (auto target = ITEMS.begin(); target != ITEMS.end(); target++)
+        {
+            if (target->name == a.name){
+                ITEMS.erase(target);
+                break;
+            }
+        }
+    }
+
     Place* Hero::getPlace() const
     {
         return loc;
@@ -260,6 +280,54 @@
     {
         setName("archaeologist");
         setPlace(lo);
-        setAction(6);
+        setAction(4);
     }
 
+
+    void arch::specialAction()
+    {
+        std::vector<Place*> neigh = getPlace()->getNeighbor();
+        //storing all the possible items with its places with pair. first i tried map but it didnt work (it has seviral problems for us to find out which item user chosed)
+        std::vector<std::pair<Place*,Item>> possible;
+
+        int i = 1;
+        for (Place* neighbor : neigh) {
+            for (auto& item : neighbor->getItems())
+            {
+                std::cout << i << " - " <<  "place -> " << neighbor->getName() << "item -> " << item.name << ' ' << item.color << ' ' << item.power << '\n';
+                possible.push_back(std::make_pair(neighbor,item));
+                i++;
+            }
+        }
+
+        if(possible.empty())
+        {
+            std::cout << "there is no item nearby\n";
+            return;
+        }
+
+        std::cout << "select the item to pick up \n";
+    int choice;
+    std::cin >> choice;
+
+    if(choice < 1 || choice > possible.size())
+    {
+        throw std::out_of_range("Invalid selection.\n");
+    }
+
+    Place* targetPlace = possible[choice - 1].first;
+    Item targetItem = possible[choice - 1].second;
+
+    targetPlace->removeItem(targetItem);   
+
+    
+    addItem(targetItem);
+    
+
+    decreaseAction();
+}   
+
+
+
+
+    

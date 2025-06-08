@@ -16,30 +16,27 @@ public:
     Hero();
 
 
+    //actions member functions
 
     virtual void Move() = 0;
     void Guid();
-
-
     void pick();
     void advance();
     void defeat();
 
-
+    //setter getter
     
     std::string getName() const;
-
     void setName(std::string );
-
     Place* getPlace() const;
-
     void setPlace(Place* ) ;
-
     int getAction() const;
-
     void decreaseAction();
-
     void setAction(int );
+    
+    void addItem(Item);
+    void rmitem(Item);
+
 
     private:
 
@@ -61,11 +58,7 @@ class arch:public Hero
     //getting a perk card
     arch(Place*);
     void Move();
-    
-
-    
-
-
+    void specialAction(); 
 
 
 };
