@@ -7,6 +7,8 @@
 class Villager
 {
     public:
+    Villager(std::string ,Place*);
+
     std::string getName();
     Place* getVillagerLoc();
     void changeLoc(Place* );

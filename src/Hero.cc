@@ -1,5 +1,45 @@
 #include "Hero.hpp"
 #include <map>
+
+
+
+
+
+
+
+    void Hero::pick()
+    {
+        std::vector<Item> available = loc->getItems();
+
+        if(available.empty())
+        {
+            std::cout << "there is no item in your place\n";
+            return;
+        }
+
+        for (int i = 0; i < available.size(); i++)
+        {
+            std::cout << i+1 << " - " << available[i].name << " " << available[i].color << ' ' << available[i].power << '\n';
+        }
+        int choice;
+        std::cin >> choice;
+
+        if(choice < 1 || choice > available.size())
+        {
+            throw std::out_of_range("invalid item \n");
+        }
+
+        ITEMS.push_back(available[choice-1]);
+        
+        loc->removeItem(available[choice-1]);
+
+
+    }
+
+
+
+    //----guid-----
+
     void Hero::Guid()
     {
         std::vector<std::shared_ptr<Villager>> temp = loc->getVillage(); 
@@ -69,7 +109,7 @@
             loc->addVill(selectedVillager);
             selectedVillager->changeLoc(loc);
         
-            //
+            std::cout << "villager ->" << selectedVillager->getName() << "came to your location\n";
 
             decreaseAction(); 
         
@@ -159,6 +199,24 @@
     }
 
 
+    void Hero::setName(std::string n)
+    {
+        name=n;
+    }
+
+    std::string Hero::getName() const
+    {
+        return name;
+    }
+
+
+    void Hero::setAction(int act)
+    {
+        if(act < 1)
+        throw std::invalid_argument("the number for setting action is invalid\n");
+        action = act;
+    }
+
 //---------arch---------
 
     void arch::Move()
@@ -178,9 +236,30 @@
             {
                 throw std::invalid_argument("the number that you have selected for moving is invalid\n");
             }
+
+
+
+            for (auto& vill : getPlace()->getVillage())
+            {
+                getPlace()->rmVill(vill);              
+                getPlace()->addVill(vill);          
+                vill->changeLoc(targetPlaces[choice-1]);        
+        
+            }
+
             getPlace()->setArchaeologist(false);
             setPlace(targetPlaces[choice-1]);
             getPlace()->setArchaeologist(true);
             decreaseAction();        
         }
     }
+
+  
+
+    arch::arch(Place* lo)
+    {
+        setName("archaeologist");
+        setPlace(lo);
+        setAction(6);
+    }
+

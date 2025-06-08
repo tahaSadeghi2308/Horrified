@@ -1,6 +1,10 @@
 #include "villager.hpp"
 
-std::string Villager::getName()
+
+    Villager::Villager(std::string n,Place* pl):name(n),villagerLoc(pl)
+    {}
+
+    std::string Villager::getName()
     {
         return name;
     }

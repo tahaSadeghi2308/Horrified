@@ -27,6 +27,10 @@ public:
 
 
     
+    std::string getName() const;
+
+    void setName(std::string );
+
     Place* getPlace() const;
 
     void setPlace(Place* ) ;
@@ -35,7 +39,7 @@ public:
 
     void decreaseAction();
 
-
+    void setAction(int );
 
     private:
 
@@ -43,10 +47,10 @@ public:
     std::vector<int> perk;
     int action;
     Place* loc;
-    int ITEMS;
+    std::vector<Item> ITEMS;
 
 
-    ~Hero();
+    
 };
 
 
@@ -54,6 +58,8 @@ public:
 class arch:public Hero
 {
 
+    //getting a perk card
+    arch(Place*);
     void Move();
     
 

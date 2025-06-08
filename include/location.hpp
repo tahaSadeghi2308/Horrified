@@ -11,6 +11,12 @@ class Place
 {
     public:
 
+    //not implemanted
+
+    void showItems();
+
+    void rmItems();
+
     // essential function to work with places
 
     Place(std::string ,std::vector<Place*> );
@@ -48,7 +54,7 @@ class Place
 
     std::vector<Item> getItems();
 
-    void removeItem(int );
+    void removeItem(Item );
 
     private:
     // all the things that could be in a place 

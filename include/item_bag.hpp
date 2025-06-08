@@ -3,6 +3,8 @@
 
 #include <vector>
 #include <string>
+#include "location.hpp"
+
 
 enum Color { RED , BLUE , YELLOW };
 
@@ -12,7 +14,7 @@ struct Item {
     int power;
     Color color;
     std::string name;
-    std::string place; // NOTE: maybe change base on place implementation
+    //Place* locat;  // NOTE: maybe change base on place implementation--changed   ***discussion
 };
 
 class ItemBag {

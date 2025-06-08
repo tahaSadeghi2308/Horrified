@@ -84,10 +84,7 @@
        return items;
    }
 
-   void Place::removeItem(int num)
+   void Place::removeItem(Item num)
    {
-    if(num < items.size())
-    {
-            items.erase(items.begin() + num);
-    }
+        //
    }
