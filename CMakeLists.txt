@@ -36,6 +36,7 @@ set(
   src/exceptions.cc
   src/location.cc
   src/system.cc
+  src/Hero.cc
 )
 
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})

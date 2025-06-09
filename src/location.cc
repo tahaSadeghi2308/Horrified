@@ -13,3 +13,17 @@ void Place::setNeighbors(const vector<shared_ptr<Place>> &neiList){
 }
 
 string Place::getName(){ return this->name; }
+
+void Place::addHero(shared_ptr<HeroBase> _hero){
+    this->heroes.push_back(_hero);
+}
+
+void Place::deleteHero(const std::string &_heroName){
+    bool endSearching {false};
+    for(short i{}; i < this->heroes.size() && endSearching; i++){
+        if (heroes[i]->getHeroName() == _heroName){
+            this->heroes.erase(heroes.begin() + i);
+            endSearching = true;
+        }
+    }
+}

@@ -11,10 +11,13 @@ System::System(){
     itemBag = make_shared<ItemBag<Item>>();
     perkDeck = make_shared<PerkDeck<Perk>>();
 
-    // ----- collect the name of all locations
+    // setup heroes
+    arch = make_shared<Archaeologist>(4 , "archaeologist" , perkDeck->pickOneRandomly());
+    mayor = make_shared<Mayor>(6 , "mayor" , perkDeck->pickOneRandomly());
 
-    ifstream file("../data/before_game/locations.txt");
-    if (file.is_open()){
+    // ----- collect the name of all locations
+    ifstream file ("../data/before_game/locations.txt");
+    if (file.is_open()) {
         stringstream stream;     
         string line , placeName;
         while(getline(file , line)){
@@ -63,6 +66,13 @@ System::System(){
     else {
         throw FileOpenningExecption("couldn't open file locations.txt");
     }
+
+    // put heroes in right place 
+    for(auto &p : allLocations){
+        if 
+    }
+
+
 }
 
 void System::showLocs() const {

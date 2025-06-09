@@ -2,6 +2,7 @@
 #define SYSTEM_HPP
 
 #include "card_manager.hpp"
+#include "Hero.hpp"
 #include <memory>
 #include <unordered_map>
 #include <string>
@@ -11,6 +12,11 @@ class System {
     std::shared_ptr<MonsterCardDeck<MonsterCard>> monsterDeck {nullptr};
     std::shared_ptr<ItemBag<Item>> itemBag {nullptr};
     std::shared_ptr<PerkDeck<Perk>> perkDeck {nullptr};
+
+    // heroes 
+    std::shared_ptr<Archaeologist> arch {nullptr};
+    std::shared_ptr<Mayor> mayor {nullptr};
+    
     // game map
     // std::unordered_map<std::string , std::shared_ptr<Place>> gameMap;
 
