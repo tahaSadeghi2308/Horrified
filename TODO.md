@@ -1,1 +1,2 @@
-- [ ] implement perk and monster and item card with inheritance and polymorphism !!
+- [x] implement perk and monster and item card with inheritance and polymorphism !!
+- [ ] Write test for card_manager !!!
