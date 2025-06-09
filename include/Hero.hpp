@@ -20,12 +20,13 @@ class HeroBase {
 public:
     HeroBase() = default;
     HeroBase(const int &_num , std::string_view _name , const Perk &perk);
+    void addItem(Item);
     int getActionCount();
     void setActionCount(const int &num);
     std::string getHeroName();
     void moveAction();
-    // void guideAction();
-    // void pickUpAction();
+    void guideAction();
+    void pickUpAction();
     // void advanceAtion();
     // void defeatAction();
     // void runPerkCard();
@@ -42,7 +43,7 @@ public:
 class Archaeologist final : public HeroBase {
 public:
     Archaeologist(const int &_num , std::string_view _name, const Perk &perk);
-    // void specialAction();
+    void specialAction();
 };
 
 class Mayor final : public HeroBase {

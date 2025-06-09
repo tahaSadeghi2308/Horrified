@@ -52,3 +52,27 @@ std::vector<std::shared_ptr<Villager>> Place::getVillage() const
 {
     return village;
 }
+
+//-----working with items------
+
+void Place::addItem(Item item)
+   {
+       ITEMS.push_back(item);
+   }
+
+   std::vector<Item> Place::getItems()
+   {
+       return ITEMS;
+   }
+
+   void Place::removeItem(Item num)
+   {
+        for (auto target = ITEMS.begin(); target != ITEMS.end(); target++)
+        {
+            if (target->name == num.name)
+            {
+                ITEMS.erase(target);
+                break;
+            }
+        }
+   }

@@ -11,7 +11,7 @@ class Place {
     std::string name;
     std::vector<std::shared_ptr<Place>> neighbors;
     std::vector<std::shared_ptr<HeroBase>> heroes;
-
+    std::vector<Item> ITEMS;
     std::vector<std::shared_ptr<Villager>> village;//use a village private member to store the current villagers
 
 public:
@@ -26,6 +26,11 @@ public:
     void addVill(std::shared_ptr<Villager> );
     void rmVill(std::shared_ptr<Villager> );
     std::vector<std::shared_ptr<Villager>> getVillage() const;
+
+    //----same for items----
+    void addItem(Item item);
+    std::vector<Item> getItems();
+    void removeItem(Item );
 
 };
 
