@@ -1,0 +1,102 @@
+@startuml
+' Enums
+enum Color {
+    RED
+    BLUE
+    YELLOW
+}
+
+' Structures
+class Item {
+    +int power
+    +Color color
+    +string name
+    +string place
+}
+
+class Perk {
+    +string name
+    +string description
+}
+
+class MonsterCard {
+    +string name
+    +int dice
+    +int move
+    +int itemCount
+    +vector<string> strikePriorities
+}
+
+' Base Classes
+abstract class CardManagerBase<T> {
+    #vector<T> cards
+    #void shuffleCards()
+    +T pickOneRandomly()
+    +void push(const T&)
+    +void pop(const int)
+}
+
+abstract class HeroBase {
+    #int actionCount
+    #string heroName
+    #vector<Item> heroItems
+    #vector<Perk> heroPerks
+    +int getActionCount()
+    +void setActionCount(const int)
+    +string getHeroName()
+    +void addPerkCard(const Perk&)
+}
+
+' Derived Classes
+class ItemBag<T> {
+    +ItemBag()
+    +void addItem(const T&)
+}
+
+class PerkDeck<T> {
+    +PerkDeck()
+}
+
+class MonsterCardDeck<T> {
+    +MonsterCardDeck()
+}
+
+class Archaeologist {
+    +Archaeologist(const int&, string_view, const Perk&)
+}
+
+class Mayor {
+    +Mayor(const int&, string_view, const Perk&)
+}
+
+class System {
+    -shared_ptr<MonsterCardDeck<MonsterCard>> monsterDeck
+    -shared_ptr<ItemBag<Item>> itemBag
+    -shared_ptr<PerkDeck<Perk>> perkDeck
+    -shared_ptr<Archaeologist> arch
+    -shared_ptr<Mayor> mayor
+    -vector<shared_ptr<Place>> allLocations
+    +System()
+    +void showLocs() const
+}
+
+' Inheritance Relationships
+CardManagerBase <|-- ItemBag
+CardManagerBase <|-- PerkDeck
+CardManagerBase <|-- MonsterCardDeck
+HeroBase <|-- Archaeologist
+HeroBase <|-- Mayor
+
+' Composition Relationships
+System o-- MonsterCardDeck
+System o-- ItemBag
+System o-- PerkDeck
+System o-- Archaeologist
+System o-- Mayor
+System o-- Place
+
+' Usage Relationships
+HeroBase --> Item
+HeroBase --> Perk
+System --> Place
+@enduml
