@@ -4,11 +4,11 @@ std::string Villager::getName()
     {
         return name;
     }
-    Place* Villager::getVillagerLoc()
+    std::shared_ptr<Place> Villager::getVillagerLoc()
     {
         return villagerLoc;
     }
-    void Villager::changeLoc(Place* newLoc)
+    void Villager::changeLoc(std::shared_ptr<Place> newLoc)
     {
         villagerLoc=newLoc;
     }

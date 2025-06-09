@@ -27,3 +27,28 @@ void Place::deleteHero(const std::string &_heroName){
         }
     }
 }
+
+//----function about working with villagers---
+
+
+void Place::addVill(std::shared_ptr<Villager> vill)
+{
+    village.push_back(vill);
+}
+
+void Place::rmVill(std::shared_ptr<Villager> vill)
+{
+     for(auto target = village.begin(); target != village.end(); target++)
+     {
+         if (*target == vill)
+         {
+             village.erase(target);
+             break;
+         }
+     }
+}
+
+std::vector<std::shared_ptr<Villager>> Place::getVillage() const
+{
+    return village;
+}

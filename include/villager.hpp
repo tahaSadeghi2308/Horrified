@@ -8,12 +8,12 @@ class Villager
 {
     public:
     std::string getName();
-    Place* getVillagerLoc();
-    void changeLoc(Place* );
+    std::shared_ptr<Place> getVillagerLoc();
+    void changeLoc(std::shared_ptr<Place> );
     
     private:
     std::string name;
-    Place* villagerLoc;
+    std::shared_ptr<Place> villagerLoc;
 };
 
 

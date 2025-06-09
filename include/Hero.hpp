@@ -5,25 +5,38 @@
 #include <vector>
 #include <string>
 #include <string_view>
+#include <memory>
+ 
+
 
 class HeroBase {
     int actionCount;
     std::string heroName;
     std::vector<Item> heroItems;
     std::vector<Perk> heroPerks;
+    std::shared_ptr<Place> loc;
+
+
 public:
     HeroBase() = default;
     HeroBase(const int &_num , std::string_view _name , const Perk &perk);
     int getActionCount();
     void setActionCount(const int &num);
     std::string getHeroName();
-    // void moveAction();
+    void moveAction();
     // void guideAction();
     // void pickUpAction();
     // void advanceAtion();
     // void defeatAction();
     // void runPerkCard();
     void addPerkCard(const Perk &perk);
+
+    //----added function by shahriar---
+
+    std::shared_ptr<Place> getPlace();
+    void setPlace(std::shared_ptr<Place> );
+
+
 };
 
 class Archaeologist final : public HeroBase {
