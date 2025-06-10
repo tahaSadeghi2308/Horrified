@@ -1,4 +1,5 @@
 #include "location.hpp"
+#include "Hero.hpp"
 
 using namespace std;
 
@@ -8,11 +9,11 @@ vector<shared_ptr<Place>> Place::getNeighbors() {
     return this->neighbors;
 }
 
-void Place::setNeighbors(const vector<shared_ptr<Place>> &neiList){
+void Place::setNeighbors(const vector<shared_ptr<Place>> neiList){
     this->neighbors = neiList;
 }
 
-string Place::getName(){ return this->name; }
+string Place::getName() { return this->name; }
 
 void Place::addHero(shared_ptr<HeroBase> _hero){
     this->heroes.push_back(_hero);

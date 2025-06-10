@@ -6,7 +6,7 @@ void HeroBase::addPerkCard(const Perk &perk) {
     this->heroPerks.push_back(perk);
 }
 
-HeroBase::HeroBase(
+HeroBase::HeroBase (
     const int &_num, 
     std::string_view _name,
     const Perk &perk
@@ -29,4 +29,8 @@ Archaeologist::Archaeologist(const int &_num , std::string_view _name , const Pe
 Mayor::Mayor(const int &_num , std::string_view _name , const Perk &perk) :
     HeroBase(_num , _name , perk) {}
 
+void HeroBase::setCurrentPlace(shared_ptr<Place> _place) {
+    this->currentPlace = _place;
+}
 
+shared_ptr<Place> HeroBase::getCurrentPlace() { return this->currentPlace; }

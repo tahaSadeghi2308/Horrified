@@ -5,12 +5,16 @@
 #include <vector>
 #include <string>
 #include <string_view>
+#include "location.hpp"
+#include <memory>
 
 class HeroBase {
     int actionCount;
     std::string heroName;
     std::vector<Item> heroItems;
     std::vector<Perk> heroPerks;
+    std::shared_ptr<Place> currentPlace {nullptr};
+
 public:
     HeroBase() = default;
     HeroBase(const int &_num , std::string_view _name , const Perk &perk);
@@ -24,6 +28,8 @@ public:
     // void defeatAction();
     // void runPerkCard();
     void addPerkCard(const Perk &perk);
+    void setCurrentPlace(std::shared_ptr<Place> _place); // delete & here bug possibility !!
+    std::shared_ptr<Place> getCurrentPlace();
 };
 
 class Archaeologist final : public HeroBase {

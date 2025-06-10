@@ -15,6 +15,8 @@ System::System(){
     arch = make_shared<Archaeologist>(4 , "archaeologist" , perkDeck->pickOneRandomly());
     mayor = make_shared<Mayor>(6 , "mayor" , perkDeck->pickOneRandomly());
 
+    // TODO : here we should make a villiagers list ..
+
     // ----- collect the name of all locations
     ifstream file ("../data/before_game/locations.txt");
     if (file.is_open()) {
@@ -67,12 +69,21 @@ System::System(){
         throw FileOpenningExecption("couldn't open file locations.txt");
     }
 
-    // put heroes in right place 
-    for(auto &p : allLocations){
-        if 
+    // put heroes in right place
+    // we have to set it in place and in hero 
+    for(auto &place : allLocations){
+        if (place->getName() == "docks"){
+            place->addHero(arch);
+            arch->setCurrentPlace(place);
+        }
+        else if (place->getName() == "theatre"){
+            place->addHero(mayor);
+            mayor->setCurrentPlace(place);
+        }
     }
 
-
+    // test
+    cout << arch->getCurrentPlace()->getName() << "\n"; 
 }
 
 void System::showLocs() const {
