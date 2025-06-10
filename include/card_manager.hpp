@@ -7,7 +7,9 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
+#include <memory>
 #include "exceptions.hpp"
+#include "location.hpp"
 
 enum Color { RED , BLUE , YELLOW };
 

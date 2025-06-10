@@ -7,6 +7,7 @@
 #include <string_view>
 #include "location.hpp"
 #include <memory>
+#include "villager.hpp"
 
 class HeroBase {
     int actionCount;
@@ -21,21 +22,23 @@ public:
     int getActionCount();
     void setActionCount(const int &num);
     std::string getHeroName();
-    // void moveAction();
-    // void guideAction();
-    // void pickUpAction();
+    void moveAction();
+    void guideAction();
+     void pickUpAction();
     // void advanceAtion();
     // void defeatAction();
     // void runPerkCard();
     void addPerkCard(const Perk &perk);
     void setCurrentPlace(std::shared_ptr<Place> _place); // delete & here bug possibility !!
     std::shared_ptr<Place> getCurrentPlace();
+    std::vector<Item> getHeroItems();
+    void addHeroItems(Item);
 };
 
 class Archaeologist final : public HeroBase {
 public:
     Archaeologist(const int &_num , std::string_view _name, const Perk &perk);
-    // void specialAction();
+    void specialAction();
 };
 
 class Mayor final : public HeroBase {
