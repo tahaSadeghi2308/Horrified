@@ -1,14 +1,19 @@
 #include "villager.hpp"
 
-std::string Villager::getName()
-    {
-        return name;
-    }
-    Place* Villager::getVillagerLoc()
-    {
-        return villagerLoc;
-    }
-    void Villager::changeLoc(Place* newLoc)
-    {
-        villagerLoc=newLoc;
-    }
+using namespace std;
+
+string Villager::getName() const { return name; }
+
+Villager::Villager(const string &_name) : name(_name){}
+
+shared_ptr<Place> Villager::getVillagerLoc() const {
+    return this->villagerLoc;   
+}
+
+void Villager::changeLoc(shared_ptr<Place> _newLoc){
+    this->villagerLoc = _newLoc;
+}
+
+void Villager::setSafeZone(shared_ptr<Place> _newLoc){
+    this->safeZone = _newLoc;
+}

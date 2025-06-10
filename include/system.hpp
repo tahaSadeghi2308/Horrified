@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include <string>
 #include "location.hpp"
+#include "villager.hpp"
 
 class System {
     std::shared_ptr<MonsterCardDeck<MonsterCard>> monsterDeck {nullptr};
@@ -17,12 +18,11 @@ class System {
     std::shared_ptr<Archaeologist> arch {nullptr};
     std::shared_ptr<Mayor> mayor {nullptr};
     
-    // game map
-    // std::unordered_map<std::string , std::shared_ptr<Place>> gameMap;
-
     std::vector<std::shared_ptr<Place>> allLocations;
 
-    // TODO: create object of hero and monster by pointers
+    // all villagers
+    std::vector<std::shared_ptr<Villager>> allVillagers;
+
 public:
     System();
     // TODO: we should create a function for saving game with destructor !!!

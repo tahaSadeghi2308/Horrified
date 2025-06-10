@@ -4,19 +4,16 @@
 #include <iostream>
 #include "location.hpp"
 
-class Villager
-{
-    public:
-    std::string getName();
-    Place* getVillagerLoc();
-    void changeLoc(Place* );
-    
-    private:
+class Villager final {
     std::string name;
-    Place* villagerLoc;
+    std::shared_ptr<Place> villagerLoc;
+    std::shared_ptr<Place> safeZone;
+public:
+    Villager(const std::string &_vill);
+    std::string getName() const;
+    std::shared_ptr<Place> getVillagerLoc() const;
+    void changeLoc(std::shared_ptr<Place> _newLoc);
+    void setSafeZone(std::shared_ptr<Place> _newLoc);
 };
-
-
-
 
 #endif

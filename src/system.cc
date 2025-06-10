@@ -15,7 +15,6 @@ System::System(){
     arch = make_shared<Archaeologist>(4 , "archaeologist" , perkDeck->pickOneRandomly());
     mayor = make_shared<Mayor>(6 , "mayor" , perkDeck->pickOneRandomly());
 
-    // TODO : here we should make a villiagers list ..
 
     // ----- collect the name of all locations
     ifstream file ("../data/before_game/locations.txt");
@@ -82,16 +81,34 @@ System::System(){
         }
     }
 
-    // test
-    cout << arch->getCurrentPlace()->getName() << "\n"; 
+    // TODO : here we should make a villiagers list ..
+    ifstream villFile("../data/before_game/villagers.txt");
+    if(villFile.is_open()){
+        string line , name , safeZone;
+        while(getline(villFile , line)){
+            stringstream stream(line);
+            stream >> name >> safeZone;
+            shared_ptr<Villager> temp {make_shared<Villager>(name)};
+
+            for(auto _place : allLocations){
+                if (_place->getName() == safeZone){
+                    temp->setSafeZone(_place);
+                    _place->addVillager(temp);
+                }
+            }
+
+            this->allVillagers.push_back(temp);
+        }
+        villFile.close();
+    }
+    else {
+        throw FileOpenningExecption("couldn't open villager.txt");
+    } 
 }
 
 void System::showLocs() const {
-    for(const auto &loc : allLocations){
+    for(auto loc : allVillagers){
         cout << loc->getName() << " : ";
-        for(auto nei : loc->getNeighbors()){
-            cout << nei->getName() << " ";
-        }
         cout << '\n';
     }
 }
