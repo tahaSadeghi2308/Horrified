@@ -48,14 +48,14 @@ System::System(){
             vector<shared_ptr<Place>> neigList;
 
             for(const string &n : temp){
-                for(auto &loc : allLocations){
+                for(auto loc : allLocations){
                     if(loc->getName() == n){
                         neigList.push_back(loc);
                     }
                 }
             }
 
-            for(auto &loc : allLocations){
+            for(auto loc : allLocations){
                 if(loc->getName() == placeName){
                     loc->setNeighbors(neigList);
                     break;
@@ -70,7 +70,7 @@ System::System(){
 
     // put heroes in right place
     // we have to set it in place and in hero 
-    for(auto &place : allLocations){
+    for(auto place : allLocations){
         if (place->getName() == "docks"){
             place->addHero(arch);
             arch->setCurrentPlace(place);
@@ -107,8 +107,11 @@ System::System(){
 }
 
 void System::showLocs() const {
-    for(auto loc : allVillagers){
+    for(auto loc : allLocations){
         cout << loc->getName() << " : ";
+        for(auto x : loc->getNeighbors()){
+            cout << x->getName() << " ";
+        }
         cout << '\n';
     }
 }
