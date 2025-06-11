@@ -65,6 +65,8 @@ public:
     MonsterCardDeck<T>();
 };
 
+//------------------
+
 template<class T>
 void ItemBag<T>::addItem(const T &item){
     this->push(item);

@@ -41,6 +41,139 @@ void HeroBase::addHeroItems(Item _item)
 {
     heroItems.push_back(_item);
 }
+
+
+//-----defeat-----
+
+void HeroBase::defeatAction(const std::vector<std::string>& coffin,bool invisible)
+{
+    std::cout << "which monster do you want to defeat\n 1-dracula\n2-invisible man\n"; //this method needs monsters implementation to be complete
+                int choice;
+                std::cin >> choice;
+                if(choice == 1)
+                {
+                    if(coffin.empty())
+                    {
+                        //null the monster
+                        actionCount--;
+                    }
+                    else
+                    {
+                        cout <<"there is still coffins out there that you have not destroyed!!\n";
+                        return;
+                    }
+                }
+                else if(choice == 2)
+                {
+                    if(invisible)
+                    {
+                        //same
+                        actionCount--;
+                    }
+                    else
+                    {
+                        cout <<"not enough evidence for finding invisable man!!\n";
+                        return;
+                    }
+                }
+                else
+                {
+                    cout << "invalid choice try again\n";
+                }
+}
+
+//----advanced----
+
+void HeroBase::advanceAction(std::vector<std::string>& coffins, std::shared_ptr<ItemBag<Item>> bag)
+{
+    bool flag = true;
+
+    // if(currentPlace->getName() == "precinct")
+    // {
+    //     flag=false;
+    // }
+
+    for(auto coffin = coffins.begin();coffin!=coffins.end();coffin++)
+    {
+        if(currentPlace->getName() == *coffin)
+        {
+            flag = false;
+            int totalRedItemPower = 0;
+            std::vector<Item> redItems;
+        for (const auto& item : heroItems)
+        {
+            if (item.color == Color::RED)
+            {
+                totalRedItemPower += item.power;
+                redItems.push_back(item);
+            }
+        }
+
+        if (totalRedItemPower < 6)
+        {
+            std::cout << "not enough red item to destroy a coffin\n";
+            return;   
+        }
+        std::cout << "destroying a coffin in -> " << *coffin << std::endl;
+            std::cout << "choose some red item with a valuation more than 6\n";
+
+            int chosenItemsPower = 0 ;
+            std::vector<Item> usedItem;
+            while(chosenItemsPower < 6)
+            {
+                for (int i = 0; i < redItems.size(); i++)
+                {
+                    std::cout << i + 1 << " - " << redItems[i].name << " Power-> " << redItems[i].power << '\n';
+                }
+                int choice;
+                std::cin >> choice;
+                if (choice < 1 || choice > redItems.size())
+                {
+                    std::cout << "invalid choice try again\n";
+                    continue;
+                }
+
+                Item selectedItem = redItems[choice - 1];
+                usedItem.push_back(selectedItem);
+                chosenItemsPower += selectedItem.power;
+
+                redItems.erase(redItems.begin() + (choice - 1));
+            }
+
+            for (const auto& item : usedItem) {
+                for (auto it = heroItems.begin(); it != heroItems.end(); it++) {
+                    if (it->name == item.name)
+                    {
+                        heroItems.erase(it);
+                        break; 
+                    }
+                }
+            }
+
+            for(const auto item : usedItem)
+            {
+                bag->addItem(item);
+            }
+
+            coffins.erase(coffin);
+            actionCount--;
+            std::cout << "the coffin destroyed successfully in -> " << currentPlace->getName() <<std::endl;             
+            break;
+    }
+}
+    if(flag)
+    {
+        std::cout << "there is no coffin in -> " << currentPlace->getName() << '\n';
+        return;
+    }
+
+
+
+
+
+}
+
+
 //----move-----
 
 void HeroBase::moveAction()
