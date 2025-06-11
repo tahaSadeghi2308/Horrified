@@ -1,6 +1,8 @@
 #include "location.hpp"
 #include "Hero.hpp"
 #include "villager.hpp"
+#include "card_manager.hpp"
+#include "monster.hpp"
 
 using namespace std;
 
@@ -51,7 +53,7 @@ std::vector<shared_ptr<Villager>> Place::getVillagers()
 
 std::shared_ptr<HeroBase> Place::getHeros(const std::string &_heroName)
 {
-    for (auto &hero : heroes) {
+    for (auto hero : heroes) { // NOTE: delete &hero -> hero
         if (hero->getHeroName() == _heroName) {
             return hero;
         }
@@ -80,3 +82,19 @@ void Place::addItem(Item item)
             }
         }
    }
+
+void Place::addMonster(shared_ptr<MonsterBase> _monster){
+    this->monsters.push_back(_monster);
+}
+
+void Place::deleteMonster(const string &_monsterName){
+    bool endSearching {false};
+    for(short i{}; i < this->monsters.size() && !endSearching; i++){
+        if (monsters[i]->getMonsterName() == _monsterName){
+            this->monsters.erase(monsters.begin() + i);
+            endSearching = true;
+        }
+    }
+}
+
+vector<shared_ptr<MonsterBase>> Place::getMonsters() { return this->monsters; }

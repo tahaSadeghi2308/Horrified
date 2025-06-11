@@ -17,6 +17,7 @@ set(
   src/location.cc
   src/system.cc
   src/villager.cc
+  src/monster.cc
 )
 
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})

@@ -6,16 +6,18 @@
 #include <memory>
 #include <string>
 
-
 class HeroBase;
 class Villager;
 struct Item; 
+class MonsterBase;
+
 class Place {
     std::string name;
     std::vector<std::shared_ptr<Place>> neighbors;
     std::vector<std::shared_ptr<HeroBase>> heroes;
     std::vector<std::shared_ptr<Villager>> villagers;
     std::vector<Item> currentItems;
+    std::vector<std::shared_ptr<MonsterBase>> monsters;
 
 public:
     explicit Place(const std::string &_name);
@@ -32,6 +34,9 @@ public:
     void addItem(Item item);
     std::vector<Item> getItems();
     void removeItem(Item );
+    void addMonster(std::shared_ptr<MonsterBase> _monster);
+    void deleteMonster(const std::string &_monsterName);
+    std::vector<std::shared_ptr<MonsterBase>> getMonsters();
 };
 
 #endif

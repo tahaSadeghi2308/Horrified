@@ -15,6 +15,9 @@ System::System(){
     arch = make_shared<Archaeologist>(4 , "archaeologist" , perkDeck->pickOneRandomly());
     mayor = make_shared<Mayor>(6 , "mayor" , perkDeck->pickOneRandomly());
 
+    // setup monsters
+    dracula = make_shared<Dracula>("dracula" , true);
+    invisibleMan = make_shared<InvisibleMan>("invisibleMan" , false);
 
     // ----- collect the name of all locations
     ifstream file ("../data/before_game/locations.txt");
@@ -104,13 +107,25 @@ System::System(){
     else {
         throw FileOpenningExecption("couldn't open villager.txt");
     } 
+
+    // add location to our monsters
+    for (auto loc : allLocations){
+        if(loc->getName() == "docks"){
+            dracula->setCurrentLocation(loc);
+            loc->addMonster(dracula);
+        }
+        else if(loc->getName() == "inn"){
+            invisibleMan->setCurrentLocation(loc);
+            loc->addMonster(invisibleMan);
+        }
+    }
 }
 
 void System::showLocs() const {
     for(auto loc : allLocations){
         cout << loc->getName() << " : ";
-        for(auto x : loc->getNeighbors()){
-            cout << x->getName() << " ";
+        for(auto x : loc->getMonsters()){
+            cout << x->getMonsterName() << " ";
         }
         cout << '\n';
     }

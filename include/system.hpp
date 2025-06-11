@@ -8,6 +8,8 @@
 #include <string>
 #include "location.hpp"
 #include "villager.hpp"
+#include "monster.hpp"
+
 
 class System {
     std::shared_ptr<MonsterCardDeck<MonsterCard>> monsterDeck {nullptr};
@@ -18,6 +20,11 @@ class System {
     std::shared_ptr<Archaeologist> arch {nullptr};
     std::shared_ptr<Mayor> mayor {nullptr};
     
+    // monsters
+    std::shared_ptr<Dracula> dracula;
+    std::shared_ptr<InvisibleMan> invisibleMan;
+
+    // all locations
     std::vector<std::shared_ptr<Place>> allLocations;
 
     // all villagers
