@@ -1,5 +1,5 @@
 #ifndef VILLAGER_HPP
-#define VILLEGER_HPP
+#define VILLAGER_HPP
 
 #include <iostream>
 #include "location.hpp"

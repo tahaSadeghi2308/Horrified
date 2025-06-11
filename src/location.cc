@@ -43,3 +43,40 @@ void Place::deleteVillager(const std::string &_placeName){
         }
     }
 }
+
+std::vector<shared_ptr<Villager>> Place::getVillagers()
+{
+    return this -> villagers;
+}
+
+std::shared_ptr<HeroBase> Place::getHeros(const std::string &_heroName)
+{
+    for (auto &hero : heroes) {
+        if (hero->getHeroName() == _heroName) {
+            return hero;
+        }
+    }
+    return nullptr;
+}
+
+void Place::addItem(Item item)
+   {
+       currentItems.push_back(item);
+   }
+
+   std::vector<Item> Place::getItems()
+   {
+       return currentItems;
+   }
+
+   void Place::removeItem(Item num)
+   {
+        for (auto target = currentItems.begin(); target != currentItems.end(); target++)
+        {
+            if (target->name == num.name)
+            {
+                currentItems.erase(target);
+                break;
+            }
+        }
+   }
