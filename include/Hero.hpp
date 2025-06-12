@@ -24,9 +24,9 @@ public:
     std::string getHeroName();
     void moveAction();
     void guideAction();
-     void pickUpAction();
-    // void advanceAtion();
-    // void defeatAction();
+    void pickUpAction();
+    void advanceAction(std::vector<std::string>&,std::vector<std::string>& ,std::shared_ptr<ItemBag<Item>> );
+    void defeatAction(const std::vector<std::string>& ,const std::vector<std::string>& ,std::shared_ptr<ItemBag<Item>> );
     // void runPerkCard();
     void addPerkCard(const Perk &perk);
     void setCurrentPlace(std::shared_ptr<Place> _place); // delete & here bug possibility !!
