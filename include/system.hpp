@@ -35,7 +35,7 @@ public:
     // TODO: we should create a function for saving game with destructor !!!
     // ~System();
     void showLocs() const;
-    // void runMonsterPhase();
+    void runMonsterPhase();
     // void runHeroPhase();
     // void runGame();
 };

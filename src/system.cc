@@ -124,9 +124,24 @@ System::System(){
 void System::showLocs() const {
     for(auto loc : allLocations){
         cout << loc->getName() << " : ";
-        for(auto x : loc->getMonsters()){
-            cout << x->getMonsterName() << " ";
+        for(auto x : loc->getItems()){
+            cout << x.name << " ";
         }
         cout << '\n';
+    }
+}
+
+void System::runMonsterPhase(){
+    // first pick a monster card 
+    MonsterCard currentCard {monsterDeck->pickOneRandomly()};
+    
+    // put items in right place 
+    for (int i {}; i < currentCard.itemCount; i++){
+        Item thisItem {itemBag->pickOneRandomly()};
+        for (auto place : this->allLocations){
+            if (place->getName() == thisItem.place){
+                place->addItem(thisItem);
+            }
+        }
     }
 }
