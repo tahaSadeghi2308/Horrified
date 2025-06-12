@@ -10,7 +10,6 @@
 #include "villager.hpp"
 #include "monster.hpp"
 
-
 class System {
     std::shared_ptr<MonsterCardDeck<MonsterCard>> monsterDeck {nullptr};
     std::shared_ptr<ItemBag<Item>> itemBag {nullptr};
@@ -31,12 +30,15 @@ class System {
     std::vector<std::shared_ptr<Villager>> allVillagers;
 
     void putVillagerInPlace(const std::string &_place , const std::string &_villName);
+    char rollDice();
+
+    std::vector<std::shared_ptr<Place>> findShortestPath(std::shared_ptr<Place> _monst);
 
 public:
     System();
     // TODO: we should create a function for saving game with destructor !!!
     // ~System();
-    void showLocs() const;
+    void showLocs();
     void runMonsterPhase();
     // void runHeroPhase();
     // void runGame();

@@ -98,3 +98,7 @@ void Place::deleteMonster(const string &_monsterName){
 }
 
 vector<shared_ptr<MonsterBase>> Place::getMonsters() { return this->monsters; }
+
+vector<shared_ptr<HeroBase>> Place::getAllHeroes() const {
+    return this->heroes;
+}

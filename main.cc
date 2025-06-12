@@ -6,8 +6,8 @@ using namespace std;
 int main(){
     System game;
     game.showLocs();
-    game.runMonsterPhase();
+    // game.runMonsterPhase();
     cout << "-----------------------\n";
-    game.showLocs();
+    // game.showLocs();
     return 0;
 }

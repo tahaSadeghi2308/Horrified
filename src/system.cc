@@ -3,6 +3,9 @@
 #include "exceptions.hpp"
 #include <sstream>
 #include <iostream>
+#include <unordered_map>
+#include <queue>
+
 using namespace std;
 
 System::System(){
@@ -121,6 +124,44 @@ System::System(){
     }
 }
 
+vector<shared_ptr<Place>> System::findShortestPath(shared_ptr<Place> _p){
+    unordered_map<shared_ptr<Place>, bool> visited;
+    unordered_map<shared_ptr<Place>, shared_ptr<Place>> parent;
+    for (auto x : allLocations) visited[x] = false;
+
+    queue<shared_ptr<Place>> q;
+    visited[_p] = true;
+    q.push(_p);
+    shared_ptr<Place> target {nullptr};
+
+    while(!q.empty() && !target){
+        shared_ptr<Place> currentPlace {q.front()};
+        
+        for (auto nei : currentPlace->getNeighbors()){
+            if (!visited[nei]) {
+                visited[nei] = true;
+                parent[nei] = currentPlace;
+                
+                if (nei->getAllHeroes().size() > 0 || nei->getVillagers().size() > 0){
+                    target = nei;
+                    break;
+                }
+                q.push(nei);
+            }
+        }
+        q.pop();
+    }
+
+    vector<shared_ptr<Place>> path;
+    if (target) {
+        for (shared_ptr<Place> current = target; current != nullptr; current = parent[current]) {
+            path.push_back(current);
+        }
+        reverse(path.begin(), path.end());
+    }
+    return path;
+}
+
 void System::putVillagerInPlace(const string &_placeName , const string &_villName){
     for (auto _vill : this->allVillagers){
         if (_vill->getName() == _villName){
@@ -139,13 +180,17 @@ void System::putVillagerInPlace(const string &_placeName , const string &_villNa
     }
 }
 
-void System::showLocs() const {
-    for(auto loc : allVillagers){
-        cout << loc->getName() << " : ";
-        if (loc->getVillagerLoc() != nullptr){
-            cout << loc->getVillagerLoc()->getName();
-        }
-        cout << '\n';
+char System::rollDice(){
+    char diceChars[6] = {'-' , '*' , '-' , '-' , '!' , '-'};
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<> distrib(0, 5);
+    return diceChars[distrib(gen)];
+}
+
+void System::showLocs() {
+    for (auto lox : findShortestPath(dracula->getCurrentLocation())){
+        cout << lox->getName() << " -> "; 
     }
 }
 
@@ -215,7 +260,7 @@ void System::runMonsterPhase(){
     }
 
     else if (currentCard.name == "The_Innocent"){
-        this->putVillagerInPlace("maria" , "barn");
+        this->putVillagerInPlace("barn" , "maria");
     }
 
     else if (currentCard.name == "Egyptian_Expert"){
@@ -228,4 +273,17 @@ void System::runMonsterPhase(){
 
     // ------------------------- strike phase :D -----------------------------------
 
+    for(auto monst : currentCard.strikePriorities){
+        char diceResult = this->rollDice();
+        if (monst == "du") {
+
+        }
+        else if (monst == "inm"){
+
+        }
+        else {
+            // frenzed state
+        }
+    }
+    
 }
