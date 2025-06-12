@@ -32,8 +32,8 @@ void Place::deleteHero(const std::string &_heroName){
     }
 }
 
-void Place::addVillager(shared_ptr<Villager> _place){
-    this->villagers.push_back(_place);
+void Place::addVillager(shared_ptr<Villager> _vill){
+    this->villagers.push_back(_vill);
 }
 
 void Place::deleteVillager(const std::string &_placeName){
@@ -66,7 +66,7 @@ void Place::addItem(Item item)
        currentItems.push_back(item);
    }
 
-   std::vector<Item> Place::getItems()
+   std::vector<Item>& Place::getItems()
    {
        return currentItems;
    }

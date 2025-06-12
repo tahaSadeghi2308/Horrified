@@ -26,13 +26,13 @@ public:
     std::vector<std::shared_ptr<Place>> getNeighbors();
     void addHero(std::shared_ptr<HeroBase> _hero);
     void deleteHero(const std::string &_heroName);
-    void addVillager(std::shared_ptr<Villager> _place);
-    void deleteVillager(const std::string &_placeName);
+    void addVillager(std::shared_ptr<Villager> _vill);
+    void deleteVillager(const std::string &_villName);
     std::vector<std::shared_ptr<Villager>> getVillagers();
     std::shared_ptr<HeroBase> getHeros(const std::string &_heroName);
     //about items
     void addItem(Item item);
-    std::vector<Item> getItems();
+    std::vector<Item>& getItems();
     void removeItem(Item );
     void addMonster(std::shared_ptr<MonsterBase> _monster);
     void deleteMonster(const std::string &_monsterName);
