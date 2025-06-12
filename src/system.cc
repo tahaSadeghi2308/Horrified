@@ -121,6 +121,24 @@ System::System(){
     }
 }
 
+void System::putVillagerInPlace(const string &_placeName , const string &_villName){
+    for (auto _vill : this->allVillagers){
+        if (_vill->getName() == _villName){
+            
+            if (_vill->getVillagerLoc() != nullptr){
+                _vill->getVillagerLoc()->deleteVillager(_villName);
+            }
+
+            for (auto _place : this->allLocations){
+                if (_place->getName() == _placeName) {
+                    _vill->changeLoc(_place);
+                    _place->addVillager(_vill);
+                }
+            }
+        }
+    }
+}
+
 void System::showLocs() const {
     for(auto loc : allVillagers){
         cout << loc->getName() << " : ";
@@ -134,6 +152,7 @@ void System::showLocs() const {
 void System::runMonsterPhase(){
     // first pick a monster card 
     MonsterCard currentCard {monsterDeck->pickOneRandomly()};
+    currentCard.name = "Fortune_Teller";
     // TODO: Here we can show which card picked and is running !!
 
 
@@ -180,131 +199,33 @@ void System::runMonsterPhase(){
     }
 
     else if (currentCard.name == "The_Delivery"){
-        for (auto _vill : this->allVillagers){
-            if (_vill->getName() == "wilbur&chick"){
-                
-                if (_vill->getVillagerLoc() != nullptr){
-                    _vill->getVillagerLoc()->deleteVillager("wilbur&chick");
-                }
-
-                for (auto _place : this->allLocations){
-                    if (_place->getName() == "docks") {
-                        _vill->changeLoc(_place);
-                        _place->addVillager(_vill);
-                    }
-                }
-            }
-        }
+        this->putVillagerInPlace("docks" , "wilbur&chick");
     }
 
     else if (currentCard.name == "Fortune_Teller"){
-        for (auto _vill : this->allVillagers){
-            if (_vill->getName() == "maleva"){
-                
-                if (_vill->getVillagerLoc() != nullptr){
-                    _vill->getVillagerLoc()->deleteVillager("maleva");
-                }
-
-                for (auto _place : this->allLocations){
-                    if (_place->getName() == "camp") {
-                        _vill->changeLoc(_place);
-                        _place->addVillager(_vill);
-                    }
-                }
-            }
-        }
+        this->putVillagerInPlace("camp" , "maleva");
     }
 
     else if (currentCard.name == "Former_Employer"){
-        for (auto _vill : this->allVillagers){
-            if (_vill->getName() == "dr.cranly"){
-                
-                if (_vill->getVillagerLoc() != nullptr){
-                    _vill->getVillagerLoc()->deleteVillager("dr.cranly");
-                }
-
-                for (auto _place : this->allLocations){
-                    if (_place->getName() == "laboratory") {
-                        _vill->changeLoc(_place);
-                        _place->addVillager(_vill);
-                    }
-                }
-            }
-        }
+        this->putVillagerInPlace("laboratory" , "dr.cranly");
     }
 
     else if (currentCard.name == "Hurried_Assistant"){
-        for (auto _vill : this->allVillagers){
-            if (_vill->getName() == "fritz"){
-                
-                if (_vill->getVillagerLoc() != nullptr){
-                    _vill->getVillagerLoc()->deleteVillager("fritz");
-                }
-
-                for (auto _place : this->allLocations){
-                    if (_place->getName() == "tower") {
-                        _vill->changeLoc(_place);
-                        _place->addVillager(_vill);
-                    }
-                }
-            }
-        }
+        this->putVillagerInPlace("tower" , "fritz");
     }
 
     else if (currentCard.name == "The_Innocent"){
-        for (auto _vill : this->allVillagers){
-            if (_vill->getName() == "maria"){
-                
-                if (_vill->getVillagerLoc() != nullptr){
-                    _vill->getVillagerLoc()->deleteVillager("maria");
-                }
-
-                for (auto _place : this->allLocations){
-                    if (_place->getName() == "barn") {
-                        _vill->changeLoc(_place);
-                        _place->addVillager(_vill);
-                    }
-                }
-            }
-        }
+        this->putVillagerInPlace("maria" , "barn");
     }
 
     else if (currentCard.name == "Egyptian_Expert"){
-        for (auto _vill : this->allVillagers){
-            if (_vill->getName() == "prof.pearson"){
-                
-                if (_vill->getVillagerLoc() != nullptr){
-                    _vill->getVillagerLoc()->deleteVillager("prof.pearson");
-                }
-
-                for (auto _place : this->allLocations){
-                    if (_place->getName() == "cave") {
-                        _vill->changeLoc(_place);
-                        _place->addVillager(_vill);
-                    }
-                }
-            }
-        }
+        this->putVillagerInPlace("cave" , "prof.pearson");
     }
 
     else if (currentCard.name == "The_Ichthyologist"){
-        for (auto _vill : this->allVillagers){
-            if (_vill->getName() == "dr.reed"){
-                
-                if (_vill->getVillagerLoc() != nullptr){
-                    _vill->getVillagerLoc()->deleteVillager("dr.reed");
-                }
-
-                for (auto _place : this->allLocations){
-                    if (_place->getName() == "institute") {
-                        _vill->changeLoc(_place);
-                        _place->addVillager(_vill);
-                    }
-                }
-            }
-        }
+        this->putVillagerInPlace("institute" , "dr.reed");
     }
 
-    // strike phase :D -----------------------------------
+    // ------------------------- strike phase :D -----------------------------------
 
 }

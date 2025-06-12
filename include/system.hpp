@@ -30,6 +30,8 @@ class System {
     // all villagers
     std::vector<std::shared_ptr<Villager>> allVillagers;
 
+    void putVillagerInPlace(const std::string &_place , const std::string &_villName);
+
 public:
     System();
     // TODO: we should create a function for saving game with destructor !!!
