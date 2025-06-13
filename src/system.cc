@@ -99,7 +99,6 @@ System::System(){
             for(auto _place : allLocations){
                 if (_place->getName() == safeZone){
                     temp->setSafeZone(_place);
-                    // _place->addVillager(temp);
                 }
             }
 
@@ -207,14 +206,29 @@ void System::showLocs() {
         for (auto vil : loc->getMonsters()){
             cout << "  - " << vil->getMonsterName() << '\n';
         } 
+
+        cout << "Neighbors : ";
+        for (auto nei : loc->getNeighbors()){
+            cout << nei->getName() << " ";
+        }
+        cout << '\n';
     }
+
+    // for (auto x : findShortestPath(invisibleMan->getCurrentLocation())){
+    //     cout << x->getName() << " ";
+    // }
+    // show villagers state 
+    // for (auto vil : allVillagers) {
+    //     cout << "--------------  " << vil->getName() << "  ---------------" << '\n';
+    //     cout << " - Safe zone : " << vil->getVillagerLoc() << '\n';
+    // }
 }
 
 void System::runMonsterPhase(){
     // first pick a monster card 
     MonsterCard currentCard {monsterDeck->pickOneRandomly()};
-    currentCard.name = "Thief";
-    currentCard.strikePriorities = {"du"};
+    // currentCard.name = "Thief";
+    // currentCard.strikePriorities = {"du"};
     // TODO: Here we can show which card picked and is running !!
 
 
@@ -290,5 +304,128 @@ void System::runMonsterPhase(){
 
     // ------------------------- strike phase :D -----------------------------------
 
-       
+    bool stopStrike {};
+
+    for (int i {}; i < currentCard.strikePriorities.size(); i++){
+        if (currentCard.strikePriorities[i] == "du"){
+            if (dracula != nullptr){
+                // move actions for monster
+                bool continueMoving {true};
+                int movesCount {currentCard.move};
+                while (movesCount && continueMoving){
+    
+                    if (
+                        dracula->getCurrentLocation()->getAllHeroes().size() > 0 ||
+                        dracula->getCurrentLocation()->getVillagers().size() > 0
+                    ){
+                        continueMoving = false;
+                    }
+                    else {
+                        // move the monster here
+                        vector<shared_ptr<Place>> pathToEnemy {findShortestPath(dracula->getCurrentLocation())};
+                        dracula->getCurrentLocation()->deleteMonster("dracula");
+                        for (auto loc : allLocations){
+                            if (loc->getName() == pathToEnemy[1]->getName()){
+                                dracula->setCurrentLocation(loc);
+                                loc->addMonster(dracula);
+                            }
+                        }
+                    }
+                    movesCount--;
+                } 
+                // dice and attack here ...
+
+            }
+        }
+        else if (currentCard.strikePriorities[i] == "inm"){
+            if (invisibleMan != nullptr){
+                // move actions for monster
+                bool continueMoving {true};
+                int movesCount {currentCard.move};
+                while (movesCount && continueMoving){
+    
+                    if (
+                        invisibleMan->getCurrentLocation()->getAllHeroes().size() > 0 ||
+                        invisibleMan->getCurrentLocation()->getVillagers().size() > 0
+                    ){
+                        continueMoving = false;
+                    }
+                    else {
+                        // move the monster here
+                        vector<shared_ptr<Place>> pathToEnemy {findShortestPath(invisibleMan->getCurrentLocation())};
+                        invisibleMan->getCurrentLocation()->deleteMonster("invisibleMan");
+                        for (auto loc : allLocations){
+                            if (loc->getName() == pathToEnemy[1]->getName()){
+                                invisibleMan->setCurrentLocation(loc);
+                                loc->addMonster(invisibleMan);
+                            }
+                        }
+                    }
+                    movesCount--;
+                } 
+                // dice and attack here ...
+
+            }
+        }
+        else {
+            if (invisibleMan != nullptr) {
+                if (invisibleMan->getIsFrenzed()){
+                    // move actions for monster
+                    bool continueMoving {true};
+                    int movesCount {currentCard.move};
+                    while (movesCount && continueMoving){
+                        if (
+                            invisibleMan->getCurrentLocation()->getAllHeroes().size() > 0 ||
+                            invisibleMan->getCurrentLocation()->getVillagers().size() > 0
+                        ){
+                            continueMoving = false;
+                        }
+                        else {
+                            // move the monster here
+                            vector<shared_ptr<Place>> pathToEnemy {findShortestPath(invisibleMan->getCurrentLocation())};
+                            invisibleMan->getCurrentLocation()->deleteMonster("invisibleMan");
+                            for (auto loc : allLocations){
+                                if (loc->getName() == pathToEnemy[1]->getName()){
+                                    invisibleMan->setCurrentLocation(loc);
+                                    loc->addMonster(invisibleMan);
+                                }
+                            }
+                        }
+                        movesCount--;
+                    } 
+                    // dice and attack here ...
+
+                }
+            }
+            else if (dracula != nullptr) {
+                if (dracula->getIsFrenzed()){
+                    // move actions for monster
+                    bool continueMoving {true};
+                    int movesCount {currentCard.move};
+                    while (movesCount && continueMoving){
+        
+                        if (
+                            invisibleMan->getCurrentLocation()->getAllHeroes().size() > 0 ||
+                            invisibleMan->getCurrentLocation()->getVillagers().size() > 0
+                        ){
+                            continueMoving = false;
+                        }
+                        else {
+                            // move the monster here
+                            vector<shared_ptr<Place>> pathToEnemy {findShortestPath(invisibleMan->getCurrentLocation())};
+                            invisibleMan->getCurrentLocation()->deleteMonster("invisibleMan");
+                            for (auto loc : allLocations){
+                                if (loc->getName() == pathToEnemy[1]->getName()){
+                                    invisibleMan->setCurrentLocation(loc);
+                                    loc->addMonster(invisibleMan);
+                                }
+                            }
+                        }
+                        movesCount--;
+                    } 
+                    // dice and attack here ...
+                }
+            }
+        }
+    }
 }
