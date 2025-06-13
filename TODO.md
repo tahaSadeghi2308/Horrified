@@ -1,3 +1,5 @@
 - [x] implement perk and monster and item card with inheritance and polymorphism !!
 - [ ] Write test for card_manager !!!
-- [ ] Test that ur changes in one place effects in all of them !!
+- [X] Test that ur changes in one place effects in all of them !!
+- [ ] Indicate which hero is current hero
+- [ ] implement monster's power with pure virtual
