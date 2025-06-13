@@ -7,7 +7,7 @@ int main(){
     System game;
     game.showLocs();
     // game.runMonsterPhase();
-    cout << "-----------------------\n";
+    // cout << "-----------------------\n";
     // game.showLocs();
     return 0;
 }

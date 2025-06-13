@@ -99,7 +99,7 @@ System::System(){
             for(auto _place : allLocations){
                 if (_place->getName() == safeZone){
                     temp->setSafeZone(_place);
-                    _place->addVillager(temp);
+                    // _place->addVillager(temp);
                 }
             }
 
@@ -117,7 +117,7 @@ System::System(){
             dracula->setCurrentLocation(loc);
             loc->addMonster(dracula);
         }
-        else if(loc->getName() == "inn"){
+        else if(loc->getName() == "hospital"){
             invisibleMan->setCurrentLocation(loc);
             loc->addMonster(invisibleMan);
         }
@@ -189,15 +189,32 @@ char System::rollDice(){
 }
 
 void System::showLocs() {
-    for (auto lox : findShortestPath(dracula->getCurrentLocation())){
-        cout << lox->getName() << " -> "; 
+    // lets show all infoes 
+    for (auto loc : allLocations){
+        cout << "------------  " << loc->getName() << "  -------------\n";
+        // villgers here !!
+        cout << "villagers : \n";
+        for (auto vil : loc->getVillagers()){
+            cout << "  - " << vil->getName() << '\n';
+        } 
+
+        cout << "Heroes : \n";
+        for (auto vil : loc->getAllHeroes()){
+            cout << "  - " << vil->getHeroName() << '\n';
+        } 
+
+        cout << "monsters : \n";
+        for (auto vil : loc->getMonsters()){
+            cout << "  - " << vil->getMonsterName() << '\n';
+        } 
     }
 }
 
 void System::runMonsterPhase(){
     // first pick a monster card 
     MonsterCard currentCard {monsterDeck->pickOneRandomly()};
-    currentCard.name = "Fortune_Teller";
+    currentCard.name = "Thief";
+    currentCard.strikePriorities = {"du"};
     // TODO: Here we can show which card picked and is running !!
 
 
@@ -273,17 +290,5 @@ void System::runMonsterPhase(){
 
     // ------------------------- strike phase :D -----------------------------------
 
-    for(auto monst : currentCard.strikePriorities){
-        char diceResult = this->rollDice();
-        if (monst == "du") {
-
-        }
-        else if (monst == "inm"){
-
-        }
-        else {
-            // frenzed state
-        }
-    }
-    
+       
 }
