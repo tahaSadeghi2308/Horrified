@@ -3,3 +3,4 @@
 - [X] Test that ur changes in one place effects in all of them !!
 - [ ] Indicate which hero is current hero
 - [ ] implement monster's power with pure virtual
+- [ ] add a parameter to FSP function for finding based on situation

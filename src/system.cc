@@ -302,6 +302,9 @@ void System::runMonsterPhase(){
         this->putVillagerInPlace("institute" , "dr.reed");
     }
 
+    else if (currentCard.name == "Hypnotic_Gaze"){
+
+    }
     // ------------------------- strike phase :D -----------------------------------
 
     bool stopStrike {};
