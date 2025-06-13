@@ -20,6 +20,18 @@ struct Item {
     Color color;
     std::string name;
     std::string place; // NOTE: maybe change base on place implementation
+    friend std::ostream& operator<< (std::ostream& output , Item&items)
+    {  
+        output<< "Name-> " << items.name << " Color-> ";
+        if(items.color == 0)
+        output << "Red";
+        else if(items.color == 1)
+        output << "Blue";
+        else
+        output << "Yellow";
+        output<< " Power-> " << items.power << " Place-> " << items.place ;
+        return output;
+    }
 };
 
 struct Perk {

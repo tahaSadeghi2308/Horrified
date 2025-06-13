@@ -28,6 +28,10 @@ class System {
 
     // all villagers
     std::vector<std::shared_ptr<Villager>> allVillagers;
+    //draculas coffins
+    std::vector<std::string> coffins = {"crypt" ,"cave" ,"dungeon","graveyard"};
+    //saving evidence
+    std::vector<std::string> evidence = {"inn","barn","mansion","laboratory","institute"};
 
     void putVillagerInPlace(const std::string &_place , const std::string &_villName);
     char rollDice();
