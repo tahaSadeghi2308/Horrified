@@ -744,6 +744,7 @@ void HeroBase::defeatAction(const std::vector<std::string>& coffin,const std::ve
 
                         cout << "you defeated dracula!\n";
                         //null the monster
+                        dracula->getCurrentLocation()->deleteMonster(dracula->getMonsterName());
                         dracula=nullptr;
                         actionCount--;
                     }
@@ -818,6 +819,7 @@ void HeroBase::defeatAction(const std::vector<std::string>& coffin,const std::ve
 
                     std::cout << "You defeated the invisible man!\n";
                         //same
+                        invisible->getCurrentLocation()->deleteMonster(invisible->getMonsterName());
                         invisible=nullptr;
                         actionCount--;
                     }
