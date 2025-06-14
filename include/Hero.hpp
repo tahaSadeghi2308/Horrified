@@ -8,7 +8,7 @@
 #include "location.hpp"
 #include <memory>
 #include "villager.hpp"
-
+#include "monster.hpp"
 class HeroBase {
     int actionCount;
     std::string heroName;
@@ -25,9 +25,9 @@ public:
     void moveAction();
     void guideAction();
     void pickUpAction();
-    void advanceAction(std::vector<std::string>&,std::vector<std::string>& ,std::shared_ptr<ItemBag<Item>> );
-    void defeatAction(const std::vector<std::string>& ,const std::vector<std::string>& ,std::shared_ptr<ItemBag<Item>> );
-    // void runPerkCard();
+    void advanceAction(std::vector<std::string>&,std::vector<std::string>& ,std::shared_ptr<ItemBag<Item>>& );
+    void defeatAction(const std::vector<std::string>& ,const std::vector<std::string>& ,std::shared_ptr<ItemBag<Item>>&,std::shared_ptr<Dracula>&,std::shared_ptr<InvisibleMan>&);
+    void runPerkCard(shared_ptr<Archaeologist>& , shared_ptr<Mayor>& ,shared_ptr<Dracula>& ,shared_ptr<InvisibleMan>&  ,std::vector<std::shared_ptr<Place>>, std::shared_ptr<ItemBag<Item>>& );
     void addPerkCard(const Perk &perk);
     void setCurrentPlace(std::shared_ptr<Place> _place); // delete & here bug possibility !!
     std::shared_ptr<Place> getCurrentPlace();

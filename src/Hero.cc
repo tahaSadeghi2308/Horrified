@@ -41,6 +41,72 @@ void HeroBase::addHeroItems(Item _item)
 {
     heroItems.push_back(_item);
 }
+
+//-----perk-----
+
+void HeroBase::runPerkCard(shared_ptr<Archaeologist>& arch, shared_ptr<Mayor>& mayor,shared_ptr<Dracula>& dracula,shared_ptr<InvisibleMan>& invisible,vector<shared_ptr<Place>> allLocations,shared_ptr<ItemBag<Item>>& bag)
+{
+    if(heroPerks.empty())
+    {
+        cout << "you have no perk card to use\n";
+        return;
+    }
+    cout << "select your perk card\n";
+    for(int i; i < heroPerks.size();i++)
+    {
+        cout << i+1 << " - " << heroPerks[i].name << endl;
+    }
+    int choice;
+    cin >> choice;
+    string chosenPerksName = heroPerks[choice-1].name;
+    if(chosenPerksName == "Late_into_the_Night")
+    {
+        actionCount += 2;
+    }
+    else if(chosenPerksName == "Visit_from_the_Detective")
+    {
+        cout << "select the position that you want to put invisible man\n";
+        for(int i=0;i < allLocations.size() ;i++)
+        {
+            cout << i+1 << " - " << allLocations[i]->getName() << endl;
+        }
+        int choice;
+        cin >> choice;
+        if(choice < 1 || choice > allLocations.size())
+        {
+            cout << "your choice was invalid\n";
+            return;
+        }
+        shared_ptr<Place> selectedPlace = allLocations[choice-1];
+        invisible->setCurrentLocation(selectedPlace);
+        cout << "invisible man moved to -> " << selectedPlace->getName() << endl;
+    }
+    else if(chosenPerksName == "Overstock")
+    {
+        cout << "select the item that you what to add to your location\n";
+        vector<Item> ITEMS = bag->getCards();   
+        for(int i=0;i < ITEMS.size();i++)
+        { 
+            cout << i+1 << " - " << ITEMS[i] << endl;
+        }
+        int choice;
+        cin >> choice;
+        if(choice < 1 || choice > ITEMS.size())
+        {
+            cout << "your choice was invalid\n";
+            return;
+        }
+        currentPlace->addItem(ITEMS[choice-1]);
+        bag->pop(choice-1);
+        cout << "the item that you slected has been added to your location\n";
+    }
+    else if(chosenPerksName == "")
+    {
+
+    }
+}
+
+
 //----move-----
 
 void HeroBase::moveAction()
@@ -332,7 +398,7 @@ void HeroBase::guideAction()
 
 }
 
-void HeroBase::advanceAction(std::vector<std::string>& coffins,std::vector<std::string>& evidence,std::shared_ptr<ItemBag<Item>> bag)
+void HeroBase::advanceAction(std::vector<std::string>& coffins,std::vector<std::string>& evidence,std::shared_ptr<ItemBag<Item>>& bag)
 {
     bool flag = true;
 
@@ -481,7 +547,7 @@ void HeroBase::advanceAction(std::vector<std::string>& coffins,std::vector<std::
 
 //-----defeat-----
 
-void HeroBase::defeatAction(const std::vector<std::string>& coffin,const std::vector<std::string>& evidence,std::shared_ptr<ItemBag<Item>> bag)
+void HeroBase::defeatAction(const std::vector<std::string>& coffin,const std::vector<std::string>& evidence,std::shared_ptr<ItemBag<Item>>& bag ,shared_ptr<Dracula>& dracula,shared_ptr<InvisibleMan>& invisible)
 {
 
     //using the same method that i used for getting the red items for destroying coffins (copy,past :) )
@@ -492,8 +558,7 @@ void HeroBase::defeatAction(const std::vector<std::string>& coffin,const std::ve
                 std::cin >> choice;
                 if(choice == 1)
                 {
-                    string unknown;
-                    if(currentPlace->getName() != unknown)//monster place)
+                    if(currentPlace->getName() != dracula->getCurrentLocation()->getName())//monster place)
                     {
                         cerr << "your not in the same place with dracula\n";
                         return;
@@ -559,6 +624,7 @@ void HeroBase::defeatAction(const std::vector<std::string>& coffin,const std::ve
 
                         cout << "you defeated dracula!\n";
                         //null the monster
+                        dracula=nullptr;
                         actionCount--;
                     }
                     else
@@ -569,8 +635,7 @@ void HeroBase::defeatAction(const std::vector<std::string>& coffin,const std::ve
                 }
                 else if(choice == 2)
                 {
-                    string unkwon;
-                    if(currentPlace->getName() != unkwon)//monster place)
+                    if(currentPlace->getName() != invisible->getCurrentLocation()->getName())//monster place)
                     {
                         cerr << "your not in the same place with invisible man\n";
                         return;
@@ -633,6 +698,7 @@ void HeroBase::defeatAction(const std::vector<std::string>& coffin,const std::ve
 
                     std::cout << "You defeated the invisible man!\n";
                         //same
+                        invisible=nullptr;
                         actionCount--;
                     }
                     else

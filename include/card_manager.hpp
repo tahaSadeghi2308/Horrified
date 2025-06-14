@@ -63,6 +63,10 @@ class ItemBag : public CardManagerBase<T> {
 public:
     ItemBag<T>();
     void addItem(const T &item);
+    std::vector getCards()
+    {
+        return cards;
+    }
 };
 
 template <class T>
