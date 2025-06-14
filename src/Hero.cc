@@ -151,7 +151,7 @@ void HeroBase::runPerkCard(shared_ptr<Archaeologist> arch, shared_ptr<Mayor> may
                 }
                 else if(choose == 1)
                 {
-                    mayor->moveAction();
+                    selectedHero->moveAction();
                     break;
                 }
                 else
