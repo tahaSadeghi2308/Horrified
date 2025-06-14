@@ -44,7 +44,7 @@ void HeroBase::addHeroItems(Item _item)
 
 //-----perk-----
 
-void HeroBase::runPerkCard(shared_ptr<Archaeologist>& arch, shared_ptr<Mayor>& mayor,shared_ptr<Dracula>& dracula,shared_ptr<InvisibleMan>& invisible,vector<shared_ptr<Place>> allLocations,shared_ptr<ItemBag<Item>>& bag)
+void HeroBase::runPerkCard(shared_ptr<Archaeologist> arch, shared_ptr<Mayor> mayor,shared_ptr<Dracula> dracula,shared_ptr<InvisibleMan> invisible,vector<shared_ptr<Place>> allLocations,shared_ptr<ItemBag<Item>> bag)
 {
     //one perk is left
     if(heroPerks.empty())
@@ -64,7 +64,13 @@ void HeroBase::runPerkCard(shared_ptr<Archaeologist>& arch, shared_ptr<Mayor>& m
     {
         actionCount += 2;
         heroPerks.erase(heroPerks.begin() + choice-1);
-        cout << "two more anction is added to your hero\n";
+        cout << "two more anction is added to your hero you have -> " << actionCount << " left\nthe following items are added to your location\n";
+        for(int i = 0;i < 2;i++)
+        {
+            Item addItem= bag->pickOneRandomly();
+            cout << "added -> " << addItem << endl;
+            currentPlace->addItem(addItem);   
+        }
     }
     else if(chosenPerksName == "Visit_from_the_Detective")
     {
@@ -73,37 +79,49 @@ void HeroBase::runPerkCard(shared_ptr<Archaeologist>& arch, shared_ptr<Mayor>& m
         {
             cout << i+1 << " - " << allLocations[i]->getName() << endl;
         }
-        int choice2;
-        cin >> choice2;
-        if(choice2 < 1 || choice2 > allLocations.size())
+        int locChoice;
+        cin >> locChoice;
+        if(locChoice < 1 || locChoice > allLocations.size())
         {
             cout << "your choice was invalid\n";
             return;
         }
-        shared_ptr<Place> selectedPlace = allLocations[choice2-1];
+        shared_ptr<Place> selectedPlace = allLocations[locChoice-1];
+        invisible->getCurrentLocation()->deleteMonster(invisible->getMonsterName());
         invisible->setCurrentLocation(selectedPlace);
+        selectedPlace ->addMonster(invisible);
+
         heroPerks.erase(heroPerks.begin() + choice-1);
         cout << "invisible man moved to -> " << selectedPlace->getName() << endl;
     }
     else if(chosenPerksName == "Overstock")
     {
-        cout << "select the item that you what to add to your location\n";
-        vector<Item> ITEMS = bag->getCards();   
-        for(int i=0;i < ITEMS.size();i++)
-        { 
-            cout << i+1 << " - " << ITEMS[i] << endl;
-        }
-        int itemChoice;
+        auto allItems = bag->getCards();
+        vector<Item> possibleItems;
+        vector<int> index;
+        for(int i = 0; i < allItems.size(); i++)
+            {
+                if(i == 0 || allItems[i].name != allItems[i-1].name)
+                {
+                    possibleItems.push_back(allItems[i]);
+                    index.push_back(i);
+                }
+            }
+        cout << "select the item you want to add to your location\n";
+        for(int i = 0; i < possibleItems.size(); i++)
+        cout << i+1 << " - " << possibleItems[i] << endl;
+        int itemChoice; 
         cin >> itemChoice;
-        if(itemChoice < 1 || itemChoice > ITEMS.size())
+        if(itemChoice < 1 || itemChoice > possibleItems.size())
         {
-            cout << "your choice was invalid\n";
+            cout << "invalid choice\n";
             return;
         }
-        currentPlace->addItem(ITEMS[itemChoice-1]);
-        bag->pop(itemChoice-1);
+        currentPlace->addItem(possibleItems[itemChoice-1]);
+
+        bag->pop(index[itemChoice-1]);
         heroPerks.erase(heroPerks.begin() + choice-1);
-        cout << "the item that you slected has been added to your location\n";
+        cout << "the item -> "<< possibleItems[itemChoice-1].name << " has been added to your location\n";
     }
     else if(chosenPerksName == "Hurry")
     {
@@ -115,35 +133,13 @@ void HeroBase::runPerkCard(shared_ptr<Archaeologist>& arch, shared_ptr<Mayor>& m
             cout << "invalid choice\n";
             return;
         }
+        shared_ptr<HeroBase> selectedHero ;
         if(heroChoice == 1)
-        {
-            arch -> moveAction();
-            cout << "do you want to continue?( no -> 0  yes -> 1 )\n";
-            while(true)
-            {
-                int choose;
-                cin >> choose;
-                if(choose == 0)
-                {
-                    break;
-                }
-                else if(choose == 1)
-                {
-                    arch->moveAction();
-                    break;
-                }
-                else
-                {
-                    cout << "invalid choice try again\n";
-                    continue;
-                }
-            }
-            heroPerks.erase(heroPerks.begin() + choice-1);
-            return;  
-    }
+            selectedHero = arch;
         else
-        {
-            mayor->moveAction();
+            selectedHero = mayor;
+
+            selectedHero->moveAction();
             cout << "do you want to continue?( no -> 0  yes -> 1 )\n";
             while(true)
             {
@@ -165,8 +161,7 @@ void HeroBase::runPerkCard(shared_ptr<Archaeologist>& arch, shared_ptr<Mayor>& m
                 }
             }
             heroPerks.erase(heroPerks.begin() + choice-1);
-            return;
-        }
+            return;    
     }
     else if(chosenPerksName == "Repel")
     {
@@ -523,7 +518,7 @@ void HeroBase::guideAction()
 
 }
 
-void HeroBase::advanceAction(std::vector<std::string>& coffins,std::vector<std::string>& evidence,std::shared_ptr<ItemBag<Item>>& bag)
+void HeroBase::advanceAction(std::vector<std::string>& coffins,std::vector<std::string>& evidence,std::shared_ptr<ItemBag<Item>> bag)
 {
     bool flag = true;
 

@@ -46,10 +46,6 @@ public:
     void runMonsterPhase();
     // void runHeroPhase();
     // void runGame();
-    void perk()
-    {
-        arch->runPerkCard(arch,mayor,dracula,invisibleMan,allLocations,itemBag);
-    }
 };
 
 #endif //SYSTEM_HPP
