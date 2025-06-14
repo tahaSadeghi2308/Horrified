@@ -46,13 +46,14 @@ void HeroBase::addHeroItems(Item _item)
 
 void HeroBase::runPerkCard(shared_ptr<Archaeologist>& arch, shared_ptr<Mayor>& mayor,shared_ptr<Dracula>& dracula,shared_ptr<InvisibleMan>& invisible,vector<shared_ptr<Place>> allLocations,shared_ptr<ItemBag<Item>>& bag)
 {
+    //one perk is left
     if(heroPerks.empty())
     {
         cout << "you have no perk card to use\n";
         return;
     }
     cout << "select your perk card\n";
-    for(int i; i < heroPerks.size();i++)
+    for(int i=0; i < heroPerks.size();i++)
     {
         cout << i+1 << " - " << heroPerks[i].name << endl;
     }
@@ -62,6 +63,8 @@ void HeroBase::runPerkCard(shared_ptr<Archaeologist>& arch, shared_ptr<Mayor>& m
     if(chosenPerksName == "Late_into_the_Night")
     {
         actionCount += 2;
+        heroPerks.erase(heroPerks.begin() + choice-1);
+        cout << "two more anction is added to your hero\n";
     }
     else if(chosenPerksName == "Visit_from_the_Detective")
     {
@@ -70,15 +73,16 @@ void HeroBase::runPerkCard(shared_ptr<Archaeologist>& arch, shared_ptr<Mayor>& m
         {
             cout << i+1 << " - " << allLocations[i]->getName() << endl;
         }
-        int choice;
-        cin >> choice;
-        if(choice < 1 || choice > allLocations.size())
+        int choice2;
+        cin >> choice2;
+        if(choice2 < 1 || choice2 > allLocations.size())
         {
             cout << "your choice was invalid\n";
             return;
         }
-        shared_ptr<Place> selectedPlace = allLocations[choice-1];
+        shared_ptr<Place> selectedPlace = allLocations[choice2-1];
         invisible->setCurrentLocation(selectedPlace);
+        heroPerks.erase(heroPerks.begin() + choice-1);
         cout << "invisible man moved to -> " << selectedPlace->getName() << endl;
     }
     else if(chosenPerksName == "Overstock")
@@ -89,20 +93,141 @@ void HeroBase::runPerkCard(shared_ptr<Archaeologist>& arch, shared_ptr<Mayor>& m
         { 
             cout << i+1 << " - " << ITEMS[i] << endl;
         }
-        int choice;
-        cin >> choice;
-        if(choice < 1 || choice > ITEMS.size())
+        int itemChoice;
+        cin >> itemChoice;
+        if(itemChoice < 1 || itemChoice > ITEMS.size())
         {
             cout << "your choice was invalid\n";
             return;
         }
-        currentPlace->addItem(ITEMS[choice-1]);
-        bag->pop(choice-1);
+        currentPlace->addItem(ITEMS[itemChoice-1]);
+        bag->pop(itemChoice-1);
+        heroPerks.erase(heroPerks.begin() + choice-1);
         cout << "the item that you slected has been added to your location\n";
     }
-    else if(chosenPerksName == "")
+    else if(chosenPerksName == "Hurry")
     {
+        cout << "which hero do you want to move for two space\n1-Archaeologist\n2-Mayor\n";
+        int heroChoice;
+        cin >> heroChoice;
+        if(heroChoice != 1 && heroChoice != 2)
+        {
+            cout << "invalid choice\n";
+            return;
+        }
+        if(heroChoice == 1)
+        {
+            arch -> moveAction();
+            cout << "do you want to continue?( no -> 0  yes -> 1 )\n";
+            while(true)
+            {
+                int choose;
+                cin >> choose;
+                if(choose == 0)
+                {
+                    break;
+                }
+                else if(choose == 1)
+                {
+                    arch->moveAction();
+                    break;
+                }
+                else
+                {
+                    cout << "invalid choice try again\n";
+                    continue;
+                }
+            }
+            heroPerks.erase(heroPerks.begin() + choice-1);
+            return;  
+    }
+        else
+        {
+            mayor->moveAction();
+            cout << "do you want to continue?( no -> 0  yes -> 1 )\n";
+            while(true)
+            {
+                int choose;
+                cin >> choose;
+                if(choose == 0)
+                {
+                    break;
+                }
+                else if(choose == 1)
+                {
+                    mayor->moveAction();
+                    break;
+                }
+                else
+                {
+                    cout << "invalid choice try again\n";
+                    continue;
+                }
+            }
+            heroPerks.erase(heroPerks.begin() + choice-1);
+            return;
+        }
+    }
+    else if(chosenPerksName == "Repel")
+    {
+        cout << "which monster do you want to move for two space\n1-Dracula\n2-invisibleMan\n";
+        int monsterChoice;
+        cin >> monsterChoice;
+        if(monsterChoice != 1 && monsterChoice != 2)
+        {
+            cout << "invalid choice\n";
+            return;
+        }
+        shared_ptr<MonsterBase> selectedMonster;
+        if(monsterChoice == 1)
+        {
+            selectedMonster = dracula;
+        }
+        else
+        {
+            selectedMonster = invisible;
+        }
 
+
+        for(int j = 0;j < 2;j++)
+        {
+        vector<shared_ptr<Place>> targetPlaces = selectedMonster->getCurrentLocation()->getNeighbors();
+    
+            for(int i = 0;i < targetPlaces.size();i++)
+            {    
+                cout << i+1 << '-' << targetPlaces[i]->getName() << std::endl;
+            }
+            int choose;
+            cin >> choose;
+            if(choose < 1 || choose > targetPlaces.size() )
+            {
+                cout <<"the number that you have selected for moving is invalid\n";
+                return;
+            }
+
+            string name = selectedMonster->getMonsterName();
+            shared_ptr<Place> target = selectedMonster->getCurrentLocation();
+
+
+            targetPlaces[choose-1] -> addMonster(target ->getOneMonster(name));
+            selectedMonster->getCurrentLocation()->deleteMonster(selectedMonster->getMonsterName());
+            selectedMonster->setCurrentLocation(targetPlaces[choose-1]);
+
+            if (j == 0)
+            {
+                cout << "Do you want to move the monster a second time? (0 -> no, 1 -> yes)\n";
+                int repeat;
+                cin >> repeat;
+                while (repeat != 0 && repeat != 1)
+                {
+                    cout << "invalid input try again (0 = no, 1 = yes)\n";
+                    cin >> repeat;
+                }
+                if (repeat == 0)
+                break;
+            }
+        }
+        heroPerks.erase(heroPerks.begin() + choice-1);
     }
 }
 

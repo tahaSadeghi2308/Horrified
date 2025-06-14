@@ -102,3 +102,15 @@ vector<shared_ptr<MonsterBase>> Place::getMonsters() { return this->monsters; }
 vector<shared_ptr<HeroBase>> Place::getAllHeroes() const {
     return this->heroes;
 }
+
+shared_ptr<MonsterBase> Place::getOneMonster(const string &_monsterName)
+{
+    for (auto monster : monsters)
+    {
+        if ( monster->getMonsterName() == _monsterName)
+        {
+            return monster;
+        }
+    }
+    return nullptr;
+}
