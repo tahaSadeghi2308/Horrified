@@ -247,18 +247,45 @@ void HeroBase::moveAction()
                 return;
             }
 
+            shared_ptr<Place> finalPlace = targetPlaces[choice-1];
+            vector<shared_ptr<Villager>> PossibleVillager = currentPlace ->getVillagers();
 
-
-            for (auto vill : currentPlace -> getVillagers())
+            if(!PossibleVillager.empty())
             {
-                targetPlaces[choice-1]->addVillager(vill); 
-                currentPlace -> deleteVillager(vill -> getName());                          
-                vill -> changeLoc(targetPlaces[choice-1]);        
+                cout << "select which villager you want to move by yourself(when you finished selecting type -> -1 )\n";
+                while(true)
+                {   
+                    if(PossibleVillager.empty())
+                        break;
+                    for (int i = 0; i < PossibleVillager.size() ; i++)
+                    {
+                        cout << i+1 << " - " << PossibleVillager[i]->getName() << endl;
+                    }
+                int villChoice;
+                cin >> villChoice;
+                    if(villChoice == -1)
+                        break;
+                    if(villChoice < 1 || villChoice > PossibleVillager.size())
+                    {
+                        cout << "invalid choice try again\n";
+                        continue;
+                    }
+                    shared_ptr<Villager> chosenVill = PossibleVillager[villChoice-1];
+                    
+                    
+                    finalPlace->addVillager(chosenVill);
+                    currentPlace->deleteVillager(chosenVill->getName());
+                    chosenVill->changeLoc(finalPlace);
+                    PossibleVillager.erase(PossibleVillager.begin() + villChoice-1 );
+                    cout << "you moved -> " << chosenVill->getName() << " to -> " << finalPlace->getName() << endl;
+                }
             }
 
-            targetPlaces[choice-1] -> addHero(currentPlace->getHeros(getHeroName()));
-            currentPlace->deleteHero(getHeroName());
-            setCurrentPlace(targetPlaces[choice-1]);
+            finalPlace -> addHero(currentPlace->getHeros(getHeroName()));
+            currentPlace -> deleteHero(getHeroName());
+            setCurrentPlace(finalPlace);
+
+            cout << "you moved to -> " << finalPlace->getName() << endl;
             
             actionCount--;     
 }
@@ -326,7 +353,7 @@ void Archaeologist::specialAction()
     while(true)
     {
     std::vector<std::shared_ptr<Place>> neigh = getCurrentPlace()->getNeighbors();
-        //storing all the possible items with its places with pair. first i tried map but it didnt work (it has seviral problems for us to find out which item user chosed)
+        //storing all the possible items with its places with pair. first i tried map but it didnt work (it has several problems for us to find out which item user chosed)
         std::vector<std::pair<std::shared_ptr<Place>,Item>> possible;
 
         int i = 1;
@@ -388,8 +415,6 @@ void HeroBase::guideAction()
 
         if(choice == 1)
         {
-            //the problem is that when a player choose a wrong number fo place or villager it will throw a exeption
-
             std::vector<std::shared_ptr<Place>> places;
 
             for(std::shared_ptr<Place> item:neighbors)
