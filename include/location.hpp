@@ -38,6 +38,7 @@ public:
     void deleteMonster(const std::string &_monsterName);
     std::vector<std::shared_ptr<MonsterBase>> getMonsters();
     std::vector<std::shared_ptr<HeroBase>> getAllHeroes() const;
+    std::shared_ptr<MonsterBase> getOneMonster(const std::string &_monsterName);
 };
 
 #endif

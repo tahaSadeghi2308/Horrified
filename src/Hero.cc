@@ -41,6 +41,192 @@ void HeroBase::addHeroItems(Item _item)
 {
     heroItems.push_back(_item);
 }
+
+//-----perk-----
+
+void HeroBase::runPerkCard(shared_ptr<Archaeologist> arch, shared_ptr<Mayor> mayor,shared_ptr<Dracula> dracula,shared_ptr<InvisibleMan> invisible,vector<shared_ptr<Place>> allLocations,shared_ptr<ItemBag<Item>> bag)
+{
+    //one perk is left
+    if(heroPerks.empty())
+    {
+        cout << "you have no perk card to use\n";
+        return;
+    }
+    cout << "select your perk card\n";
+    for(int i=0; i < heroPerks.size();i++)
+    {
+        cout << i+1 << " - " << heroPerks[i].name << endl;
+    }
+    int choice;
+    cin >> choice;
+    string chosenPerksName = heroPerks[choice-1].name;
+    if(chosenPerksName == "Late_into_the_Night")
+    {
+        actionCount += 2;
+        heroPerks.erase(heroPerks.begin() + choice-1);
+        cout << "two more anction is added to your hero you have -> " << actionCount << " left\nthe following items are added to your location\n";
+        for(int i = 0;i < 2;i++)
+        {
+            Item addItem= bag->pickOneRandomly();
+            cout << "added -> " << addItem << endl;
+            currentPlace->addItem(addItem);   
+        }
+    }
+    else if(chosenPerksName == "Visit_from_the_Detective")
+    {
+        cout << "select the position that you want to put invisible man\n";
+        for(int i=0;i < allLocations.size() ;i++)
+        {
+            cout << i+1 << " - " << allLocations[i]->getName() << endl;
+        }
+        int locChoice;
+        cin >> locChoice;
+        if(locChoice < 1 || locChoice > allLocations.size())
+        {
+            cout << "your choice was invalid\n";
+            return;
+        }
+        shared_ptr<Place> selectedPlace = allLocations[locChoice-1];
+        invisible->getCurrentLocation()->deleteMonster(invisible->getMonsterName());
+        invisible->setCurrentLocation(selectedPlace);
+        selectedPlace ->addMonster(invisible);
+
+        heroPerks.erase(heroPerks.begin() + choice-1);
+        cout << "invisible man moved to -> " << selectedPlace->getName() << endl;
+    }
+    else if(chosenPerksName == "Overstock")
+    {
+        auto allItems = bag->getCards();
+        vector<Item> possibleItems;
+        vector<int> index;
+        for(int i = 0; i < allItems.size(); i++)
+            {
+                if(i == 0 || allItems[i].name != allItems[i-1].name)
+                {
+                    possibleItems.push_back(allItems[i]);
+                    index.push_back(i);
+                }
+            }
+        cout << "select the item you want to add to your location\n";
+        for(int i = 0; i < possibleItems.size(); i++)
+        cout << i+1 << " - " << possibleItems[i] << endl;
+        int itemChoice; 
+        cin >> itemChoice;
+        if(itemChoice < 1 || itemChoice > possibleItems.size())
+        {
+            cout << "invalid choice\n";
+            return;
+        }
+        currentPlace->addItem(possibleItems[itemChoice-1]);
+
+        bag->pop(index[itemChoice-1]);
+        heroPerks.erase(heroPerks.begin() + choice-1);
+        cout << "the item -> "<< possibleItems[itemChoice-1].name << " has been added to your location\n";
+    }
+    else if(chosenPerksName == "Hurry")
+    {
+        cout << "which hero do you want to move for two space\n1-Archaeologist\n2-Mayor\n";
+        int heroChoice;
+        cin >> heroChoice;
+        if(heroChoice != 1 && heroChoice != 2)
+        {
+            cout << "invalid choice\n";
+            return;
+        }
+        shared_ptr<HeroBase> selectedHero ;
+        if(heroChoice == 1)
+            selectedHero = arch;
+        else
+            selectedHero = mayor;
+
+            selectedHero->moveAction();
+            cout << "do you want to continue?( no -> 0  yes -> 1 )\n";
+            while(true)
+            {
+                int choose;
+                cin >> choose;
+                if(choose == 0)
+                {
+                    break;
+                }
+                else if(choose == 1)
+                {
+                    selectedHero->moveAction();
+                    break;
+                }
+                else
+                {
+                    cout << "invalid choice try again\n";
+                    continue;
+                }
+            }
+            heroPerks.erase(heroPerks.begin() + choice-1);
+            return;    
+    }
+    else if(chosenPerksName == "Repel")
+    {
+        cout << "which monster do you want to move for two space\n1-Dracula\n2-invisibleMan\n";
+        int monsterChoice;
+        cin >> monsterChoice;
+        if(monsterChoice != 1 && monsterChoice != 2)
+        {
+            cout << "invalid choice\n";
+            return;
+        }
+        shared_ptr<MonsterBase> selectedMonster;
+        if(monsterChoice == 1)
+        {
+            selectedMonster = dracula;
+        }
+        else
+        {
+            selectedMonster = invisible;
+        }
+
+
+        for(int j = 0;j < 2;j++)
+        {
+        vector<shared_ptr<Place>> targetPlaces = selectedMonster->getCurrentLocation()->getNeighbors();
+    
+            for(int i = 0;i < targetPlaces.size();i++)
+            {    
+                cout << i+1 << '-' << targetPlaces[i]->getName() << std::endl;
+            }
+            int choose;
+            cin >> choose;
+            if(choose < 1 || choose > targetPlaces.size() )
+            {
+                cout <<"the number that you have selected for moving is invalid\n";
+                return;
+            }
+
+            string name = selectedMonster->getMonsterName();
+            shared_ptr<Place> target = selectedMonster->getCurrentLocation();
+
+
+            targetPlaces[choose-1] -> addMonster(target ->getOneMonster(name));
+            selectedMonster->getCurrentLocation()->deleteMonster(selectedMonster->getMonsterName());
+            selectedMonster->setCurrentLocation(targetPlaces[choose-1]);
+
+            if (j == 0)
+            {
+                cout << "Do you want to move the monster a second time? (0 -> no, 1 -> yes)\n";
+                int repeat;
+                cin >> repeat;
+                while (repeat != 0 && repeat != 1)
+                {
+                    cout << "invalid input try again (0 = no, 1 = yes)\n";
+                    cin >> repeat;
+                }
+                if (repeat == 0)
+                break;
+            }
+        }
+        heroPerks.erase(heroPerks.begin() + choice-1);
+    }
+}
+
+
 //----move-----
 
 void HeroBase::moveAction()
@@ -61,18 +247,45 @@ void HeroBase::moveAction()
                 return;
             }
 
+            shared_ptr<Place> finalPlace = targetPlaces[choice-1];
+            vector<shared_ptr<Villager>> PossibleVillager = currentPlace ->getVillagers();
 
-
-            for (auto vill : currentPlace -> getVillagers())
+            if(!PossibleVillager.empty())
             {
-                targetPlaces[choice-1]->addVillager(vill); 
-                currentPlace -> deleteVillager(vill -> getName());                          
-                vill -> changeLoc(targetPlaces[choice-1]);        
+                cout << "select which villager you want to move by yourself(when you finished selecting type -> -1 )\n";
+                while(true)
+                {   
+                    if(PossibleVillager.empty())
+                        break;
+                    for (int i = 0; i < PossibleVillager.size() ; i++)
+                    {
+                        cout << i+1 << " - " << PossibleVillager[i]->getName() << endl;
+                    }
+                int villChoice;
+                cin >> villChoice;
+                    if(villChoice == -1)
+                        break;
+                    if(villChoice < 1 || villChoice > PossibleVillager.size())
+                    {
+                        cout << "invalid choice try again\n";
+                        continue;
+                    }
+                    shared_ptr<Villager> chosenVill = PossibleVillager[villChoice-1];
+                    
+                    
+                    finalPlace->addVillager(chosenVill);
+                    currentPlace->deleteVillager(chosenVill->getName());
+                    chosenVill->changeLoc(finalPlace);
+                    PossibleVillager.erase(PossibleVillager.begin() + villChoice-1 );
+                    cout << "you moved -> " << chosenVill->getName() << " to -> " << finalPlace->getName() << endl;
+                }
             }
 
-            targetPlaces[choice-1] -> addHero(currentPlace->getHeros(getHeroName()));
-            currentPlace->deleteHero(getHeroName());
-            setCurrentPlace(targetPlaces[choice-1]);
+            finalPlace -> addHero(currentPlace->getHeros(getHeroName()));
+            currentPlace -> deleteHero(getHeroName());
+            setCurrentPlace(finalPlace);
+
+            cout << "you moved to -> " << finalPlace->getName() << endl;
             
             actionCount--;     
 }
@@ -140,7 +353,7 @@ void Archaeologist::specialAction()
     while(true)
     {
     std::vector<std::shared_ptr<Place>> neigh = getCurrentPlace()->getNeighbors();
-        //storing all the possible items with its places with pair. first i tried map but it didnt work (it has seviral problems for us to find out which item user chosed)
+        //storing all the possible items with its places with pair. first i tried map but it didnt work (it has several problems for us to find out which item user chosed)
         std::vector<std::pair<std::shared_ptr<Place>,Item>> possible;
 
         int i = 1;
@@ -202,8 +415,6 @@ void HeroBase::guideAction()
 
         if(choice == 1)
         {
-            //the problem is that when a player choose a wrong number fo place or villager it will throw a exeption
-
             std::vector<std::shared_ptr<Place>> places;
 
             for(std::shared_ptr<Place> item:neighbors)
@@ -481,7 +692,7 @@ void HeroBase::advanceAction(std::vector<std::string>& coffins,std::vector<std::
 
 //-----defeat-----
 
-void HeroBase::defeatAction(const std::vector<std::string>& coffin,const std::vector<std::string>& evidence,std::shared_ptr<ItemBag<Item>> bag)
+void HeroBase::defeatAction(const std::vector<std::string>& coffin,const std::vector<std::string>& evidence,std::shared_ptr<ItemBag<Item>>& bag ,shared_ptr<Dracula>& dracula,shared_ptr<InvisibleMan>& invisible)
 {
 
     //using the same method that i used for getting the red items for destroying coffins (copy,past :) )
@@ -492,8 +703,7 @@ void HeroBase::defeatAction(const std::vector<std::string>& coffin,const std::ve
                 std::cin >> choice;
                 if(choice == 1)
                 {
-                    string unknown;
-                    if(currentPlace->getName() != unknown)//monster place)
+                    if(currentPlace->getName() != dracula->getCurrentLocation()->getName())//monster place)
                     {
                         cerr << "your not in the same place with dracula\n";
                         return;
@@ -559,6 +769,8 @@ void HeroBase::defeatAction(const std::vector<std::string>& coffin,const std::ve
 
                         cout << "you defeated dracula!\n";
                         //null the monster
+                        dracula->getCurrentLocation()->deleteMonster(dracula->getMonsterName());
+                        dracula=nullptr;
                         actionCount--;
                     }
                     else
@@ -569,8 +781,7 @@ void HeroBase::defeatAction(const std::vector<std::string>& coffin,const std::ve
                 }
                 else if(choice == 2)
                 {
-                    string unkwon;
-                    if(currentPlace->getName() != unkwon)//monster place)
+                    if(currentPlace->getName() != invisible->getCurrentLocation()->getName())//monster place)
                     {
                         cerr << "your not in the same place with invisible man\n";
                         return;
@@ -633,6 +844,8 @@ void HeroBase::defeatAction(const std::vector<std::string>& coffin,const std::ve
 
                     std::cout << "You defeated the invisible man!\n";
                         //same
+                        invisible->getCurrentLocation()->deleteMonster(invisible->getMonsterName());
+                        invisible=nullptr;
                         actionCount--;
                     }
                     else

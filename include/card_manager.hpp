@@ -56,6 +56,7 @@ public:
     T pickOneRandomly();
     void push(const T &temp);
     void pop(const int index);
+    std::vector<Item> getCards();
 };
 
 template <class T>
@@ -88,6 +89,12 @@ void CardManagerBase<T>::shuffleCards() {
     std::mt19937 g(rd());
     std::shuffle(cards.begin(), cards.end(), g);
 }
+
+template <class T>
+std::vector<Item> CardManagerBase<T>::getCards()
+    {
+        return cards;
+    }
 
 template <class T>
 void CardManagerBase<T>::push(const T &item) {
