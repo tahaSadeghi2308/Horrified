@@ -432,3 +432,157 @@ void System::runMonsterPhase(){
         }
     }
 }
+
+
+//-----HeroPhase----
+
+void System::runHeroPhase()
+{
+    shared_ptr<HeroBase> HeroTurn;
+
+    if(turn)
+    HeroTurn = arch;
+    else
+    HeroTurn = mayor;
+
+    turn = !turn;
+
+    while(HeroTurn -> getActionCount() != 0)
+    {
+         cout <<"select your option\n";
+         cout << "1-Move\n2-Pick up\n3-Guid\n4-Advanced\n5-defeat\n6-Using perks\n7-help\n8-Quit\n";
+         if(HeroTurn->getHeroName() == "archaeologist")
+         cout << "9-Speciall action\n";
+         int choice;
+         cin >> choice;
+         switch (choice)
+         {
+        case 1:
+            HeroTurn->moveAction();
+            break;
+        case 2:
+            HeroTurn->pickUpAction();
+            break;
+        case 3:
+            HeroTurn->guideAction();
+            break;
+        case 4:
+            HeroTurn->advanceAction(coffins, evidence, itemBag);
+            break;
+        case 5:
+            HeroTurn->defeatAction(coffins, evidence, itemBag, dracula, invisibleMan);
+            break;
+        case 6:
+            HeroTurn->runPerkCard(arch, mayor, dracula, invisibleMan,allLocations, itemBag,BreakOfDawn);
+            break;
+        case 7:
+            HeroTurn->Help();
+        case 8:
+            return;
+        case 9:
+        if (HeroTurn->getHeroName() == "archaeologist")
+        {
+            HeroTurn->specialAction();
+        }
+        else
+        {
+            std::cout << "invalid choice try again\n";
+        }
+            break;
+         default:
+            cout << "invalid choice try again\n";
+            break;
+        }
+    }
+    HeroTurn->setActionCount((turn)?4:5);
+    
+}
+
+//-------game---------
+
+void System::runGame()
+{
+    long int choice1;
+    long int choice2;
+    while(true)
+    {
+        cout << "Player1\nWhen was the last time that you ate garlic(day)\n";
+        cin >> choice1;
+        if(choice1 < 0)
+        {
+        cerr << "Player1 your choice was invalid\n";
+        continue;
+        }
+        cout << "Player2\nWhen was the last time that you ate garlic\n";
+        cin >> choice2;
+        if(choice2 < 0)
+        {
+        cerr << "Player2 your choice was invalid\n";
+        continue;
+        }
+        break;
+    }
+    if(choice1 <= choice2)
+    {
+        while(true)
+        {
+            cout << "Player1 ,Which hero do you want to be\n1-Archaeologist\n2-Mayor\n";
+            int choose;
+            cin >> choose;
+            if(choose == 1)
+            turn = true;
+            else if(choose == 2)
+            turn = false;
+            else
+            {
+                cerr << "Your choice was invalid try again\n";
+                continue;
+            }
+            break;
+        }
+    }
+    else
+    {
+        while(true)
+        {
+            cout << "Player2 ,Which hero do you want to be\n1-Archaeologist\n2-Mayor\n";
+            int choose;
+            cin >> choose;
+            if(choose == 1)
+            turn = false;
+            else if(choose == 2)
+            turn = true;
+            else
+            {
+            cerr << "Your choice was invalid try again\n";
+            continue;
+            }
+            break;
+        }
+    }
+    clearScreen();
+    if(turn)
+    cout << "Player1 is -> Arcaeologist\nPlayer2 is -> Mayor\nGood luck\n";
+    else
+    cout << "Player1 is -> Mayor\nPlayer2 is -> Archaeologist\nGood luck\n";
+    
+    while(true)
+    {
+        if(dracula != nullptr && invisibleMan != nullptr)
+        {
+            cout << "YOU WON !!!!!\n";
+            break;
+        }
+        if()
+        {
+
+        }
+        showLocs();
+        runHeroPhase();
+        if(BreakOfDawn)
+        runMonsterPhase();
+        else
+        BreakOfDawn = true;
+        clearScreen();
+    }
+}

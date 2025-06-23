@@ -9,6 +9,7 @@
 #include "location.hpp"
 #include "villager.hpp"
 #include "monster.hpp"
+#include "utility.hpp"
 
 class System {
     std::shared_ptr<MonsterCardDeck<MonsterCard>> monsterDeck {nullptr};
@@ -18,7 +19,7 @@ class System {
     // heroes 
     std::shared_ptr<Archaeologist> arch {nullptr};
     std::shared_ptr<Mayor> mayor {nullptr};
-    
+
     // monsters
     std::shared_ptr<Dracula> dracula;
     std::shared_ptr<InvisibleMan> invisibleMan;
@@ -33,6 +34,11 @@ class System {
     //saving evidence
     std::vector<std::string> evidence = {"inn","barn","mansion","laboratory","institute"};
 
+    //bool for hero turn if true -> arch if false -> mayor
+    bool turn ;
+
+    bool BreakOfDawn = true;
+
     void putVillagerInPlace(const std::string &_place , const std::string &_villName);
     char rollDice();
 
@@ -44,8 +50,8 @@ public:
     // ~System();
     void showLocs();
     void runMonsterPhase();
-    // void runHeroPhase();
-    // void runGame();
+    void runHeroPhase();
+    void runGame();
 };
 
 #endif //SYSTEM_HPP

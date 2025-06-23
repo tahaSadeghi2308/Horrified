@@ -42,9 +42,66 @@ void HeroBase::addHeroItems(Item _item)
     heroItems.push_back(_item);
 }
 
+void HeroBase::specialAction()
+{
+    cout << "this should never run(speciall action in base)\n";
+    return;
+}
+
+//------help------
+
+void HeroBase::Help()
+{
+    //not complete
+    vector<string> helpOption = {"Move","Guide","Pick up","Advanced","Defeat","Perks","Quit","speciall(just for archaeologist)"};
+    cout << "select the action that you want:\n";
+    for(int i = 0 ; i < helpOption.size() ; i++)
+    {
+        cout << i+1 << " - " << helpOption[i] << endl;
+    }
+    int choice;
+    cin >> choice;
+    if(choice < 1 || choice >helpOption.size())
+    {
+        cout << "invalid choice try again\n";
+        return;   
+    }
+    switch (choice)
+    {
+    case 1:
+        cout << "with Move action you can move to a neighbor location and if any villager was on your location the program will ask you if you want to move it as well with you or not\n";
+        break;
+    case 2:
+        cout << "with Guide action you if a villager is in your neighborhood you can bring it to your location and if its currently in your location you can move it to a neighbor location\n";
+        break;
+    case 3:
+        cout << "you can simply pick up a item from you current location and add it to your items in your bag\n";
+        break;
+    case 4:
+        cout << "for defeating monsters as you may know you need to break dracula's coffins and collect evidence for invisible man you must do this works with Advanced action\n";
+        cout << "use Advanced to break coffins in (crypt,cave,graveyard,dungeon)\n";
+        cout << "pickup evidence(items) in(inn,barn,mansion,laboratory,institute) with pickup and collect them in precinct with advanced action to defeat invisible man\n";
+        break;
+    case 5:
+        cout << "defeat a monster with this action when you breaked all the coffins or collected all the evidence of invisible mans persent\n";
+        break;
+    case 6:
+        cout << "you can use one of perk cards that you already have\n";
+        break;
+    case 7:
+        cout << "when you have actions left and you dont want to play them any more do this action\n";
+        break;
+    case 8:
+        cout << "with speciall action you can pick an item of neighbor locations\n";
+    default:
+        cout << "your choice was invalid please use help another time and give us a correct number\n";
+        break;
+    }
+}
+
 //-----perk-----
 
-void HeroBase::runPerkCard(shared_ptr<Archaeologist> arch, shared_ptr<Mayor> mayor,shared_ptr<Dracula> dracula,shared_ptr<InvisibleMan> invisible,vector<shared_ptr<Place>> allLocations,shared_ptr<ItemBag<Item>> bag)
+void HeroBase::runPerkCard(shared_ptr<Archaeologist> arch, shared_ptr<Mayor> mayor,shared_ptr<Dracula> dracula,shared_ptr<InvisibleMan> invisible,vector<shared_ptr<Place>> allLocations,shared_ptr<ItemBag<Item>> bag,bool &BreakOfDown)
 {
     //one perk is left
     if(heroPerks.empty())
@@ -71,6 +128,18 @@ void HeroBase::runPerkCard(shared_ptr<Archaeologist> arch, shared_ptr<Mayor> may
             cout << "added -> " << addItem << endl;
             currentPlace->addItem(addItem);   
         }
+    }
+    else if(chosenPerksName == "Break_of_Dawn")
+    {
+        cout << "the next monster phase skiped\n";
+        BreakOfDown = false;
+        for(int i = 0;i < 2;i++)
+        {
+            Item addItem= bag->pickOneRandomly();
+            cout << "added -> " << addItem << endl;
+            currentPlace->addItem(addItem);   
+        }
+
     }
     else if(chosenPerksName == "Visit_from_the_Detective")
     {
@@ -542,6 +611,7 @@ void HeroBase::guideAction()
         }
 
 }
+//----advanced----
 
 void HeroBase::advanceAction(std::vector<std::string>& coffins,std::vector<std::string>& evidence,std::shared_ptr<ItemBag<Item>> bag)
 {
