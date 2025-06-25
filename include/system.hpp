@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include "card_manager.hpp"
 #include "place.hpp"
+#include "villager.hpp"
 
 class System {
     // cards part !!
@@ -18,6 +19,8 @@ class System {
     std::vector<std::shared_ptr<Place>> allLocations;
     std::unordered_map<std::string , std::vector<std::string>> gameMap;
         
+    // villagers data structure
+    std::vector<Villager> allVillagers;
     void gameInit();
 
 public:
