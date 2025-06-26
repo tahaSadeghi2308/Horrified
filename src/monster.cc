@@ -67,7 +67,7 @@ void MonsterBase::doEvent(const string& _eventName){
 void MonsterBase::runMonsterPhase() {
     // get a random monster card 
     MonsterCard currentCard { sys->getRandomMonstCard() };
-    currentCard.name = "Thief";
+    // currentCard.name = "Thief";
     // put items 
     this->putItems(currentCard.itemCount);
 

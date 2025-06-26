@@ -69,9 +69,11 @@ void System::systemInfoShow() const {
         for(auto i : loc->getAllMonsters()){
             fmt::print("{} " , i->getMonsterName());
         }
+        fmt::print("\n      Here villagers : ");
+        for(auto i : loc->getAllVillagers()){
+            fmt::print("{} " , i->getVillagerName());
+        }
     }
-    fmt::print("\n");
-    fmt::print("items cout : {}\n" , items.size());
 }
 
 void System::moveVillager(string_view villName , string_view _newPlace){
@@ -136,14 +138,17 @@ void System::placeWithMaxItem() {
     int maxItemCount {-1};
     shared_ptr<Place> p {nullptr};
     for(auto loc : this->allLocations){
-        if (loc->getAllItems().size() > maxItemCount){
-            maxItemCount = loc->getAllItems().size();
+        int size = loc->getAllItems().size(); 
+        if (size > maxItemCount){
+            maxItemCount = size;
             p = loc;
         }
     }
-    while (maxItemCount--) {
-        this->items.addItem(p->getAllItems()[0]);
-        p->deleteItem(p->getAllItems()[0].name);
+    auto temp {p->getAllItems()};
+
+    for (auto i : temp){
+        this->items.addItem(i);
+        p->deleteItem(i.name);
     }
 
     this->moveMonster("invisibleMan" , p->getPlaceName());
