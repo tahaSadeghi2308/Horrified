@@ -7,12 +7,13 @@
 #include "card_manager.hpp"
 #include "monster.hpp" 
 
-// class MonsterBase;
+struct Villager;
 
 class Place final {
     std::string placeName;
     std::vector<Item> items;
     std::vector<std::shared_ptr<MonsterBase>> monsters;
+    std::vector<std::shared_ptr<Villager>> villagers;
 public:
     explicit Place(const std::string& name);
     std::string getPlaceName() const;
@@ -22,6 +23,9 @@ public:
     void addMonster(std::shared_ptr<MonsterBase> m);
     void deleteMonster(const std::string& _name);
     const std::vector<std::shared_ptr<MonsterBase>>& getAllMonsters() const;
+    void addVillager(std::shared_ptr<Villager> m);
+    void deleteVillager(const std::string& _name);
+    const std::vector<std::shared_ptr<Villager>>& getAllVillagers() const;
 };
 
 #endif // PLACE_HPP

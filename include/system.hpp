@@ -28,7 +28,7 @@ class System {
     std::unordered_map<std::string , std::vector<std::string>> gameMap;
         
     // villagers data structure
-    std::vector<Villager> allVillagers;
+    std::vector<std::shared_ptr<Villager>> allVillagers;
 
     // monsters
     std::vector<std::shared_ptr<MonsterBase>> monsters;
@@ -39,6 +39,7 @@ class System {
     System();
     ~System() = default;
     void run();
+    void moveVillager(std::string_view villName , std::string_view _newPlace);
     void placeWithMaxItem();
     void systemInfoShow() const;
     Item getRandomItem();

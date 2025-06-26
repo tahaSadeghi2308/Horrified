@@ -41,12 +41,33 @@ void MonsterBase::doEvent(const string& _eventName){
     else if (_eventName == "Thief"){
         sys->placeWithMaxItem();
     }
+    else if (_eventName == "The_Delivery"){
+        sys->moveVillager("wilbur&chick" , "docks");
+    }
+    else if (_eventName == "Fortune_Teller"){
+        sys->moveVillager("maleva" , "camp");
+    }
+    else if (_eventName == "Former_Employer"){
+        sys->moveVillager("dr.cranley" , "laboratory");
+    }
+    else if (_eventName == "Hurried_Assistant"){
+        sys->moveVillager("fritz" , "tower");
+    }
+    else if (_eventName == "The_Innocent"){
+        sys->moveVillager("maria" , "barn");
+    }
+    else if (_eventName == "Egyptian_Expert"){
+        sys->moveVillager("prof.pearson" , "cave");
+    }
+    else if (_eventName == "The_Ichthyologist"){
+        sys->moveVillager("dr.reed" , "institute");
+    }
 }
 
 void MonsterBase::runMonsterPhase() {
     // get a random monster card 
     MonsterCard currentCard { sys->getRandomMonstCard() };
-    currentCard.name = "Sunrise";
+    currentCard.name = "Thief";
     // put items 
     this->putItems(currentCard.itemCount);
 

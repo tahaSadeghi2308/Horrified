@@ -43,7 +43,7 @@ void System::gameInit() {
             stringstream stream;     
             stream.str(line);
             stream >> villName >> zone;
-            this->allVillagers.push_back(Villager(villName , zone));
+            this->allVillagers.push_back(make_shared<Villager>(villName , zone));
         }
         villFile.close();
     }
@@ -73,6 +73,28 @@ void System::systemInfoShow() const {
     fmt::print("\n");
     fmt::print("items cout : {}\n" , items.size());
 }
+
+void System::moveVillager(string_view villName , string_view _newPlace){
+    shared_ptr<Villager> currentEntity {nullptr};
+    for(auto vill : this->allVillagers){
+        if (vill->getVillagerName() == villName) { currentEntity = vill; break; }
+    }
+
+    // delete from current place 
+    for (auto loc : this->allLocations){
+        for(auto vill : loc->getAllVillagers()){
+            if (vill->getVillagerName() == currentEntity->getVillagerName()){
+                loc->deleteVillager(currentEntity->getVillagerName());
+            }
+        }
+    }
+
+    // add to new place 
+    for(auto loc : this->allLocations){
+        if(loc->getPlaceName() == _newPlace) loc->addVillager(currentEntity);
+    }
+}
+
 
 Item System::getRandomItem() { return items.pickOneRandomly(); }
 

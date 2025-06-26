@@ -1,4 +1,5 @@
 #include "place.hpp"
+#include "villager.hpp"
 
 using namespace std;
 
@@ -40,4 +41,22 @@ void Place::deleteMonster(const string& _name){
 
 const vector<shared_ptr<MonsterBase>>& Place::getAllMonsters() const {
     return this->monsters;
+}
+
+void Place::addVillager(shared_ptr<Villager> m){
+    this->villagers.push_back(m);
+}
+
+void Place::deleteVillager(const string& _name){
+    bool isFound {};
+    for (int i {}; i < this->villagers.size() && !isFound; i++) {
+        if (this->villagers[i]->getVillagerName() == _name){
+            this->villagers.erase(villagers.begin() + i);
+            isFound = true;
+        }
+    }
+}
+
+const vector<shared_ptr<Villager>>& Place::getAllVillagers() const {
+    return this->villagers;
 }
