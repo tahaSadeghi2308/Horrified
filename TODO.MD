@@ -1,1 +1,0 @@
-- [ ] Think about it : place in vill and monst and hero should be pointer or string and make search is better ???

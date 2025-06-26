@@ -8,11 +8,16 @@
 #include "card_manager.hpp"
 #include "place.hpp"
 #include "villager.hpp"
+#include <fmt/core.h>
+
+// #include "monster.hpp" CIRCULAR DEPENDENCY 
+
+class MonsterBase;
 
 class System {
     // cards part !!
     PerkDeck<Perk> perks;
-    ItemBag<Item> allItems;
+    ItemBag<Item> items;
     MonsterCardDeck<MonsterCard> monsterCards;
 
     // locations 
@@ -21,12 +26,19 @@ class System {
         
     // villagers data structure
     std::vector<Villager> allVillagers;
+
+    // monsters
+    std::vector<std::shared_ptr<MonsterBase>> monsters;
+
     void gameInit();
 
 public:
     System();
     ~System() = default;
     void systemInfoShow() const;
+    Item getRandomItem();
+    MonsterCard getRandomMonstCard();
+    void putItemInPlace(const std::string& _placeName , const Item &i);
 };
 
 

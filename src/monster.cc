@@ -2,7 +2,8 @@
 
 using namespace std;
 
-MonsterBase::MonsterBase(const string &_name , bool _isFrenzed) : name(_name) , isFrenzed(_isFrenzed) {}
+MonsterBase::MonsterBase(const string &_name , bool _isFrenzed , System *_sys) 
+        : name(_name) , isFrenzed(_isFrenzed) , sys(_sys) {}
 
 string MonsterBase::getMonsterName() const { return this->name; }
 
@@ -15,10 +16,27 @@ void MonsterBase::changeFrenzedState(bool newState){
 void MonsterBase::setCurrentLocation(const string &_newLoc){
     this->currentPlace = _newLoc;
 }
+
 string MonsterBase::getCurrentLocation() const {
     return this->currentPlace;
 }
 
-Dracula::Dracula(const string &_name , bool _isFrenzed) : MonsterBase(_name , _isFrenzed){}
+Dracula::Dracula(const string &_name , bool _isFrenzed , System *_sys) 
+        : MonsterBase(_name , _isFrenzed , _sys){}
 
-InvisibleMan::InvisibleMan(const string &_name , bool _isFrenzed) : MonsterBase(_name , _isFrenzed){}
+InvisibleMan::InvisibleMan(const string &_name , bool _isFrenzed , System *_sys) 
+        : MonsterBase(_name , _isFrenzed , _sys){}
+
+void MonsterBase::putItems(const int count) {
+    for (int i {}; i < count; i++){
+        Item currentItem {sys->getRandomItem()};
+        sys->putItemInPlace(currentItem.place , currentItem);
+    }
+}
+
+void MonsterBase::runMonsterPhase() {
+    // get a random monster card 
+    MonsterCard currentCard { sys->getRandomMonstCard() };
+    // put items 
+    this->putItems(currentCard.itemCount);
+}
