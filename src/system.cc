@@ -453,18 +453,19 @@ void System::runHeroPhase()
          cout << "1-Move\n2-Pick up\n3-Guid\n4-Advanced\n5-defeat\n6-Using perks\n7-help\n8-Quit\n";
          if(HeroTurn->getHeroName() == "archaeologist")
          cout << "9-Speciall action\n";
+         cout << "your current location is -> " << HeroTurn->getCurrentPlace()->getName() << endl;
          int choice;
          cin >> choice;
          switch (choice)
          {
         case 1:
-            HeroTurn->moveAction();
+            HeroTurn->moveAction(perkDeck);
             break;
         case 2:
             HeroTurn->pickUpAction();
             break;
         case 3:
-            HeroTurn->guideAction();
+            HeroTurn->guideAction(perkDeck);
             break;
         case 4:
             HeroTurn->advanceAction(coffins, evidence, itemBag);
@@ -473,7 +474,7 @@ void System::runHeroPhase()
             HeroTurn->defeatAction(coffins, evidence, itemBag, dracula, invisibleMan);
             break;
         case 6:
-            HeroTurn->runPerkCard(arch, mayor, dracula, invisibleMan,allLocations, itemBag,BreakOfDawn);
+            HeroTurn->runPerkCard(arch, mayor, dracula, invisibleMan,allLocations, itemBag,perkDeck,BreakOfDawn);
             break;
         case 7:
             HeroTurn->Help();
@@ -568,14 +569,10 @@ void System::runGame()
     
     while(true)
     {
-        if(dracula != nullptr && invisibleMan != nullptr)
+        if(dracula == nullptr && invisibleMan == nullptr)
         {
             cout << "YOU WON !!!!!\n";
             break;
-        }
-        if()
-        {
-
         }
         showLocs();
         runHeroPhase();

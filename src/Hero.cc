@@ -101,7 +101,7 @@ void HeroBase::Help()
 
 //-----perk-----
 
-void HeroBase::runPerkCard(shared_ptr<Archaeologist> arch, shared_ptr<Mayor> mayor,shared_ptr<Dracula> dracula,shared_ptr<InvisibleMan> invisible,vector<shared_ptr<Place>> allLocations,shared_ptr<ItemBag<Item>> bag,bool &BreakOfDown)
+void HeroBase::runPerkCard(shared_ptr<Archaeologist> arch, shared_ptr<Mayor> mayor,shared_ptr<Dracula> dracula,shared_ptr<InvisibleMan> invisible,vector<shared_ptr<Place>> allLocations,shared_ptr<ItemBag<Item>> bag,shared_ptr<PerkDeck<Perk>> Perks,bool &BreakOfDown)
 {
     //one perk is left
     if(heroPerks.empty())
@@ -208,7 +208,7 @@ void HeroBase::runPerkCard(shared_ptr<Archaeologist> arch, shared_ptr<Mayor> may
         else
             selectedHero = mayor;
 
-            selectedHero->moveAction();
+            selectedHero->moveAction(Perks);
             cout << "do you want to continue?( no -> 0  yes -> 1 )\n";
             while(true)
             {
@@ -220,7 +220,7 @@ void HeroBase::runPerkCard(shared_ptr<Archaeologist> arch, shared_ptr<Mayor> may
                 }
                 else if(choose == 1)
                 {
-                    selectedHero->moveAction();
+                    selectedHero->moveAction(Perks);
                     break;
                 }
                 else
@@ -298,7 +298,7 @@ void HeroBase::runPerkCard(shared_ptr<Archaeologist> arch, shared_ptr<Mayor> may
 
 //----move-----
 
-void HeroBase::moveAction()
+void HeroBase::moveAction(shared_ptr<PerkDeck<Perk>> Perks)
 {
    std::cout << "where do you want to go (select a number)\n";
     
@@ -330,8 +330,8 @@ void HeroBase::moveAction()
                     {
                         cout << i+1 << " - " << PossibleVillager[i]->getName() << endl;
                     }
-                int villChoice;
-                cin >> villChoice;
+                    int villChoice;
+                    cin >> villChoice;
                     if(villChoice == -1)
                         break;
                     if(villChoice < 1 || villChoice > PossibleVillager.size())
@@ -346,7 +346,15 @@ void HeroBase::moveAction()
                     currentPlace->deleteVillager(chosenVill->getName());
                     chosenVill->changeLoc(finalPlace);
                     PossibleVillager.erase(PossibleVillager.begin() + villChoice-1 );
-                    cout << "you moved -> " << chosenVill->getName() << " to -> " << finalPlace->getName() << endl;
+                    cout << "you moved -> " << chosenVill->getName() << " with yourself to -> " << finalPlace->getName() << endl;
+                    if(chosenVill -> getVillagerLoc() == chosenVill -> getSafeZone())
+                    {
+                        cout << chosenVill -> getName() << " is in his safe zone it would be out of the game and you will resive a perk card\n";
+                        currentPlace -> deleteVillager(chosenVill->getName());
+                        Perk selectedPerk = Perks -> pickOneRandomly();
+                        addPerkCard(selectedPerk);
+                        cout << selectedPerk.name << " is added to your perk cards\n";
+                    }
                 }
             }
 
@@ -472,7 +480,7 @@ void Archaeologist::specialAction()
 
 //-----guid----
 
-void HeroBase::guideAction()
+void HeroBase::guideAction(std::shared_ptr<PerkDeck<Perk>> Perks)
 {
     std::vector<std::shared_ptr<Villager>> currentPlaceVillagers = currentPlace->getVillagers(); 
         std::vector<std::shared_ptr<Place>> neighbors = currentPlace->getNeighbors();
@@ -541,7 +549,16 @@ void HeroBase::guideAction()
             currentPlace->addVillager(selectedVillager);
             selectedVillager->changeLoc(currentPlace);
         
-            std::cout << "villager ->" << selectedVillager->getName() << "came to your location\n";
+            cout << "villager ->" << selectedVillager->getName() << "came to your location -> " << currentPlace->getName() << endl;
+
+            if(selectedVillager -> getVillagerLoc() == selectedVillager -> getSafeZone())
+            {
+                cout << selectedVillager -> getName() << " is in his safe zone it would be out of the game and you will resive a perk card\n";
+                currentPlace -> deleteVillager(selectedPlace->getName());
+                Perk selectedPerk = Perks -> pickOneRandomly();
+                addPerkCard(selectedPerk);
+                cout << selectedPerk.name << " is added to your perk cards\n";
+            }
 
             actionCount--;
         
@@ -599,6 +616,14 @@ void HeroBase::guideAction()
         chosenVillager->changeLoc(chosenPlace);
 
         std::cout << "villager->" << chosenVillager->getName() << " guided to -> " << chosenPlace->getName() << std::endl;
+        if(chosenVillager -> getVillagerLoc() == chosenVillager -> getSafeZone())
+        {
+            cout << chosenVillager -> getName() << " is in his safe zone it would be out of the game and you will resive a perk card\n";
+            currentPlace -> deleteVillager(chosenVillager->getName());
+            Perk selectedPerk = Perks -> pickOneRandomly();
+            addPerkCard(selectedPerk);
+            cout << selectedPerk.name << " is added to your perk cards\n";
+        }
 
         actionCount--;
 

@@ -17,3 +17,8 @@ void Villager::changeLoc(shared_ptr<Place> _newLoc){
 void Villager::setSafeZone(shared_ptr<Place> _newLoc){
     this->safeZone = _newLoc;
 }
+
+shared_ptr<Place> Villager::getSafeZone()
+{
+    return safeZone;
+}
