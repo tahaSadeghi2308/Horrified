@@ -1,4 +1,5 @@
 #include "monster.hpp"
+#include <queue>
 
 using namespace std;
 
@@ -67,7 +68,7 @@ void MonsterBase::doEvent(const string& _eventName){
 void MonsterBase::runMonsterPhase() {
     // get a random monster card 
     MonsterCard currentCard { sys->getRandomMonstCard() };
-    // currentCard.name = "Thief";
+    currentCard.name = "Fortune_Teller";
     // put items 
     this->putItems(currentCard.itemCount);
 

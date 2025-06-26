@@ -15,6 +15,10 @@ class Place;
 
 // #include "monster.hpp" CIRCULAR DEPENDENCY 
 
+enum SearchType { 
+    ETO  // eneemy to others
+};
+
 class MonsterBase;
 
 class System {
@@ -35,17 +39,18 @@ class System {
 
     void gameInit();
     
-    public:
+public:
     System();
     ~System() = default;
     void run();
     void moveVillager(std::string_view villName , std::string_view _newPlace);
     void placeWithMaxItem();
-    void systemInfoShow() const;
+    void systemInfoShow();
     Item getRandomItem();
     MonsterCard getRandomMonstCard();
     void putItemInPlace(const std::string& _placeName , const Item &i);
     void moveMonster(std::string_view _monsterName , std::string_view _newPlace);
+    std::vector<std::string> findPath(std::string source , SearchType type);
 };
 
 

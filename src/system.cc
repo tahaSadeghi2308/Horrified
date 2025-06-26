@@ -4,6 +4,7 @@
 #include <iostream>
 #include "monster.hpp"
 #include "place.hpp"
+#include <queue>
 
 using namespace std;
 
@@ -58,23 +59,76 @@ void System::gameInit() {
     this->moveMonster("invisibleMan" , "inn");
 }
 
-void System::systemInfoShow() const {
-    for(auto loc : this->allLocations) {
-        fmt::print("\n---------------- {} -----------  \n" , loc->getPlaceName());
-        fmt::print("      Here items : ");
-        for(auto i : loc->getAllItems()){
-            fmt::print("{} " , i.name);
-        }
-        fmt::print("\n      Here monsters : ");
-        for(auto i : loc->getAllMonsters()){
-            fmt::print("{} " , i->getMonsterName());
-        }
-        fmt::print("\n      Here villagers : ");
-        for(auto i : loc->getAllVillagers()){
-            fmt::print("{} " , i->getVillagerName());
-        }
-    }
+void System::systemInfoShow() {
+    // for(auto loc : this->allLocations) {
+    //     fmt::print("\n---------------- {} -----------  \n" , loc->getPlaceName());
+    //     fmt::print("      Here items : ");
+    //     for(auto i : loc->getAllItems()){
+    //         fmt::print("{} " , i.name);
+    //     }
+    //     fmt::print("\n      Here monsters : ");
+    //     for(auto i : loc->getAllMonsters()){
+    //         fmt::print("{} " , i->getMonsterName());
+    //     }
+    //     fmt::print("\n      Here villagers : ");
+    //     for(auto i : loc->getAllVillagers()){
+    //         fmt::print("{} " , i->getVillagerName());
+    //     }
+    // }
+
+    // fmt::print("\n----------------------------------\n");
+    cout << this->findPath(monsters[1]->getCurrentLocation() , ETO).size();
+
 }
+
+vector<string> System::findPath(string source , SearchType type) {
+    unordered_map<string, bool> visited;
+    unordered_map<string, string> parent;
+    for (const auto& [node , nei] : this->gameMap) visited[node] = false;
+
+    queue<string> q;
+    visited[source] = true;
+    q.push(source);
+    string target;
+
+    switch (type) {
+        case SearchType::ETO:
+            while (!q.empty() && target.empty()) {
+                string currentPlace {q.front()};
+                q.pop();
+               
+                for (auto nei : this->gameMap[currentPlace]) {
+                    if (!visited[nei]) {
+                        visited[nei] = true;
+                        parent[nei] = currentPlace;
+
+                        for (auto loc : this->allLocations) {
+                            if (loc->getPlaceName() == nei) {
+                                if ((loc->getAllVillagers()).size() > 0) { // TODO : and heros should be added  
+                                    target = nei; 
+                                    break; 
+                                }
+                            }
+                        }
+                        if (!target.empty()) break;
+                        q.push(nei);
+                    }
+                }
+                
+            }
+        break;
+    }
+    vector<string> path;
+    if (!target.empty()) {
+        for (string current = target; !current.empty(); current = parent[current]) {
+            path.push_back(current);
+        }
+        reverse(path.begin(), path.end());
+    }
+    return path;
+}
+
+
 
 void System::moveVillager(string_view villName , string_view _newPlace){
     shared_ptr<Villager> currentEntity {nullptr};
@@ -157,3 +211,4 @@ void System::placeWithMaxItem() {
 void System::run() {
     monsters[0]->runMonsterPhase();
 }
+
