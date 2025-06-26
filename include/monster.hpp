@@ -4,6 +4,7 @@
 #include <iostream>
 #include "system.hpp"
 #include <fmt/core.h>
+#include <string_view>
 
 class MonsterBase {
     // variables
@@ -23,7 +24,7 @@ public:
     std::string getMonsterName() const;
     bool getIsFrenzed() const;
     void changeFrenzedState(bool newState);
-    void setCurrentLocation(const std::string &_newLoc);
+    void setCurrentLocation(std::string_view _newLoc);
     std::string getCurrentLocation() const;
     void runMonsterPhase();
 };

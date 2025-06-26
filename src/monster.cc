@@ -13,7 +13,7 @@ void MonsterBase::changeFrenzedState(bool newState){
     this->isFrenzed = newState;
 }
 
-void MonsterBase::setCurrentLocation(const string &_newLoc){
+void MonsterBase::setCurrentLocation(string_view _newLoc){
     this->currentPlace = _newLoc;
 }
 
@@ -36,14 +36,17 @@ void MonsterBase::putItems(const int count) {
 
 void MonsterBase::doEvent(const string& _eventName){
     if (_eventName == "Sunrise"){
-        
+        sys->moveMonster("dracula" , "crypt");
+    }
+    else if (_eventName == "Thief"){
+        sys->placeWithMaxItem();
     }
 }
 
 void MonsterBase::runMonsterPhase() {
     // get a random monster card 
     MonsterCard currentCard { sys->getRandomMonstCard() };
-
+    currentCard.name = "Sunrise";
     // put items 
     this->putItems(currentCard.itemCount);
 

@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <memory>
 #include "card_manager.hpp"
 #include "monster.hpp" 
 
@@ -11,13 +12,16 @@
 class Place final {
     std::string placeName;
     std::vector<Item> items;
-    std::vector<MonsterBase> monsters;
+    std::vector<std::shared_ptr<MonsterBase>> monsters;
 public:
     explicit Place(const std::string& name);
     std::string getPlaceName() const;
     void addItem(const Item& i);
     void deleteItem(const std::string& _name);
     const std::vector<Item>& getAllItems() const;
+    void addMonster(std::shared_ptr<MonsterBase> m);
+    void deleteMonster(const std::string& _name);
+    const std::vector<std::shared_ptr<MonsterBase>>& getAllMonsters() const;
 };
 
 #endif // PLACE_HPP

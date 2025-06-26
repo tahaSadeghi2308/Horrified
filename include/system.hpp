@@ -9,6 +9,7 @@
 // #include "place.hpp"
 #include "villager.hpp"
 #include <fmt/core.h>
+#include <string_view>
 
 class Place;
 
@@ -33,14 +34,17 @@ class System {
     std::vector<std::shared_ptr<MonsterBase>> monsters;
 
     void gameInit();
-
-public:
+    
+    public:
     System();
     ~System() = default;
+    void run();
+    void placeWithMaxItem();
     void systemInfoShow() const;
     Item getRandomItem();
     MonsterCard getRandomMonstCard();
     void putItemInPlace(const std::string& _placeName , const Item &i);
+    void moveMonster(std::string_view _monsterName , std::string_view _newPlace);
 };
 
 

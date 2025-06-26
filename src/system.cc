@@ -54,37 +54,29 @@ void System::gameInit() {
     // monsters
     monsters.push_back(make_shared<Dracula>("dracula" , true , this));
     monsters.push_back(make_shared<InvisibleMan>("invisibleMan" , false , this));
+    this->moveMonster("dracula" , "camp");
+    this->moveMonster("invisibleMan" , "inn");
 }
 
 void System::systemInfoShow() const {
-    
-    // cout << "\n-----------------------------------------\n";
-
-    // for (const auto& [name , neigs] : this->gameMap){
-    //     cout << name << " : ";
-    //     for (const auto &n : neigs) cout << n << " ";
-    //     cout << '\n'; 
-    // }
-    // for (auto &v : this->allVillagers) cout << v.getVillagerName() << " : " << v.getSafeZone() << '\n';
-    monsters[0]->runMonsterPhase();
-    // cout << "all locations name : \n";
-    for (const auto locPointer : this->allLocations){
-        fmt::print("{}: ", locPointer->getPlaceName());
-        for(auto n : locPointer->getAllItems()){
-            fmt::print("{} " , n.name);
+    for(auto loc : this->allLocations) {
+        fmt::print("\n---------------- {} -----------  \n" , loc->getPlaceName());
+        fmt::print("      Here items : ");
+        for(auto i : loc->getAllItems()){
+            fmt::print("{} " , i.name);
         }
-        fmt::print("\n");
+        fmt::print("\n      Here monsters : ");
+        for(auto i : loc->getAllMonsters()){
+            fmt::print("{} " , i->getMonsterName());
+        }
     }
+    fmt::print("\n");
+    fmt::print("items cout : {}\n" , items.size());
 }
 
-Item System::getRandomItem() { 
-    // fmt::print("items len : {}" , items.size());  
-    return items.pickOneRandomly(); 
-}
+Item System::getRandomItem() { return items.pickOneRandomly(); }
 
-MonsterCard System::getRandomMonstCard() { 
-    return monsterCards.pickOneRandomly(); 
-}
+MonsterCard System::getRandomMonstCard() { return monsterCards.pickOneRandomly(); }
 
 void System::putItemInPlace(const string& _placeName , const Item &i){
     for (auto loc : this->allLocations){
@@ -93,4 +85,48 @@ void System::putItemInPlace(const string& _placeName , const Item &i){
             break;
         }
     }
+}
+
+void System::moveMonster(string_view _monsterName , string_view _newPLace){
+    shared_ptr<MonsterBase> currentEntity {nullptr};
+    for(auto monst : this->monsters){
+        if (monst->getMonsterName() == _monsterName) { currentEntity = monst; break; }
+    }
+
+    // delete from current place 
+    for (auto loc : this->allLocations){
+        for(auto monst : loc->getAllMonsters()){
+            if (monst->getMonsterName() == currentEntity->getMonsterName()){
+                loc->deleteMonster(currentEntity->getMonsterName());
+            }
+        }
+    }
+
+    // add to new place 
+    for(auto loc : this->allLocations){
+        if(loc->getPlaceName() == _newPLace) loc->addMonster(currentEntity);
+    }
+
+    currentEntity->setCurrentLocation(_newPLace);
+}
+
+void System::placeWithMaxItem() {
+    int maxItemCount {-1};
+    shared_ptr<Place> p {nullptr};
+    for(auto loc : this->allLocations){
+        if (loc->getAllItems().size() > maxItemCount){
+            maxItemCount = loc->getAllItems().size();
+            p = loc;
+        }
+    }
+    while (maxItemCount--) {
+        this->items.addItem(p->getAllItems()[0]);
+        p->deleteItem(p->getAllItems()[0].name);
+    }
+
+    this->moveMonster("invisibleMan" , p->getPlaceName());
+}
+
+void System::run() {
+    monsters[0]->runMonsterPhase();
 }
