@@ -3,6 +3,7 @@
 #include <sstream>
 #include <iostream>
 #include "monster.hpp"
+#include "place.hpp"
 
 using namespace std;
 

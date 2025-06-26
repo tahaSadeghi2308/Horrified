@@ -34,9 +34,19 @@ void MonsterBase::putItems(const int count) {
     }
 }
 
+void MonsterBase::doEvent(const string& _eventName){
+    if (_eventName == "Sunrise"){
+        
+    }
+}
+
 void MonsterBase::runMonsterPhase() {
     // get a random monster card 
     MonsterCard currentCard { sys->getRandomMonstCard() };
+
     // put items 
     this->putItems(currentCard.itemCount);
+
+    // run an event
+    this->doEvent(currentCard.name);
 }

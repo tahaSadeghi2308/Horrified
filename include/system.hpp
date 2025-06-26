@@ -6,9 +6,11 @@
 #include <string>
 #include <unordered_map>
 #include "card_manager.hpp"
-#include "place.hpp"
+// #include "place.hpp"
 #include "villager.hpp"
 #include <fmt/core.h>
+
+class Place;
 
 // #include "monster.hpp" CIRCULAR DEPENDENCY 
 
