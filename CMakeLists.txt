@@ -20,3 +20,6 @@ add_executable(${PROJECT_NAME} ${PROJECT_SOURCE})
 # parts for packages 
 find_package(fmt REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE fmt::fmt)
+
+find_package(Threads REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads)

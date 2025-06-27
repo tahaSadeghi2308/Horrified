@@ -52,7 +52,10 @@ int getCommand(string prompt){
         if (rest == ""){
             try {
                 int number;
-                if (isNumber(num)){
+                if (num == "q"){
+                    return -1;
+                }
+                else if (isNumber(num)){
                     number = stoi(num);
                     if (number <= 0) throw invalid_argument("negetive number");
                     return number;

@@ -19,6 +19,7 @@ enum SearchType {
 };
 
 class System {
+    int terrorLevel {0};
     // cards part !!
     PerkDeck<Perk> perks;
     ItemBag<Item> items;
@@ -53,7 +54,12 @@ public:
     void moveHero(std::string_view _monsterName , std::string_view _newPlace);
     std::vector<std::string> findPath(std::string source , SearchType type);
     void playPerkCard(const Perk& p);
+    std::vector<std::shared_ptr<Place>>& getLocations() { return this->allLocations; }
+    std::vector<std::shared_ptr<Villager>>& getVillagers() { return this->allVillagers; }
+    std::vector<std::shared_ptr<HeroBase>>& getHeros() { return this->heros; }
+    std::vector<std::shared_ptr<MonsterBase>>& getMonsters() { return this->monsters; }
+    int getTerrorLevel() const;
+    void increaseTerrorLevel();
 };
-
 
 #endif // SYSTEM_HPP

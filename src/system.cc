@@ -252,3 +252,7 @@ void System::run() {
 void System::playPerkCard(const Perk& p) {
     
 }
+
+int System::getTerrorLevel() const { return this->terrorLevel; }
+
+void System::increaseTerrorLevel() { (this->terrorLevel)++; }
