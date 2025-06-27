@@ -1,5 +1,6 @@
 #include "place.hpp"
 #include "villager.hpp"
+// #include "hero.hpp"
 
 using namespace std;
 
@@ -59,4 +60,22 @@ void Place::deleteVillager(const string& _name){
 
 const vector<shared_ptr<Villager>>& Place::getAllVillagers() const {
     return this->villagers;
+}
+
+void Place::addHero(std::shared_ptr<HeroBase> m){
+    this->heros.push_back(m);
+}
+
+void Place::deleteHero(const string& _name){
+    bool isFound {};
+    for (int i {}; i < this->heros.size() && !isFound; i++) {
+        if (this->heros[i]->getHeroName() == _name){
+            this->heros.erase(heros.begin() + i);
+            isFound = true;
+        }
+    }
+}
+
+const vector<shared_ptr<HeroBase>>& Place::getAllHeros() const {
+    return this->heros;
 }

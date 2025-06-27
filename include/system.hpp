@@ -6,20 +6,17 @@
 #include <string>
 #include <unordered_map>
 #include "card_manager.hpp"
-// #include "place.hpp"
 #include "villager.hpp"
 #include <fmt/core.h>
 #include <string_view>
 
 class Place;
-
-// #include "monster.hpp" CIRCULAR DEPENDENCY 
+class MonsterBase;
+class HeroBase;
 
 enum SearchType { 
     ETO  // eneemy to others
 };
-
-class MonsterBase;
 
 class System {
     // cards part !!
@@ -37,6 +34,9 @@ class System {
     // monsters
     std::vector<std::shared_ptr<MonsterBase>> monsters;
 
+    // heros
+    std::vector<std::shared_ptr<HeroBase>> heros;
+
     void gameInit();
     
 public:
@@ -50,6 +50,7 @@ public:
     MonsterCard getRandomMonstCard();
     void putItemInPlace(const std::string& _placeName , const Item &i);
     void moveMonster(std::string_view _monsterName , std::string_view _newPlace);
+    void moveHero(std::string_view _monsterName , std::string_view _newPlace);
     std::vector<std::string> findPath(std::string source , SearchType type);
 };
 

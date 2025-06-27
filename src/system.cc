@@ -4,13 +4,12 @@
 #include <iostream>
 #include "monster.hpp"
 #include "place.hpp"
+#include "hero.hpp"
 #include <queue>
 
 using namespace std;
 
-System::System(){
-    this->gameInit();
-}
+System::System() { this->gameInit(); }
 
 void System::gameInit() {
     // this function is for collecting datas for files and put them in right place in system
@@ -55,29 +54,44 @@ void System::gameInit() {
     // monsters
     monsters.push_back(make_shared<Dracula>("dracula" , true , this));
     monsters.push_back(make_shared<InvisibleMan>("invisibleMan" , false , this));
+    // TODO : we can do it with a for on monster list !!
     this->moveMonster("dracula" , "camp");
     this->moveMonster("invisibleMan" , "inn");
+
+    // heros 
+    heros.push_back(make_shared<Archaeologist>("arch" , 4 , this));
+    heros.push_back(make_shared<Mayor>("mayor" , 5 , this));
+    this->moveHero("arch" , "docks");
+    this->moveHero("mayor" , "theatre");
+
+    // hero -> giving a perk to each hero
+    for (auto hero : this->heros) {
+        hero->addPerk(this->perks.pickOneRandomly());
+    }
 }
 
 void System::systemInfoShow() {
-    // for(auto loc : this->allLocations) {
-    //     fmt::print("\n---------------- {} -----------  \n" , loc->getPlaceName());
-    //     fmt::print("      Here items : ");
-    //     for(auto i : loc->getAllItems()){
-    //         fmt::print("{} " , i.name);
-    //     }
-    //     fmt::print("\n      Here monsters : ");
-    //     for(auto i : loc->getAllMonsters()){
-    //         fmt::print("{} " , i->getMonsterName());
-    //     }
-    //     fmt::print("\n      Here villagers : ");
-    //     for(auto i : loc->getAllVillagers()){
-    //         fmt::print("{} " , i->getVillagerName());
-    //     }
-    // }
-
+    for(auto loc : this->allLocations) {
+        fmt::print("\n---------------- {} -----------  \n" , loc->getPlaceName());
+        fmt::print("      Here items : ");
+        for(auto i : loc->getAllItems()){
+            fmt::print("{} " , i.name);
+        }
+        fmt::print("\n      Here monsters : ");
+        for(auto i : loc->getAllMonsters()){
+            fmt::print("{} " , i->getMonsterName());
+        }
+        fmt::print("\n      Here villagers : ");
+        for(auto i : loc->getAllVillagers()){
+            fmt::print("{} " , i->getVillagerName());
+        }
+        fmt::print("\n      Here heros : ");
+        for(auto i : loc->getAllHeros()){
+            fmt::print("{} " , i->getHeroName());
+        }
+    }
     // fmt::print("\n----------------------------------\n");
-    cout << this->findPath(monsters[1]->getCurrentLocation() , ETO).size();
+    // cout << this->findPath(monsters[1]->getCurrentLocation() , ETO).size();
 
 }
 
@@ -188,6 +202,29 @@ void System::moveMonster(string_view _monsterName , string_view _newPLace){
     currentEntity->setCurrentLocation(_newPLace);
 }
 
+void System::moveHero(string_view _heroName , string_view _newPlace){
+    shared_ptr<HeroBase> currentEntity {nullptr};
+    for(auto hero : this->heros){
+        if (hero->getHeroName() == _heroName) { currentEntity = hero; break; }
+    }
+
+    // delete from current place 
+    for (auto loc : this->allLocations){
+        for(auto hero : loc->getAllHeros()){
+            if (hero->getHeroName() == currentEntity->getHeroName()){
+                loc->deleteHero(currentEntity->getHeroName());
+            }
+        }
+    }
+
+    // add to new place 
+    for(auto loc : this->allLocations){
+        if(loc->getPlaceName() == _newPlace) loc->addHero(currentEntity);
+    }
+
+    currentEntity->setCurrentPlace(_newPlace);
+}
+
 void System::placeWithMaxItem() {
     int maxItemCount {-1};
     shared_ptr<Place> p {nullptr};
@@ -211,4 +248,3 @@ void System::placeWithMaxItem() {
 void System::run() {
     monsters[0]->runMonsterPhase();
 }
-

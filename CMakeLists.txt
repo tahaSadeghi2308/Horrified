@@ -8,6 +8,7 @@ set(
     src/exceptions.cc
     src/place.cc
     src/monster.cc
+    src/hero.cc
     main.cc
 )
 

@@ -1,3 +1,5 @@
-- [ ] Think about it : place in vill and monst and hero should be pointer or string and make search is better ???
+- [x] Think about it : place in vill and monst and hero should be pointer or string and make search is better ???
 - [ ] Add installation guide for fmt and ...
 - [ ] Three of monster cards are not implemented yet !!!
+- [ ] a aproch to delete items from hero and add them to item bag.
+- [ ] making add , delete and get functions ; template !!
