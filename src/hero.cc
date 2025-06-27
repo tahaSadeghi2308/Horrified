@@ -35,14 +35,6 @@ void HeroBase::deletePerk(string_view perkName) {
     }
 }
 
-void HeroBase::playPerk(string_view perkName) {
-    // first finding the perk
-    Perk currentPerk;
-    for (auto p : this->perks) {
-        if (p.name == perkName) { currentPerk = p; break; }
-    }
-}
-
 void HeroBase::addItem(const Item& i) {
     this->items.push_back(i);
 }

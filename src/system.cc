@@ -248,3 +248,7 @@ void System::placeWithMaxItem() {
 void System::run() {
     monsters[0]->runMonsterPhase();
 }
+
+void System::playPerkCard(const Perk& p) {
+    
+}

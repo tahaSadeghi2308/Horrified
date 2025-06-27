@@ -22,7 +22,6 @@ public:
     void addPerk(const Perk &p);
     void deletePerk(std::string_view perkName);
     const std::vector<Perk>& getAllPerks() const;
-    void playPerk(std::string_view perkName);
     void addItem(const Item &i);
 };
 

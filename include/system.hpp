@@ -52,6 +52,7 @@ public:
     void moveMonster(std::string_view _monsterName , std::string_view _newPlace);
     void moveHero(std::string_view _monsterName , std::string_view _newPlace);
     std::vector<std::string> findPath(std::string source , SearchType type);
+    void playPerkCard(const Perk& p);
 };
 
 
