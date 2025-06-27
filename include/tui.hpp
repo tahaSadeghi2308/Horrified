@@ -12,7 +12,10 @@ class Tui final {
     void header() const;
     void terrorLevel(int level);
     void displayActions() const;
-    void displayActions(std::string_view turn) const;
+    void heroPhasePage(std::string_view heroName);
+    void heroInfo(std::shared_ptr<HeroBase>& hero);
+    void monstersInfo();
+    void showNeighborsInfo(std::shared_ptr<HeroBase>& hero);
 public:
     explicit Tui(System *s);
     void runGame();

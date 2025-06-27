@@ -70,6 +70,55 @@ void System::gameInit() {
     }
 }
 
+unordered_map<string , vector<string>>& System::getGameMap() {
+    return this->gameMap;
+}
+
+vector<shared_ptr<Place>>& System::getLocations() { return this->allLocations; }
+
+vector<shared_ptr<Villager>>& System::getVillagers() { return this->allVillagers; }
+
+vector<shared_ptr<HeroBase>>& System::getHeros() { return this->heros; }
+
+vector<shared_ptr<MonsterBase>>& System::getMonsters() { return this->monsters; }
+
+bool System::allCluesFound(string_view type) const {
+    if (type == "coffin"){
+        for (bool cof : this->foundCoffin){
+            if (!cof) return false;
+        }
+        return true;
+    }
+    for (bool cu : this->foundClue){
+            if (!cu) return false;
+        }
+    return true;
+}
+
+int System::foundClues(string_view type) {
+    int count = 0;
+    if (type == "coffin"){
+        for (bool& cof : this->foundCoffin)
+            if (cof) count++; 
+    }
+    else {
+        for (bool& cu : this->foundClue)
+            if (cu) count++;
+    } 
+    return count;
+}
+
+void System::makeFoundClues(string_view type){
+    if (type == "coffin"){
+        for (bool& cof : this->foundCoffin)
+            if (cof == false) { cof = true; break; } 
+    }
+    else {
+        for (bool& cu : this->foundClue)
+            if (cu == false) { cu = true; break; }
+    }
+}
+
 void System::systemInfoShow() {
     for(auto loc : this->allLocations) {
         fmt::print("\n---------------- {} -----------  \n" , loc->getPlaceName());

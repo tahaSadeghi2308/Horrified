@@ -23,6 +23,8 @@ void HeroBase::addPerk(const Perk &p){
     this->perks.push_back(p);
 }
 
+const vector<Item>& HeroBase::getAllItems() const { return this->items; }
+
 const vector<Perk>& HeroBase::getAllPerks() const { return this->perks; }
 
 void HeroBase::deletePerk(string_view perkName) {

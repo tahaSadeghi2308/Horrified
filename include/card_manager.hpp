@@ -10,13 +10,16 @@
 #include <memory>
 #include "exceptions.hpp"
 
-enum Color { RED , BLUE , YELLOW };
+
+namespace cardColor {
+    enum Color { RED , BLUE , YELLOW };
+};
 
 constexpr int ITEM_COUNT {2};
 
 struct Item {
     int power;
-    Color color;
+    cardColor::Color color;
     std::string name;
     std::string place; // NOTE: maybe change base on place implementation
     // friend std::ostream& operator<< (std::ostream& output , Item&items)
@@ -159,9 +162,9 @@ ItemBag<T>::ItemBag() {
                 temp.power = std::stoi(power);
                 temp.name = name;
                 temp.place = place;
-                if (color == "red") temp.color = Color::RED;
-                if (color == "blue") temp.color = Color::BLUE;
-                if (color == "yellow") temp.color = Color::YELLOW;
+                if (color == "red") temp.color = cardColor::Color::RED;
+                if (color == "blue") temp.color = cardColor::Color::BLUE;
+                if (color == "yellow") temp.color = cardColor::Color::YELLOW;
                 this->push(temp);
             }
         }
