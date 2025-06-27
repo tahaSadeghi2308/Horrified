@@ -9,6 +9,8 @@ set(
     src/place.cc
     src/monster.cc
     src/hero.cc
+    src/tui.cc
+    src/utility.cc
     main.cc
 )
 

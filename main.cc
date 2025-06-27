@@ -1,12 +1,11 @@
 #include <iostream>
-#include "system.hpp"
+#include "tui.hpp"
 using namespace std;
 
 int main(){
-    System s;
-    s.run();
-    // s.systemInfoShow();
-    // fmt::print("\n ----------------------------- after -----------------------------\n");
-    s.systemInfoShow();
+    System *s = new System();
+    Tui t(s); 
+    t.runGame();
+    delete s;
     return 0;
 }
