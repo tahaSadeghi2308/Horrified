@@ -219,6 +219,10 @@ Item System::getRandomItem() { return items.pickOneRandomly(); }
 
 MonsterCard System::getRandomMonstCard() { return monsterCards.pickOneRandomly(); }
 
+Perk System::getRandomPerk() { 
+    if (perks.size() > 0) return perks.pickOneRandomly();
+}
+
 void System::putItemInPlace(const string& _placeName , const Item &i){
     for (auto loc : this->allLocations){
         if (loc->getPlaceName() == _placeName) {

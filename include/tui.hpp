@@ -17,6 +17,7 @@ class Tui final {
     void monstersInfo();
     void showNeighborsInfo(std::shared_ptr<HeroBase>& hero);
     void backButton();
+    void movePage(std::shared_ptr<HeroBase>& hero , int &actions);
 public:
     explicit Tui(System *s);
     void runGame();

@@ -7,6 +7,7 @@
 #include "tabulate/table.hpp"
 #include "place.hpp"
 #include "card_manager.hpp"
+#include "villager.hpp"
 
 using namespace std;
 using namespace tabulate;
@@ -177,8 +178,88 @@ void Tui::heroPhasePage(shared_ptr<HeroBase>& hero , int actions){
     fmt::println("Remaining actions : {}" , actions);
     this->showNeighborsInfo(hero);
     this->monstersInfo();
-    this->displayActions();
     this->terrorLevel(sys->getTerrorLevel());
+    this->displayActions();
+    int page = getCommand("Enter a action number ");
+    while (page <= 0 || page > 9) {
+        fmt::println("invalid page entered !!!");
+        page = getCommand("Enter a action number ");
+    }
+    this->pageNumber = page;
+}
+
+void Tui::movePage(shared_ptr<HeroBase>& hero , int &actions) {
+    // page Number 1
+    clearScreen();
+    string current = hero->getCurrentPlace(); 
+    vector<string> neis = (sys->getGameMap())[current];
+    vector<shared_ptr<Villager>> hereVills;
+
+    for(auto loc : sys->getLocations()){
+        if (loc->getPlaceName() == current){
+            for(auto vill : loc->getAllVillagers()) hereVills.push_back(vill);
+            break;
+        }
+    }
+
+    fmt::println("Ok, At first you can move yourself to an other place !!!");
+    while (true){
+        for(int i {}; i < neis.size(); i++){
+            cout << i + 1 << ". " << neis[i] << '\n';
+        }
+        cout << neis.size() + 1 << ". Back" << '\n';
+        cout << neis.size() + 2 << ". Exit" << '\n';
+        int num = getCommand("Enter a number to choose where u want to go ");
+
+        if (num > 0 && num <= neis.size()) {
+            sys->moveHero(hero->getHeroName() , neis[num - 1]);
+            actions--;
+            break;
+        }
+        else if (num == neis.size() + 1) { this->backButton(); return; }
+        else if (num == neis.size() + 2) { this->pageNumber = 9; return; }
+        else fmt::println("Invalid neighboer choies !!!");
+    }
+    clearScreen();
+    fmt::println(
+        "Ok, Now {} is in {}. Do u want to move villagers in {}" , 
+        hero->getHeroName(),
+        hero->getCurrentPlace(),
+        current 
+    );
+    int ch;
+    while (true) { 
+        ch = getCommand("1.Yes | 2.No");
+        if (ch == 1 || ch == 2) break;
+        else fmt::println("Invalid choise !!!");
+    }
+    if (ch == 2) { this->pageNumber = 0; }
+    else {
+        while (true) {
+            int villNum;
+            for(int i {}; i < hereVills.size(); i++){
+                cout << i + 1 << ". " << hereVills[i]->getVillagerName() << '\n';
+            }
+            cout << hereVills.size() + 1 << ". Stop moving" << '\n';
+            villNum = getCommand("Enter a number ");
+            if (villNum > 0 && villNum <= hereVills.size()){
+                sys->moveVillager(hereVills[villNum - 1]->getVillagerName() , hero->getCurrentPlace());
+                if (hereVills[villNum - 1]->getSafeZone() == hero->getCurrentPlace()){
+                    fmt::println(
+                        "You reached a villager {} to its Safe zone :)\n He will give u a perk man",
+                        hereVills[villNum - 1]->getVillagerName()
+                    );
+                    hero->addPerk(sys->getRandomPerk());
+                }
+                hereVills.erase(hereVills.begin() + villNum - 1);
+            }
+            else if (villNum == hereVills.size() + 1){
+                this->pageNumber = 0;
+                return;
+            }
+            else fmt::println("Invalid villager choies !!!");
+        }
+    }
 }
 
 void Tui::runGame() {
@@ -195,8 +276,9 @@ void Tui::runGame() {
         }
 
         int actions = currentHero->getActions();
-        while(actions != 0) {
+        while(actions != 0 && pageNumber != 9) {
             if (this->pageNumber == 0) this->heroPhasePage(currentHero , actions);
+            else if (this->pageNumber == 1) this->movePage(currentHero , actions);
         }
         round++;
     }

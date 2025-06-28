@@ -52,6 +52,7 @@ public:
     void systemInfoShow();
     Item getRandomItem();
     MonsterCard getRandomMonstCard();
+    Perk getRandomPerk();
     void putItemInPlace(const std::string& _placeName , const Item &i);
     void moveMonster(std::string_view _monsterName , std::string_view _newPlace);
     void moveHero(std::string_view _monsterName , std::string_view _newPlace);
