@@ -44,10 +44,11 @@ bool isNumber(string sequence){
 }
 
 int getCommand(string prompt){
-    string line , num , rest;
     while (true) {
+        string line , num , rest;
         fmt::print("{} > " , prompt); getline(cin , line);
-        stringstream stream(line);
+        stringstream stream;
+        stream.str(line);
         stream >> num; getline(stream , rest);
         if (rest == ""){
             try {

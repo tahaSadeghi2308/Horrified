@@ -13,7 +13,10 @@ using namespace tabulate;
 
 Tui::Tui(System *s) : sys(s) {}
 
+void Tui::backButton() { this->pageNumber--; }
+
 void Tui::quitPage() const {
+    // page number = 9
     clearScreen();
     fmt::println("I hope u enjoy this game :(: ");
 }
@@ -104,7 +107,6 @@ void Tui::displayActions() const {
 
 void Tui::heroInfo(shared_ptr<HeroBase>& hero){
     cout << "📛 Hero: " << hero->getHeroName() << '\n';
-
     cout << "📍 Location: " << hero->getCurrentPlace() << '\n';
     cout << "    ├── Neighbors: ";
     for (auto& nei : (sys->getGameMap())[hero->getCurrentPlace()]) cout << nei << " ";
@@ -144,32 +146,59 @@ void Tui::welcomePage() {
     int player2Days = getCommand("How many days has it been since you last ate garlic player2");
     if (player2Days == -1) { this->quitPage(); return; }
     cout << player1Days << " " << player2Days << '\n';
-    if (player1Days > player2Days) {
-        fmt::println("Ok , player 1 . Now choose your character: ");
+    int playerNumber = (player1Days > player2Days) ? 1 : 2;
+    while(true) {
+        fmt::println("Ok , player {} . Now choose your character: " , playerNumber);
         fmt::println("1. Archaeologist");
         fmt::println("2. Mayor");
-        if (getCommand() == 1) this->playerPriority = {"arch" , "mayor"};
-        else this->playerPriority = {"mayor" , "arch"};
+        int num = getCommand();
+        if (num == 1) {
+            this->playerPriority.push_back("arch");
+            this->playerPriority.push_back("mayor");
+            break;
+        }
+        else if (num == 2) {
+            this->playerPriority.push_back("mayor");
+            this->playerPriority.push_back("arch");
+            break;
+        }
+        else fmt::println("Invalid argument entered !!!");
     }
     fmt::println("ok game is ready to go wait for 2 seconds .....");
     this_thread::sleep_for(chrono::seconds(2));
     clearScreen();
 }
 
-void Tui::heroPhasePage(string_view heroName){
-    // find hero
-    shared_ptr<HeroBase> currentHero {nullptr};
-    for (auto h : sys->getHeros()){
-        if (h->getHeroName() == heroName) { currentHero = h; break;}
-    }
+void Tui::heroPhasePage(shared_ptr<HeroBase>& hero , int actions){
+    // page Number 0
+    clearScreen();
     this->header();
-    this->heroInfo(currentHero);
-    this->showNeighborsInfo(currentHero);
+    this->heroInfo(hero);
+    fmt::println("Remaining actions : {}" , actions);
+    this->showNeighborsInfo(hero);
     this->monstersInfo();
     this->displayActions();
     this->terrorLevel(sys->getTerrorLevel());
 }
 
 void Tui::runGame() {
-    this->heroPhasePage("arch");
+    this->welcomePage();
+    int round {0};
+    int playerCount = playerPriority.size();
+    // cout << playerCount; 
+    while (this->pageNumber != 9) {
+        string currentHeroName = playerPriority[round % playerCount];
+        //find hero
+        shared_ptr<HeroBase> currentHero {nullptr};
+        for (auto h : sys->getHeros()){
+            if (h->getHeroName() == currentHeroName) { currentHero = h; break;}
+        }
+
+        int actions = currentHero->getActions();
+        while(actions != 0) {
+            if (this->pageNumber == 0) this->heroPhasePage(currentHero , actions);
+        }
+        round++;
+    }
+    this->quitPage();
 }

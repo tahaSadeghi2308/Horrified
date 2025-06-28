@@ -24,6 +24,7 @@ public:
     const std::vector<Perk>& getAllPerks() const;
     const std::vector<Item>& getAllItems() const;
     void addItem(const Item &i);
+    int getActions() const;
 };
 
 class Archaeologist final : public HeroBase {

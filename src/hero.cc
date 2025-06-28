@@ -11,6 +11,8 @@ string HeroBase::getCurrentPlace() const {
     return this->currentPlace;
 }
 
+int HeroBase::getActions() const { return this->actionCount; }
+
 void HeroBase::setCurrentPlace(string_view _newPlace) {
     this->currentPlace = _newPlace;
 }

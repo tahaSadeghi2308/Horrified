@@ -5,17 +5,18 @@
 
 class Tui final {
     System *sys {nullptr};
-    int pageNumber {1};
+    int pageNumber {0};
     std::vector<std::string> playerPriority;
     void welcomePage();
     void quitPage() const;
     void header() const;
     void terrorLevel(int level);
     void displayActions() const;
-    void heroPhasePage(std::string_view heroName);
+    void heroPhasePage(std::shared_ptr<HeroBase>& hero , int actions);
     void heroInfo(std::shared_ptr<HeroBase>& hero);
     void monstersInfo();
     void showNeighborsInfo(std::shared_ptr<HeroBase>& hero);
+    void backButton();
 public:
     explicit Tui(System *s);
     void runGame();
