@@ -12,7 +12,8 @@ enum PageNumbers {
     ADVANCED_PAGE = 4,
     DEFEAT_PAGE = 6,
     SPECIALACTION_PAGE = 7,
-    PLAYPERK_PAGE = 8
+    PLAYPERK_PAGE = 8,
+    HELP_PAGE = 10
 };
 
 class Tui final {
@@ -36,6 +37,7 @@ class Tui final {
     void defeatPage(std::shared_ptr<HeroBase>& hero , int &actions);
     void specialActionPage(std::shared_ptr<HeroBase>& hero , int &actions);
     void playPerkPage(std::shared_ptr<HeroBase>& hero , int &actions , bool &doMonsterPhase);
+    void helpPage();
 public:
     explicit Tui(System *s);
     void runGame();

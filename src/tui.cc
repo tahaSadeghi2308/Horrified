@@ -105,7 +105,8 @@ void Tui::displayActions() const {
     cout << "[6] Defeat Action\n";
     cout << "[7] Special Action  ";
     cout << "[8] Play perk  ";
-    cout << "[9] Exit Game\n\n";
+    cout << "[9] Exit Game\n";
+    cout << "[10] Help Page\n\n";
 }
 
 void Tui::heroInfo(shared_ptr<HeroBase>& hero){
@@ -759,7 +760,7 @@ void Tui::playPerkPage(shared_ptr<HeroBase>& hero , int &actions , bool &doMonst
     unordered_map<int , string> test;
     for (auto perk : hero->getAllPerks()) uniqePerkNames.insert(perk.name);
     fmt::println("First choose which perk u want to play");
-    string perkName;
+    string perkName = "Repel";
     while(true) {
         int i {0} , perkNum;
         for(auto perk : uniqePerkNames){
@@ -771,7 +772,7 @@ void Tui::playPerkPage(shared_ptr<HeroBase>& hero , int &actions , bool &doMonst
         fmt::println("{}. Exit" , i + 2);
         perkNum = getCommand("Enter your perk number");
         if (perkNum > 0 && perkNum <= i){
-            // perkName = test[i - 1];
+            perkName = test[i - 1];
             break;
         }
         else if (perkNum == i + 1) { this->pageNumber = PageNumbers::HERO_PHASE_PAGE; return; }
@@ -876,6 +877,11 @@ void Tui::playPerkPage(shared_ptr<HeroBase>& hero , int &actions , bool &doMonst
         }
         this->pageNumber = PageNumbers::HERO_PHASE_PAGE; return;
     }
+}
+
+void Tui::helpPage() {
+    clearScreen();
+    // fmt::println();
 }
 
 void Tui::runGame() {

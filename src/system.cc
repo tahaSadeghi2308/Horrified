@@ -288,19 +288,19 @@ void System::moveHero(string_view _heroName , string_view _newPlace){
         if (hero->getHeroName() == _heroName) { currentEntity = hero; break; }
     }
 
+    // add to new place 
+    for(auto loc : this->allLocations){
+        if(loc->getPlaceName() == _newPlace) loc->addHero(currentEntity);
+    }
+
     // delete from current place 
     for (auto loc : this->allLocations){
         for(auto hero : loc->getAllHeros()){
             if (hero->getHeroName() == currentEntity->getHeroName()){
                 loc->deleteHero(currentEntity->getHeroName());
-                break;
+                // break;
             }
         }
-    }
-
-    // add to new place 
-    for(auto loc : this->allLocations){
-        if(loc->getPlaceName() == _newPlace) loc->addHero(currentEntity);
     }
 
     currentEntity->setCurrentPlace(_newPlace);
