@@ -217,7 +217,7 @@ void Tui::movePage(shared_ptr<HeroBase>& hero , int &actions) {
             break;
         }
         else if (num == neis.size() + 1) { this->backButton(); return; }
-        else if (num == neis.size() + 2) { this->pageNumber = 9; return; }
+        else if (num == neis.size() + 2) { this->pageNumber = PageNumbers::EXIT_PAGE; return; }
         else fmt::println("Invalid neighboer choies !!!");
     }
     clearScreen();
@@ -233,7 +233,7 @@ void Tui::movePage(shared_ptr<HeroBase>& hero , int &actions) {
         if (ch == 1 || ch == 2) break;
         else fmt::println("Invalid choise !!!");
     }
-    if (ch == 2) { this->pageNumber = 0; }
+    if (ch == 2) { this->pageNumber = PageNumbers::HERO_PHASE_PAGE; }
     else {
         while (true) {
             int villNum;
@@ -249,12 +249,13 @@ void Tui::movePage(shared_ptr<HeroBase>& hero , int &actions) {
                         "You reached a villager {} to its Safe zone :)\n He will give u a perk man",
                         hereVills[villNum - 1]->getVillagerName()
                     );
+                    // TODO: Add delete villager from system here
                     hero->addPerk(sys->getRandomPerk());
                 }
                 hereVills.erase(hereVills.begin() + villNum - 1);
             }
             else if (villNum == hereVills.size() + 1){
-                this->pageNumber = 0;
+                this->pageNumber = PageNumbers::HERO_PHASE_PAGE;
                 return;
             }
             else fmt::println("Invalid villager choies !!!");
@@ -262,24 +263,151 @@ void Tui::movePage(shared_ptr<HeroBase>& hero , int &actions) {
     }
 }
 
+void Tui::guidePage(shared_ptr<HeroBase>& hero , int &actions){
+    // page number 2
+    clearScreen();
+    fmt::println("Ok , Now you can choose one villager and move it");
+    int ch;
+    while(true){
+        fmt::println("1. Move a villager to neighbor place");
+        fmt::println("2. Bring a villager from neighbor place");
+        fmt::println("3. Back");
+        fmt::println("4. Exit");
+        ch = getCommand("Please Enter your choise");
+        if (ch <= 0 || ch > 4) fmt::println("Invalid choise for guide method");
+        else break;
+    }
+    clearScreen();
+    if (ch == 1){
+        string current = hero->getCurrentPlace();
+        vector<string> neis = (sys->getGameMap())[current];
+        vector<shared_ptr<Villager>> hereVills;
+
+        for(auto loc : sys->getLocations()){
+            if (loc->getPlaceName() == current){
+                for(auto vill : loc->getAllVillagers()) hereVills.push_back(vill);
+                break;
+            }
+        }
+        int villNum, locNum;
+        if (hereVills.size() == 0) {
+            this->pageNumber = PageNumbers::GUIDE_PAGE;
+            return; 
+        }
+        else {
+            // choose villager
+            while(true){
+                for(int i {}; i < hereVills.size(); i++){
+                    cout << i + 1 << ". " << hereVills[i]->getVillagerName() << '\n';
+                }
+                villNum = getCommand("Enter a villager number");
+                if (villNum <= 0 || villNum > hereVills.size()){
+                    fmt::println("invalid villager number");
+                }
+                else break;
+            }
+            // choose place 
+            while (true){
+                for(int i {}; i < neis.size(); i++){
+                    cout << i + 1 << ". " << neis[i] << '\n';
+                }
+                locNum = getCommand("Enter a place Number");
+                if (locNum <= 0 || locNum > neis.size()){
+                    fmt::println("invalid villager number");
+                }
+                else break;
+            }
+            sys->moveVillager(
+                hereVills[villNum - 1]->getVillagerName() ,
+                neis[locNum - 1]
+            );
+            if (hereVills[villNum - 1]->getSafeZone() == neis[locNum - 1]){
+                fmt::println(
+                    "You reached a villager {} to its Safe zone :)\n He will give u a perk man",
+                    hereVills[villNum - 1]->getVillagerName()
+                );
+                // TODO: Add delete villager from system here
+                hero->addPerk(sys->getRandomPerk());
+            }
+            actions--;
+            this->pageNumber = PageNumbers::HERO_PHASE_PAGE;
+        }
+    }
+
+    else if (ch == 2){
+        // choose place
+        int villNum , locNum;
+        string current = hero->getCurrentPlace();
+        vector<string> neis = (sys->getGameMap())[current];
+        fmt::println("Choose the place with u want to bring a villager from");
+        while (true){
+            for(int i {}; i < neis.size(); i++){
+                cout << i + 1 << ". " << neis[i] << '\n';
+            }
+            locNum = getCommand("Enter a place Number");
+            if (locNum <= 0 || locNum > neis.size()){
+                fmt::println("invalid villager number");
+            }
+            else break;
+        }
+        vector<shared_ptr<Villager>> hereVills;
+        for(auto loc : sys->getLocations()){
+            if (loc->getPlaceName() == neis[locNum - 1]){
+                for(auto vill : loc->getAllVillagers()) hereVills.push_back(vill);
+                break;
+            }
+        }
+        if (hereVills.size() == 0) { this->pageNumber = PageNumbers::GUIDE_PAGE; return;}
+        while(true){
+            for(int i {}; i < hereVills.size(); i++){
+                cout << i + 1 << ". " << hereVills[i]->getVillagerName() << '\n';
+            }
+            villNum = getCommand("Enter a villager number");
+            if (villNum <= 0 || villNum > hereVills.size()){
+                fmt::println("invalid villager number");
+            }
+            else break;
+        }
+        sys->moveVillager(
+            hereVills[villNum - 1]->getVillagerName() ,
+            neis[locNum - 1]
+        );
+        if (hereVills[villNum - 1]->getSafeZone() == neis[locNum - 1]){
+            fmt::println(
+                "You reached a villager {} to its Safe zone :)\n He will give u a perk man",
+                hereVills[villNum - 1]->getVillagerName()
+            );
+            // TODO: Add delete villager from system here
+            hero->addPerk(sys->getRandomPerk());
+        }
+        actions--;
+        this->pageNumber = PageNumbers::HERO_PHASE_PAGE;
+    }
+    else if (ch == 3) { this->backButton(); return; }
+    else if (ch == 4){ this->pageNumber = PageNumbers::EXIT_PAGE; return; }
+}
+
 void Tui::runGame() {
     this->welcomePage();
     int round {0};
     int playerCount = playerPriority.size();
     // cout << playerCount; 
-    while (this->pageNumber != 9) {
+    while (this->pageNumber != PageNumbers::EXIT_PAGE) {
         string currentHeroName = playerPriority[round % playerCount];
         //find hero
         shared_ptr<HeroBase> currentHero {nullptr};
         for (auto h : sys->getHeros()){
             if (h->getHeroName() == currentHeroName) { currentHero = h; break;}
         }
-
         int actions = currentHero->getActions();
-        while(actions != 0 && pageNumber != 9) {
-            if (this->pageNumber == 0) this->heroPhasePage(currentHero , actions);
-            else if (this->pageNumber == 1) this->movePage(currentHero , actions);
+        while(actions != 0 && pageNumber != PageNumbers::EXIT_PAGE) {
+            if (this->pageNumber == PageNumbers::HERO_PHASE_PAGE) this->heroPhasePage(currentHero , actions);
+            else if (this->pageNumber == PageNumbers::MOVE_PAGE) this->movePage(currentHero , actions);
+            else if (this->pageNumber == PageNumbers::GUIDE_PAGE) this->guidePage(currentHero , actions);
         }
+        // if (this->pageNumber != PageNumbers::EXIT_PAGE) {
+        //     (sys->getMonsters())[round % playerCount]->runMonsterPhase();
+        // }
         round++;
     }
     this->quitPage();

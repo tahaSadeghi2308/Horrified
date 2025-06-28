@@ -3,6 +3,13 @@
 
 #include "system.hpp"
 
+enum PageNumbers {
+    EXIT_PAGE = 9,
+    HERO_PHASE_PAGE = 0,
+    MOVE_PAGE = 1,
+    GUIDE_PAGE = 2
+};
+
 class Tui final {
     System *sys {nullptr};
     int pageNumber {0};
@@ -18,6 +25,7 @@ class Tui final {
     void showNeighborsInfo(std::shared_ptr<HeroBase>& hero);
     void backButton();
     void movePage(std::shared_ptr<HeroBase>& hero , int &actions);
+    void guidePage(std::shared_ptr<HeroBase>& hero , int &actions);
 public:
     explicit Tui(System *s);
     void runGame();
