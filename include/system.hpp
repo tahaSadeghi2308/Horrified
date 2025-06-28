@@ -68,6 +68,8 @@ public:
     bool allCluesFound(std::string_view type) const;
     void makeFoundClues(std::string_view type); 
     int foundClues(std::string_view type);
+    void killMonster(std::string_view monsterName);
+    void killVillager(std::string_view villName);
 };
 
 #endif // SYSTEM_HPP

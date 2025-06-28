@@ -121,7 +121,7 @@ void Tui::heroInfo(shared_ptr<HeroBase>& hero){
         }
     }
     cout << '\n';
-    cout << "    ├── Inventory: ";
+    cout << "    ├── Hero Items: ";
     for (auto item : hero->getAllItems()) {
         Table t;
         string text = item.name + "(" + to_string(item.power) + ")";
@@ -250,6 +250,7 @@ void Tui::movePage(shared_ptr<HeroBase>& hero , int &actions) {
                         hereVills[villNum - 1]->getVillagerName()
                     );
                     // TODO: Add delete villager from system here
+                    sys->killVillager(hereVills[villNum - 1]->getVillagerName());
                     hero->addPerk(sys->getRandomPerk());
                 }
                 hereVills.erase(hereVills.begin() + villNum - 1);
@@ -415,7 +416,7 @@ void Tui::guidePage(shared_ptr<HeroBase>& hero , int &actions){
                     "You reached a villager {} to its Safe zone :)\n He will give u a perk man",
                     hereVills[villNum - 1]->getVillagerName()
                 );
-                // TODO: Add delete villager from system here
+                sys->killVillager(hereVills[villNum - 1]->getVillagerName());
                 hero->addPerk(sys->getRandomPerk());
             }
             actions--;
@@ -466,7 +467,7 @@ void Tui::guidePage(shared_ptr<HeroBase>& hero , int &actions){
                 "You reached a villager {} to its Safe zone :)\n He will give u a perk man",
                 hereVills[villNum - 1]->getVillagerName()
             );
-            // TODO: Add delete villager from system here
+            sys->killVillager(hereVills[villNum - 1]->getVillagerName());
             hero->addPerk(sys->getRandomPerk());
         }
         actions--;

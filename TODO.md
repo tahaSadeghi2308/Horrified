@@ -3,4 +3,4 @@
 - [ ] Three of monster cards are not implemented yet !!!
 - [ ] a aproch to delete items from hero and add them to item bag.
 - [x] making add , delete and get functions ; template !! -> it was not ok
-- [ ] implemnt kill monster and villager methods in system
+- [x] implemnt kill monster and villager methods in system

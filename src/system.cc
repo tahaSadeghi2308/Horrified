@@ -191,7 +191,32 @@ vector<string> System::findPath(string source , SearchType type) {
     return path;
 }
 
-
+void System::killMonster(string_view monsterName) {
+    // delete from system list
+    for(int i {}; i < this->monsters.size(); i++){
+        if (monsters[i]->getMonsterName() == monsterName) {
+            this->monsters.erase(this->monsters.begin() + i);
+            break;
+        }
+    }
+    // delete from places
+    for (auto loc : this->allLocations){
+        loc->deleteMonster(string(monsterName));
+    }
+}
+void System::killVillager(string_view villName){
+    // delete from system list
+    for(int i {}; i < this->allVillagers.size(); i++){
+        if (allVillagers[i]->getVillagerName() == villName) {
+            this->allVillagers.erase(this->allVillagers.begin() + i);
+            break;
+        }
+    }
+    // delete from places
+    for (auto loc : this->allLocations){
+        loc->deleteMonster(string(villName));
+    }
+}
 
 void System::moveVillager(string_view villName , string_view _newPlace){
     shared_ptr<Villager> currentEntity {nullptr};
