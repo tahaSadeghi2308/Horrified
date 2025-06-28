@@ -293,6 +293,7 @@ void System::moveHero(string_view _heroName , string_view _newPlace){
         for(auto hero : loc->getAllHeros()){
             if (hero->getHeroName() == currentEntity->getHeroName()){
                 loc->deleteHero(currentEntity->getHeroName());
+                break;
             }
         }
     }
@@ -327,10 +328,6 @@ void System::placeWithMaxItem() {
 
 void System::run() {
     monsters[0]->runMonsterPhase();
-}
-
-void System::playPerkCard(const Perk& p) {
-    
 }
 
 int System::getTerrorLevel() const { return this->terrorLevel; }

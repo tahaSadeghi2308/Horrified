@@ -4,3 +4,4 @@
 - [ ] a aproch to delete items from hero and add them to item bag.
 - [x] making add , delete and get functions ; template !! -> it was not ok
 - [x] implemnt kill monster and villager methods in system
+- [ ] an unexpected but in moveHero found i done it with a break but is it rigth ??
