@@ -14,7 +14,7 @@ using namespace tabulate;
 
 Tui::Tui(System *s) : sys(s) {}
 
-void Tui::backButton() { this->pageNumber--; }
+void Tui::backButton() { this->pageNumber = PageNumbers::HERO_PHASE_PAGE; }
 
 void Tui::quitPage() const {
     // page number = 9
@@ -37,7 +37,7 @@ void Tui::showNeighborsInfo(shared_ptr<HeroBase>& hero) {
     vector<string> neis = (sys->getGameMap())[hero->getCurrentPlace()];
     auto boolToString = [](bool val) -> string { return val ? "Yes" : "No"; };
     Table table;
-    table.add_row({"Location", "Has Hero", "Has Monster", "Has Item", "Has Local"});
+    table.add_row({"Location", "Has Hero", "Has Monster", "Has Item", "Has Villager"});
     for (string nei : neis) {
         for (auto loc : sys->getLocations()){
             if (loc->getPlaceName() == nei){
@@ -263,6 +263,95 @@ void Tui::movePage(shared_ptr<HeroBase>& hero , int &actions) {
     }
 }
 
+void Tui::advancedPage(shared_ptr<HeroBase>& hero , int &actions){
+    // page number 4
+    clearScreen();
+    fmt::println("first ");
+}
+
+void Tui::specialActionPage(shared_ptr<HeroBase>& hero , int &actions){
+    //page number 7
+    clearScreen();
+    string current = hero->getCurrentPlace();
+    vector<string> neis = (sys->getGameMap())[current];
+    if (hero->getHeroName() == "mayor"){
+        fmt::print("Mayor has not any special action !!!");
+        while (true) {
+            int num;
+            fmt::println("1. Back");
+            fmt::println("2. Exit");
+            num = getCommand("Enter a option");
+            if (num == 1) { this->backButton(); return;}
+            else if (num == 2) { this->pageNumber = PageNumbers::EXIT_PAGE; return; }
+            else fmt::println("Invalid option entered!!");
+        }
+    }
+    else {
+        int neiNum;
+        fmt::println("First enter your neighbor which u want");
+        while(true){
+            int num;
+            for (int i {}; i < neis.size(); i++){
+                fmt::println("{}. {}", i + 1 , neis[i]);
+            }
+            fmt::println("{}. Back" , neis.size() + 1);
+            fmt::println("{}. Exit" , neis.size() + 2);
+            num = getCommand("Enter a place to pickup its items");
+            if (num > 0 && num <= neis.size()) { neiNum = num - 1; break; }
+            else if (num == neis.size() + 1) { this->backButton(); return;}
+            else if (num == neis.size() + 2) { this->pageNumber = PageNumbers::EXIT_PAGE; return; }
+            else fmt::println("Invalid place entered!!");
+        }
+        clearScreen();
+        string curr = neis[neiNum];
+        auto colorToString = [](cardColor::Color c) -> string {
+            if (c == cardColor::BLUE) return "blue";
+            else if (c == cardColor::RED) return "red";
+            else if (c == cardColor::YELLOW) return "yellow";
+        };
+        vector<Item> hereItems;
+        for(auto loc : sys->getLocations()){
+            if (loc->getPlaceName() == curr){
+                for(auto item : loc->getAllItems()) hereItems.push_back(item);
+            }
+        }
+        int firstItemsSize = hereItems.size();
+        while(true){
+            int itemNum;
+            for(int i {}; i < hereItems.size(); i++){
+                fmt::println(
+                    "{}. {} {} ({})",
+                    i + 1,
+                    hereItems[i].name,
+                    hereItems[i].name,
+                    hereItems[i].power
+                ); 
+            }
+            cout << hereItems.size() + 1 << ". Stop picking" << '\n';
+            itemNum = getCommand("Enter a item number");
+            if (itemNum > 0 && itemNum <= hereItems.size() + 1){
+                if (itemNum == hereItems.size() + 1){
+                    if (firstItemsSize != hereItems.size()) actions--;
+                    this->pageNumber = PageNumbers::HERO_PHASE_PAGE;
+                    return;
+                }
+                else {
+                    hero->addItem(hereItems[itemNum - 1]);
+                    for(auto loc : sys->getLocations()){
+                        if (loc->getPlaceName() == current){
+                            loc->deleteItem(hereItems[itemNum - 1].name);
+                            break;
+                        }
+                    }           
+                }
+            }
+            else {
+                fmt::println("Invalid item Entered");
+            }
+        }
+    }
+}
+
 void Tui::guidePage(shared_ptr<HeroBase>& hero , int &actions){
     // page number 2
     clearScreen();
@@ -458,6 +547,7 @@ void Tui::runGame() {
             else if (this->pageNumber == PageNumbers::MOVE_PAGE) this->movePage(currentHero , actions);
             else if (this->pageNumber == PageNumbers::GUIDE_PAGE) this->guidePage(currentHero , actions);
             else if (this->pageNumber == PageNumbers::PICKUP_PAGE) this->pickUpPage(currentHero , actions);
+            else if (this->pageNumber == PageNumbers::SPECIALACTION_PAGE) this->specialActionPage(currentHero , actions);
         }
         // if (this->pageNumber != PageNumbers::EXIT_PAGE) {
         //     (sys->getMonsters())[round % playerCount]->runMonsterPhase();

@@ -8,7 +8,9 @@ enum PageNumbers {
     HERO_PHASE_PAGE = 0,
     MOVE_PAGE = 1,
     GUIDE_PAGE = 2,
-    PICKUP_PAGE = 3
+    PICKUP_PAGE = 3,
+    ADVANCED_PAGE = 4,
+    SPECIALACTION_PAGE = 7
 };
 
 class Tui final {
@@ -28,6 +30,8 @@ class Tui final {
     void movePage(std::shared_ptr<HeroBase>& hero , int &actions);
     void guidePage(std::shared_ptr<HeroBase>& hero , int &actions);
     void pickUpPage(std::shared_ptr<HeroBase>& hero , int &actions);
+    void advancedPage(std::shared_ptr<HeroBase>& hero , int &actions);
+    void specialActionPage(std::shared_ptr<HeroBase>& hero , int &actions);
 public:
     explicit Tui(System *s);
     void runGame();
