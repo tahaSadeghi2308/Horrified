@@ -292,7 +292,7 @@ void System::moveHero(string_view _heroName , string_view _newPlace){
     for(auto loc : this->allLocations){
         if(loc->getPlaceName() == _newPlace) loc->addHero(currentEntity);
     }
-
+    
     // delete from current place 
     for (auto loc : this->allLocations){
         for(auto hero : loc->getAllHeros()){

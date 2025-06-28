@@ -760,7 +760,7 @@ void Tui::playPerkPage(shared_ptr<HeroBase>& hero , int &actions , bool &doMonst
     unordered_map<int , string> test;
     for (auto perk : hero->getAllPerks()) uniqePerkNames.insert(perk.name);
     fmt::println("First choose which perk u want to play");
-    string perkName = "Repel";
+    string perkName;
     while(true) {
         int i {0} , perkNum;
         for(auto perk : uniqePerkNames){
@@ -773,6 +773,7 @@ void Tui::playPerkPage(shared_ptr<HeroBase>& hero , int &actions , bool &doMonst
         perkNum = getCommand("Enter your perk number");
         if (perkNum > 0 && perkNum <= i){
             perkName = test[i - 1];
+            hero->deletePerk(perkName);
             break;
         }
         else if (perkNum == i + 1) { this->pageNumber = PageNumbers::HERO_PHASE_PAGE; return; }
