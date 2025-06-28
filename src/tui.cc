@@ -267,7 +267,100 @@ void Tui::movePage(shared_ptr<HeroBase>& hero , int &actions) {
 void Tui::advancedPage(shared_ptr<HeroBase>& hero , int &actions){
     // page number 4
     clearScreen();
-    fmt::println("first ");
+    fmt::println("first clarify which of monsters u want to advance");
+    int ch;
+    while (true){
+        fmt::println("1. Dracula");
+        fmt::println("2. Invisible Man");
+        fmt::println("3. Back");
+        fmt::println("4. Exit");
+        ch = getCommand("Enter your choise to advance");
+        if(ch == 3) { this->pageNumber = PageNumbers::HERO_PHASE_PAGE; return; }
+        else if(ch == 4) { this->pageNumber = PageNumbers::EXIT_PAGE; return; }
+        else if ( ch < 0 || ch > 4) {
+            fmt::println("Invaid choise for advance!!!");
+        }
+        else break;
+    }
+    if (ch == 1){
+        // TODO : dracula advance here
+        // collect hero red items
+        vector<Item> redItems;
+        int itemsPowerSum = 0;
+        for(auto i : hero->getAllItems()){
+            if (i.color == cardColor::RED) { 
+                redItems.push_back(i); 
+                itemsPowerSum += i.power;
+                if (itemsPowerSum >= 6) break; 
+            }
+        }
+        if ( itemsPowerSum < 6 ){
+            fmt::println("you cant advance for dracula !!");
+            this_thread::sleep_for(chrono::seconds(2));
+            this->pageNumber = PageNumbers::ADVANCED_PAGE; return;
+        }
+        else {
+            if (
+                hero->getCurrentPlace() != "cave" ||
+                hero->getCurrentPlace() != "crypt" ||
+                hero->getCurrentPlace() != "dungeon" ||
+                hero->getCurrentPlace() != "graveyard"
+            ){
+                fmt::println("you cant advance for dracula . there is no coffin here!!");
+                this_thread::sleep_for(chrono::seconds(2));
+                this->pageNumber = PageNumbers::ADVANCED_PAGE; return;
+            }
+            else {
+                // pay items
+                for(auto i : redItems){
+                    hero->deleteItem(i.name);
+                    sys->addItem(i);
+                }
+                if (!sys->allCluesFound("coffin")) sys->makeFoundClues("coffin");
+                actions--;
+                fmt::println("Fuck !!! we destroied one coffin");
+                this_thread::sleep_for(chrono::seconds(2));
+                this->pageNumber = PageNumbers::HERO_PHASE_PAGE; return;
+            }
+        }
+    }
+    else if (ch == 2){
+        vector<Item> clueItems;
+        for(auto i : hero->getAllItems()){
+            if (
+                i.place == "inn" || 
+                i.place == "barn" ||
+                i.place == "mansion" ||
+                i.place == "laboratory" ||
+                i.place == "institute"
+            ){
+                clueItems.push_back(i);
+            }
+        }
+
+        if (clueItems.empty()) {
+            fmt::println("you cant advance for Invisible man !!");
+            this_thread::sleep_for(chrono::seconds(2));
+            this->pageNumber = PageNumbers::ADVANCED_PAGE; return;
+        }
+        else {
+            if (hero->getCurrentPlace() != "precinct"){
+                fmt::println("you cant advance for Invisible man !!");
+                this_thread::sleep_for(chrono::seconds(2));
+                this->pageNumber = PageNumbers::ADVANCED_PAGE; return;
+            }
+            else {
+                // pay items
+                hero->deleteItem(clueItems[0].name);
+                sys->addItem(clueItems[0]);
+                if (!sys->allCluesFound("clue")) sys->makeFoundClues("clue");
+                actions--;
+                fmt::println("Fuck !!! we found one clue of ivisible man");
+                this_thread::sleep_for(chrono::seconds(2));
+                this->pageNumber = PageNumbers::HERO_PHASE_PAGE; return;
+            }
+        }
+    }
 }
 
 void Tui::specialActionPage(shared_ptr<HeroBase>& hero , int &actions){
@@ -549,6 +642,7 @@ void Tui::runGame() {
             else if (this->pageNumber == PageNumbers::GUIDE_PAGE) this->guidePage(currentHero , actions);
             else if (this->pageNumber == PageNumbers::PICKUP_PAGE) this->pickUpPage(currentHero , actions);
             else if (this->pageNumber == PageNumbers::SPECIALACTION_PAGE) this->specialActionPage(currentHero , actions);
+            else if (this->pageNumber == PageNumbers::ADVANCED_PAGE) this->advancedPage(currentHero , actions);
         }
         // if (this->pageNumber != PageNumbers::EXIT_PAGE) {
         //     (sys->getMonsters())[round % playerCount]->runMonsterPhase();

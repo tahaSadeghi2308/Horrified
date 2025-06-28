@@ -21,6 +21,7 @@ public:
     void setCurrentPlace(std::string_view _newPlace);
     void addPerk(const Perk &p);
     void deletePerk(std::string_view perkName);
+    void deleteItem(std::string_view itemName);
     const std::vector<Perk>& getAllPerks() const;
     const std::vector<Item>& getAllItems() const;
     void addItem(const Item &i);

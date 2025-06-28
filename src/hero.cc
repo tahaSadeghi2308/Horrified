@@ -39,6 +39,16 @@ void HeroBase::deletePerk(string_view perkName) {
     }
 }
 
+void HeroBase::deleteItem(string_view itemName){
+    bool isFound {};
+    for (int i {}; i < this->items.size() && !isFound; i++) {
+        if (this->items[i].name == itemName){
+            this->items.erase(items.begin() + i);
+            isFound = true;
+        }
+    }
+}
+
 void HeroBase::addItem(const Item& i) {
     this->items.push_back(i);
 }

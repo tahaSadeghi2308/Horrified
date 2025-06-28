@@ -51,6 +51,7 @@ public:
     void placeWithMaxItem();
     void systemInfoShow();
     Item getRandomItem();
+    void addItem(const Item& i);
     MonsterCard getRandomMonstCard();
     Perk getRandomPerk();
     void putItemInPlace(const std::string& _placeName , const Item &i);

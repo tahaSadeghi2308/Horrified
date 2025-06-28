@@ -191,6 +191,8 @@ vector<string> System::findPath(string source , SearchType type) {
     return path;
 }
 
+void System::addItem(const Item& i) { items.push(i); }
+
 void System::killMonster(string_view monsterName) {
     // delete from system list
     for(int i {}; i < this->monsters.size(); i++){
