@@ -41,7 +41,7 @@ class System {
 
     void putVillagerInPlace(const std::string &_place , const std::string &_villName);
     char rollDice();
-
+    int terrorLevel {0};
     std::vector<std::shared_ptr<Place>> findShortestPath(std::shared_ptr<Place> _monst);
 
 public:
@@ -52,6 +52,8 @@ public:
     void runMonsterPhase();
     void runHeroPhase();
     void runGame();
+    int getTerrorLevel() const;
+    void increaseTerrorLevel();
     int foundCluesCount(std::string type);
     void moveMonster(std::shared_ptr<MonsterBase> monst , std::shared_ptr<Place> newPlace);
     void moveHero(std::shared_ptr<HeroBase> her , std::shared_ptr<Place> newPlace);

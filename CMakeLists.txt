@@ -19,6 +19,7 @@ set(
   src/system.cc
   src/villager.cc
   src/monster.cc
+  src/tui.cc
 )
 
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})

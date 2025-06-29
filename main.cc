@@ -1,11 +1,16 @@
-#include "system.hpp"
+#include "tui.hpp"
 #include <iostream>
+#include "system.hpp"
 
 using namespace std;
 
 int main(){
-    System game;
-    game.runGame();
+    System *s = new System();
+    Tui t(s);
+    t.runGame();
+    delete s;
+    // System game;
+    // game.runGame();
     
     // game.showLocs();
     // game.runHeroPhase();

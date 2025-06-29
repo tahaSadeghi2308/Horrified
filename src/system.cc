@@ -123,6 +123,10 @@ System::System(){
     }
 }
 
+int System::getTerrorLevel() const { return this->terrorLevel; }
+
+void System::increaseTerrorLevel() { this->terrorLevel++; }
+
 int System::foundCluesCount(string type){
     if (type == "coffin") return 4 - this->coffins.size();
     else return 5 - this->evidence.size();

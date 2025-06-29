@@ -109,6 +109,19 @@ void Tui::quitPage() const {
     fmt::println("I hope u enjoy this game :(: ");
 }
 
+void Tui::displayActions() const {
+    cout << "🧰 Hero Actions:\n";
+    cout << "[1] Move  ";
+    cout << "[2] Guide Local  ";
+    cout << "[3] Pick Up Item  ";
+    cout << "[4] Advanced Action  ";
+    cout << "[6] Defeat Action\n";
+    cout << "[7] Special Action  ";
+    cout << "[8] Play perk  ";
+    cout << "[9] Exit Game\n";
+    cout << "[10] Help Page\n\n";
+}
+
 void Tui::welcomePage() {
     clearScreen();
     fmt::println("Be careful there are lot of monsters overthere !!!");
@@ -140,4 +153,32 @@ void Tui::welcomePage() {
     fmt::println("ok game is ready to go wait for 2 seconds .....");
     this_thread::sleep_for(chrono::seconds(2));
     clearScreen();
+}
+
+void Tui::terrorLevel(int level) {
+    string bar = string(level, '#') + string(5 - level, '-');
+    cout << "🧟 Terror Level: " << bar << " (" << level << " / 5)\n\n";
+}
+
+void Tui::heroPhasePage(shared_ptr<HeroBase>& hero , int actions){
+    // page Number 0
+    clearScreen();
+    this->header();
+    this->heroInfo(hero);
+    fmt::println("Remaining actions : {}" , actions);
+    this->showNeighborsInfo(hero);
+    this->monstersInfo();
+    this->terrorLevel(sys->getTerrorLevel());
+    this->displayActions();
+    int page = getCommand("Enter a action number ");
+    while (page <= 0 || page > 9) {
+        fmt::println("invalid page entered !!!");
+        page = getCommand("Enter a action number ");
+    }
+    this->pageNumber = page;
+}
+
+void Tui::runGame() {
+    this->welcomePage();
+    this->heroPhasePage(sys->getAllHeros()[0] , sys->getAllHeros()[0]->getActionCount());
 }
