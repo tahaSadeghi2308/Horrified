@@ -1,5 +1,6 @@
 #include "place.hpp"
 #include "villager.hpp"
+#include <algorithm>
 // #include "hero.hpp"
 
 using namespace std;
@@ -13,12 +14,13 @@ void Place::addItem(const Item& i){
 }
 
 void Place::deleteItem(const string& _name){
-    bool isFound {};
-    for (int i {}; i < this->items.size() && !isFound; i++) {
-        if (this->items[i].name == _name){
-            this->items.erase(items.begin() + i);
-            isFound = true;
-        }
+    auto it = std::find_if(this->items.begin(), this->items.end(),
+        [&_name](const Item& item) {
+            return item.name == _name;
+        });
+    
+    if (it != this->items.end()) {
+        this->items.erase(it);
     }
 }
 
@@ -31,12 +33,13 @@ void Place::addMonster(shared_ptr<MonsterBase> i) {
 }
 
 void Place::deleteMonster(const string& _name){
-    bool isFound {};
-    for (int i {}; i < this->monsters.size() && !isFound; i++) {
-        if (this->monsters[i]->getMonsterName() == _name){
-            this->monsters.erase(monsters.begin() + i);
-            isFound = true;
-        }
+    auto it = std::find_if(this->monsters.begin(), this->monsters.end(),
+        [&_name](const shared_ptr<MonsterBase>& monster) {
+            return monster->getMonsterName() == _name;
+        });
+    
+    if (it != this->monsters.end()) {
+        this->monsters.erase(it);
     }
 }
 
@@ -49,12 +52,13 @@ void Place::addVillager(shared_ptr<Villager> m){
 }
 
 void Place::deleteVillager(const string& _name){
-    bool isFound {};
-    for (int i {}; i < this->villagers.size() && !isFound; i++) {
-        if (this->villagers[i]->getVillagerName() == _name){
-            this->villagers.erase(villagers.begin() + i);
-            isFound = true;
-        }
+    auto it = std::find_if(this->villagers.begin(), this->villagers.end(),
+        [&_name](const shared_ptr<Villager>& villager) {
+            return villager->getVillagerName() == _name;
+        });
+    
+    if (it != this->villagers.end()) {
+        this->villagers.erase(it);
     }
 }
 
@@ -67,12 +71,13 @@ void Place::addHero(std::shared_ptr<HeroBase> m){
 }
 
 void Place::deleteHero(const string& _name){
-    bool isFound {};
-    for (int i {}; i < this->heros.size() && !isFound; i++) {
-        if (this->heros[i]->getHeroName() == _name){
-            this->heros.erase(heros.begin() + i);
-            isFound = true;
-        }
+    auto it = std::find_if(this->heros.begin(), this->heros.end(),
+        [&_name](const shared_ptr<HeroBase>& hero) {
+            return hero->getHeroName() == _name;
+        });
+    
+    if (it != this->heros.end()) {
+        this->heros.erase(it);
     }
 }
 

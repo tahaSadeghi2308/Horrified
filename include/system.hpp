@@ -47,6 +47,7 @@ public:
     System();
     ~System() = default;
     void run();
+    char rollDice() const;
     void moveVillager(std::string_view villName , std::string_view _newPlace);
     void placeWithMaxItem();
     void systemInfoShow();

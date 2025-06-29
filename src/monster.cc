@@ -150,6 +150,15 @@ void MonsterBase::move(int n , string strike)
     }
 }
 
+int MonsterBase::attack(char dice)
+{
+    if (dice == '*')
+    {
+        
+    }
+}
+
+
 void MonsterBase::runMonsterPhase() {
     // get a random monster card 
     MonsterCard currentCard { sys->getRandomMonstCard() };

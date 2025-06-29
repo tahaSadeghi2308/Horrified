@@ -6,6 +6,7 @@
 #include "place.hpp"
 #include "hero.hpp"
 #include <queue>
+#include <algorithm>
 
 using namespace std;
 
@@ -195,53 +196,93 @@ vector<string> System::findPath(string source , SearchType type) {
 void System::addItem(const Item& i) { items.push(i); }
 
 void System::killMonster(string_view monsterName) {
-    // delete from system list
-    for(int i {}; i < this->monsters.size(); i++){
-        if (monsters[i]->getMonsterName() == monsterName) {
-            this->monsters.erase(this->monsters.begin() + i);
-            break;
-        }
+    // delete from system list using iterator to avoid index issues
+    auto it = std::find_if(this->monsters.begin(), this->monsters.end(),
+        [&monsterName](const shared_ptr<MonsterBase>& monster) {
+            return monster->getMonsterName() == monsterName;
+        });
+    
+    if (it != this->monsters.end()) {
+        this->monsters.erase(it);
     }
+    
     // delete from places
     for (auto loc : this->allLocations){
         loc->deleteMonster(string(monsterName));
     }
 }
+
 void System::killVillager(string_view villName){
-    // delete from system list
-    for(int i {}; i < this->allVillagers.size(); i++){
-        if (allVillagers[i]->getVillagerName() == villName) {
-            this->allVillagers.erase(this->allVillagers.begin() + i);
-            break;
-        }
+    // delete from system list using iterator to avoid index issues
+    auto it = std::find_if(this->allVillagers.begin(), this->allVillagers.end(),
+        [&villName](const shared_ptr<Villager>& villager) {
+            return villager->getVillagerName() == villName;
+        });
+    
+    if (it != this->allVillagers.end()) {
+        this->allVillagers.erase(it);
     }
-    // delete from places
+    
+    // delete from places - FIXED: was calling deleteMonster instead of deleteVillager
     for (auto loc : this->allLocations){
-        loc->deleteMonster(string(villName));
+        loc->deleteVillager(string(villName));
     }
 }
 
+char System::rollDice() const
+{
+    char diceChars[6] = {'-' , '*' , '-' , '-' , '!' , '-'};
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<> distrib(0, 5);
+    return diceChars[distrib(gen)];
+}
+
 void System::moveVillager(string_view villName , string_view _newPlace){
+    // Find the villager
     shared_ptr<Villager> currentEntity {nullptr};
     for(auto vill : this->allVillagers){
-        if (vill->getVillagerName() == villName) { currentEntity = vill; break; }
+        if (vill->getVillagerName() == villName) { 
+            currentEntity = vill; 
+            break; 
+        }
+    }
+    
+    // Check if villager exists
+    if (!currentEntity) {
+        // Villager not found - this could be a bug or the villager was already killed
+        return;
     }
 
-    // delete from current place 
+    // Find the target location
+    shared_ptr<Place> targetLocation {nullptr};
+    for(auto loc : this->allLocations){
+        if(loc->getPlaceName() == _newPlace) {
+            targetLocation = loc;
+            break;
+        }
+    }
+    
+    // Check if target location exists
+    if (!targetLocation) {
+        // Target location not found
+        return;
+    }
+
+    // Delete from current place (if any) - Villager doesn't track location, so search all
     for (auto loc : this->allLocations){
-        for(auto vill : loc->getAllVillagers()){
+        const auto& villagers = loc->getAllVillagers();
+        for(const auto& vill : villagers){
             if (vill->getVillagerName() == currentEntity->getVillagerName()){
                 loc->deleteVillager(currentEntity->getVillagerName());
+                break;
             }
         }
     }
 
-    // add to new place 
-    for(auto loc : this->allLocations){
-        if(loc->getPlaceName() == _newPlace) loc->addVillager(currentEntity);
-    }
+    // Add to new place 
+    targetLocation->addVillager(currentEntity);
 }
-
 
 Item System::getRandomItem() { return items.pickOneRandomly(); }
 
@@ -261,50 +302,96 @@ void System::putItemInPlace(const string& _placeName , const Item &i){
 }
 
 void System::moveMonster(string_view _monsterName , string_view _newPLace){
+    // Find the monster
     shared_ptr<MonsterBase> currentEntity {nullptr};
     for(auto monst : this->monsters){
-        if (monst->getMonsterName() == _monsterName) { currentEntity = monst; break; }
+        if (monst->getMonsterName() == _monsterName) { 
+            currentEntity = monst; 
+            break; 
+        }
+    }
+    
+    // Check if monster exists
+    if (!currentEntity) {
+        // Monster not found - this could be a bug or the monster was already killed
+        return;
     }
 
-    // delete from current place 
-    for (auto loc : this->allLocations){
-        for(auto monst : loc->getAllMonsters()){
-            if (monst->getMonsterName() == currentEntity->getMonsterName()){
+    // Find the target location
+    shared_ptr<Place> targetLocation {nullptr};
+    for(auto loc : this->allLocations){
+        if(loc->getPlaceName() == _newPLace) {
+            targetLocation = loc;
+            break;
+        }
+    }
+    
+    // Check if target location exists
+    if (!targetLocation) {
+        // Target location not found
+        return;
+    }
+
+    // Get current location from monster and delete from it
+    string currentLocationStr = currentEntity->getCurrentLocation();
+    if (!currentLocationStr.empty()) {
+        for (auto loc : this->allLocations) {
+            if (loc->getPlaceName() == currentLocationStr) {
                 loc->deleteMonster(currentEntity->getMonsterName());
                 break;
             }
         }
     }
 
-    // add to new place 
-    for(auto loc : this->allLocations){
-        if(loc->getPlaceName() == _newPLace) loc->addMonster(currentEntity);
-    }
-
+    // Add to new place 
+    targetLocation->addMonster(currentEntity);
     currentEntity->setCurrentLocation(_newPLace);
 }
 
 void System::moveHero(string_view _heroName , string_view _newPlace){
+    // Find the hero
     shared_ptr<HeroBase> currentEntity {nullptr};
     for(auto hero : this->heros){
-        if (hero->getHeroName() == _heroName) { currentEntity = hero; break; }
+        if (hero->getHeroName() == _heroName) { 
+            currentEntity = hero; 
+            break; 
+        }
+    }
+    
+    // Check if hero exists
+    if (!currentEntity) {
+        // Hero not found - this could be a bug
+        return;
     }
 
+    // Find the target location
+    shared_ptr<Place> targetLocation {nullptr};
+    for(auto loc : this->allLocations){
+        if(loc->getPlaceName() == _newPlace) {
+            targetLocation = loc;
+            break;
+        }
+    }
     
-    // delete from current place 
-    for (auto loc : this->allLocations){
-        for(auto hero : loc->getAllHeros()){
-            if (hero->getHeroName() == currentEntity->getHeroName()){
+    // Check if target location exists
+    if (!targetLocation) {
+        // Target location not found
+        return;
+    }
+
+    // Get current location from hero and delete from it
+    string currentLocationStr = currentEntity->getCurrentPlace();
+    if (!currentLocationStr.empty()) {
+        for (auto loc : this->allLocations) {
+            if (loc->getPlaceName() == currentLocationStr) {
                 loc->deleteHero(currentEntity->getHeroName());
                 break;
             }
         }
     }
     
-    // add to new place 
-    for(auto loc : this->allLocations){
-        if(loc->getPlaceName() == _newPlace) loc->addHero(currentEntity);
-    }
+    // Add to new place 
+    targetLocation->addHero(currentEntity);
     currentEntity->setCurrentPlace(_newPlace);
 }
 
