@@ -139,13 +139,13 @@ void Tui::welcomePage() {
         fmt::println("2. Mayor");
         int num = getCommand();
         if (num == 1) {
-            this->playerPriority.push_back("arch");
+            this->playerPriority.push_back("archaeologist");
             this->playerPriority.push_back("mayor");
             break;
         }
         else if (num == 2) {
             this->playerPriority.push_back("mayor");
-            this->playerPriority.push_back("arch");
+            this->playerPriority.push_back("archaeologist");
             break;
         }
         else fmt::println("Invalid argument entered !!!");
@@ -178,7 +178,35 @@ void Tui::heroPhasePage(shared_ptr<HeroBase>& hero , int actions){
     this->pageNumber = page;
 }
 
+
 void Tui::runGame() {
     this->welcomePage();
-    this->heroPhasePage(sys->getAllHeros()[0] , sys->getAllHeros()[0]->getActionCount());
+    int round {0};
+    int playerCount = playerPriority.size();
+    bool doNextPhase {true};
+    while (this->pageNumber != PageNumbers::EXIT_PAGE) {
+        string currentHeroName = playerPriority[round % playerCount];
+        shared_ptr<HeroBase> currentHero {nullptr};
+        for (auto h : sys->getAllHeros()){
+            if (h->getHeroName() == currentHeroName) { currentHero = h; break;}
+        }
+        int actions = currentHero->getActionCount();
+        while(actions != 0 && pageNumber != PageNumbers::EXIT_PAGE) {
+            if (this->pageNumber == PageNumbers::HERO_PHASE_PAGE) this->heroPhasePage(currentHero , actions);
+            // else if (this->pageNumber == PageNumbers::MOVE_PAGE) this->movePage(currentHero , actions);
+            // else if (this->pageNumber == PageNumbers::GUIDE_PAGE) this->guidePage(currentHero , actions);
+            // else if (this->pageNumber == PageNumbers::PICKUP_PAGE) this->pickUpPage(currentHero , actions);
+            // else if (this->pageNumber == PageNumbers::SPECIALACTION_PAGE) this->specialActionPage(currentHero , actions);
+            // else if (this->pageNumber == PageNumbers::ADVANCED_PAGE) this->advancedPage(currentHero , actions);
+            // else if (this->pageNumber == PageNumbers::DEFEAT_PAGE) this->defeatPage(currentHero , actions);
+            // else if (this->pageNumber == PageNumbers::PLAYPERK_PAGE) this->playPerkPage(currentHero , actions , doNextPhase);
+        }
+        if (this->pageNumber != PageNumbers::EXIT_PAGE && doNextPhase == true) 
+        {
+            shared_ptr<MonsterBase> m = (sys->getAllMonsters())[round % playerCount];
+            // this->monsterPhasePage(m , currentHeroName);
+        }
+        round++;
+    }
+    this->quitPage();
 }
