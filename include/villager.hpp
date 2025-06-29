@@ -14,6 +14,7 @@ public:
     std::shared_ptr<Place> getVillagerLoc() const;
     void changeLoc(std::shared_ptr<Place> _newLoc);
     void setSafeZone(std::shared_ptr<Place> _newLoc);
+    std::shared_ptr<Place> getSafeZone(); 
 };
 
 #endif

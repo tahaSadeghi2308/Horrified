@@ -22,14 +22,14 @@ struct Item {
     std::string place; // NOTE: maybe change base on place implementation
     friend std::ostream& operator<< (std::ostream& output , Item&items)
     {  
-        output<< "Name-> " << items.name << " Color-> ";
+        output<< "Name-> " << items.name << '\t' << "Color-> ";
         if(items.color == 0)
-        output << "Red";
+        output << "Red\t";
         else if(items.color == 1)
-        output << "Blue";
+        output << "Blue\t";
         else
-        output << "Yellow";
-        output<< " Power-> " << items.power << " Place-> " << items.place ;
+        output << "Yellow\t";
+        output<< "Power-> " << items.power  << '\t' << "Place-> " << items.place ;
         return output;
     }
 };
