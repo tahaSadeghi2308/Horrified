@@ -123,6 +123,27 @@ System::System(){
     }
 }
 
+void System::moveMonster(shared_ptr<MonsterBase> monst , shared_ptr<Place> newPlace){
+    shared_ptr<Place> currentPlace = monst->getCurrentLocation();
+    monst->setCurrentLocation(newPlace);
+    newPlace->addMonster(monst);
+    currentPlace->deleteMonster(monst->getMonsterName());
+}
+
+void System::moveHero(shared_ptr<HeroBase> her , shared_ptr<Place> newPlace){
+    shared_ptr<Place> currentPlace = her->getCurrentPlace();
+    her->setCurrentPlace(newPlace);
+    newPlace->addHero(her);
+    currentPlace->deleteHero(her->getHeroName());
+}
+
+void System::moveVillager(shared_ptr<Villager> vill , shared_ptr<Place> newPlace){
+    shared_ptr<Place> currentPlace = vill->getVillagerLoc();
+    vill->changeLoc(newPlace);
+    newPlace->addVillager(vill);
+    currentPlace->deleteVillager(vill->getName());
+}
+
 vector<shared_ptr<Place>> System::findShortestPath(shared_ptr<Place> _p){
     unordered_map<shared_ptr<Place>, bool> visited;
     unordered_map<shared_ptr<Place>, shared_ptr<Place>> parent;

@@ -52,6 +52,9 @@ public:
     void runMonsterPhase();
     void runHeroPhase();
     void runGame();
+    void moveMonster(std::shared_ptr<MonsterBase> monst , std::shared_ptr<Place> newPlace);
+    void moveHero(std::shared_ptr<HeroBase> her , std::shared_ptr<Place> newPlace);
+    void moveVillager(std::shared_ptr<Villager> vill , std::shared_ptr<Place> newPlace);
 };
 
 #endif //SYSTEM_HPP
