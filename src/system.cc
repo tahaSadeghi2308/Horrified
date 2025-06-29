@@ -443,7 +443,7 @@ void System::placeWithMaxItem() {
 }
 
 void System::run() {
-    monsters[0]->runMonsterPhase();
+    // monsters[0]->runMonsterPhase();
     // cout << monsters[0]->getCurrentLocation() << "\n";
     for (auto h : heros) 
     {

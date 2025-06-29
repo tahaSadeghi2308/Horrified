@@ -13,7 +13,8 @@ enum PageNumbers {
     DEFEAT_PAGE = 6,
     SPECIALACTION_PAGE = 7,
     PLAYPERK_PAGE = 8,
-    HELP_PAGE = 10
+    HELP_PAGE = 10,
+    MONSTERPHASE_PAGE = 11
 };
 
 class Tui final {
@@ -25,7 +26,7 @@ class Tui final {
     void header() const;
     void terrorLevel(int level);
     void displayActions() const;
-    // void monsterPhasePage(shared_ptr<MonsterBase> monster);
+    void monsterPhasePage(std::shared_ptr<MonsterBase>& monster , std::string_view cHero);
     void heroPhasePage(std::shared_ptr<HeroBase>& hero , int actions);
     void heroInfo(std::shared_ptr<HeroBase>& hero);
     void monstersInfo();

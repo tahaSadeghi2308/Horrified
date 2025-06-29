@@ -26,7 +26,7 @@ public:
     void changeFrenzedState(bool newState);
     void setCurrentLocation(std::string_view _newLoc);
     std::string getCurrentLocation() const;
-    void runMonsterPhase();
+    int runMonsterPhase(char dice , std::string_view cHero);
 };
 
 class Dracula final : public MonsterBase {

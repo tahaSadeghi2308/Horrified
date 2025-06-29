@@ -212,7 +212,7 @@ int MonsterBase::attack(char dice , string_view monsterName , string_view cHero)
         }
         else if (!p->getAllHeros().empty())
         {
-            if (p->getAllHeros()[0]->getHeroName() == "arch") return 2; // for attacing to arch
+            if (p->getAllHeros()[0]->getHeroName() == cHero) return 2; // for attacing to arch
             return 3; // for attact to mayor
         }
     }
@@ -224,10 +224,10 @@ int MonsterBase::attack(char dice , string_view monsterName , string_view cHero)
     return -1; // for no attack or power
 }
 
-void MonsterBase::runMonsterPhase() {
+int MonsterBase::runMonsterPhase(char dice , string_view cHero) {
     // get a random monster card 
     MonsterCard currentCard { sys->getRandomMonstCard() };
-    currentCard.name = "Fortune_Teller";
+    // currentCard.name = "Fortune_Teller";
     // put items 
     this->putItems(currentCard.itemCount);
 
@@ -235,9 +235,30 @@ void MonsterBase::runMonsterPhase() {
     this->doEvent(currentCard.name);
 
     // moving 
-    // for (auto st : currentCard.strikePriorities)
-    // {
-    //     this->move(currentCard.move , st);
-    // }
-    this->power( "dracula" , "arch");
+    for (auto st : currentCard.strikePriorities)
+    {
+        this->move(currentCard.move , st);
+        if (st == "du") 
+        {
+            int status = this->attack(dice , "dracula" , cHero);
+            if (status != -1 && status != 4) return status;   
+        }
+        else if (st == "inm")
+        {
+            int status = this->attack(dice , "invisibleMan" , cHero);
+            if (status != -1 && status != 4) return status;
+        }
+        else
+        {
+            for (auto m : sys->getMonsters())
+            {
+                if (m->getIsFrenzed() == true)
+                {
+                    int status = this->attack(dice , m->getMonsterName() , cHero);
+                    if (status != -1 && status != 4) return status;
+                }
+            }
+        }
+    }
+    return -1;
 }
