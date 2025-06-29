@@ -1,6 +1,7 @@
 #include "tui.hpp"
 #include <iostream>
 #include "system.hpp"
+#include <fmt/core.h>
 
 using namespace std;
 
@@ -9,6 +10,12 @@ int main(){
     Tui t(s);
     t.runGame();
     delete s;
+    // System s;
+    // s.showLocs();
+    // s.runGame();
+    // fmt::println("\n-----------------------------------");
+    // s.showLocs();
+
     // System game;
     // game.runGame();
     

@@ -125,6 +125,25 @@ System::System(){
 
 int System::getTerrorLevel() const { return this->terrorLevel; }
 
+void System::killMonster(shared_ptr<MonsterBase> monst){
+    for(auto loc : this->allLocations){
+        loc->deleteMonster(monst->getMonsterName());
+    }
+    if (monst->getMonsterName() == "dracula") this->dracula = nullptr;
+    else if (monst->getMonsterName() == "invisibleMan") this->invisibleMan = nullptr;
+}
+
+void System::killVillager(shared_ptr<Villager> vill){
+    for (auto loc : this->allLocations){
+        loc->deleteVillager(vill->getName());
+    }
+    int index {0};
+    for(int i {}; i < this->allVillagers.size(); i++) {
+        if (this->allVillagers[i]->getName() == vill->getName()) { index = i; break; }
+    }
+    this->allVillagers.erase(this->allVillagers.begin() + index);
+}
+
 void System::increaseTerrorLevel() { this->terrorLevel++; }
 
 int System::foundCluesCount(string type){
@@ -219,39 +238,39 @@ char System::rollDice(){
 
 void System::showLocs() {
     // lets show all infoes 
-    for (auto loc : allLocations){
-        cout << "------------  " << loc->getName() << "  -------------\n";
-        // villgers here !!
-        cout << "villagers : \n";
-        for (auto vil : loc->getVillagers()){
-            cout << "  - " << vil->getName() << '\n';
-        } 
+    // for (auto loc : allLocations){
+    //     cout << "------------  " << loc->getName() << "  -------------\n";
+    //     // villgers here !!
+    //     cout << "villagers : \n";
+    //     for (auto vil : loc->getVillagers()){
+    //         cout << "  - " << vil->getName() << '\n';
+    //     } 
 
-        cout << "Heroes : \n";
-        for (auto vil : loc->getAllHeroes()){
-            cout << "  - " << vil->getHeroName() << '\n';
-        } 
+    //     cout << "Heroes : \n";
+    //     for (auto vil : loc->getAllHeroes()){
+    //         cout << "  - " << vil->getHeroName() << '\n';
+    //     } 
 
-        cout << "monsters : \n";
-        for (auto vil : loc->getMonsters()){
-            cout << "  - " << vil->getMonsterName() << '\n';
-        } 
+    //     cout << "monsters : \n";
+    //     for (auto vil : loc->getMonsters()){
+    //         cout << "  - " << vil->getMonsterName() << '\n';
+    //     } 
 
-        cout << "Neighbors : ";
-        for (auto nei : loc->getNeighbors()){
-            cout << nei->getName() << " ";
-        }
-        cout << '\n';
-    }
+    //     cout << "Neighbors : ";
+    //     for (auto nei : loc->getNeighbors()){
+    //         cout << nei->getName() << " ";
+    //     }
+    //     cout << '\n';
+    // }
 
     // for (auto x : findShortestPath(invisibleMan->getCurrentLocation())){
     //     cout << x->getName() << " ";
     // }
     // show villagers state 
-    // for (auto vil : allVillagers) {
-    //     cout << "--------------  " << vil->getName() << "  ---------------" << '\n';
-    //     cout << " - Safe zone : " << vil->getVillagerLoc() << '\n';
-    // }
+    for (auto vil : allVillagers) {
+        cout << "--------------  " << vil->getName() << "  ---------------" << '\n';
+        cout << " - Safe zone : " << vil->getSafeZone()->getName() << '\n';
+    }
 }
 
 void System::runMonsterPhase(){
@@ -533,83 +552,6 @@ void System::runHeroPhase()
 
 void System::runGame()
 {
-    long int choice1;
-    long int choice2;
-    while(true)
-    {
-        cout << "Player1\nWhen was the last time that you ate garlic(day)\n";
-        cin >> choice1;
-        if(choice1 < 0)
-        {
-        cerr << "Player1 your choice was invalid\n";
-        continue;
-        }
-        cout << "Player2\nWhen was the last time that you ate garlic\n";
-        cin >> choice2;
-        if(choice2 < 0)
-        {
-        cerr << "Player2 your choice was invalid\n";
-        continue;
-        }
-        break;
-    }
-    if(choice1 <= choice2)
-    {
-        while(true)
-        {
-            cout << "Player1 ,Which hero do you want to be\n1-Archaeologist\n2-Mayor\n";
-            int choose;
-            cin >> choose;
-            if(choose == 1)
-            turn = true;
-            else if(choose == 2)
-            turn = false;
-            else
-            {
-                cerr << "Your choice was invalid try again\n";
-                continue;
-            }
-            break;
-        }
-    }
-    else
-    {
-        while(true)
-        {
-            cout << "Player2 ,Which hero do you want to be\n1-Archaeologist\n2-Mayor\n";
-            int choose;
-            cin >> choose;
-            if(choose == 1)
-            turn = false;
-            else if(choose == 2)
-            turn = true;
-            else
-            {
-            cerr << "Your choice was invalid try again\n";
-            continue;
-            }
-            break;
-        }
-    }
-    clearScreen();
-    if(turn)
-    cout << "Player1 is -> Arcaeologist\nPlayer2 is -> Mayor\nGood luck\n";
-    else
-    cout << "Player1 is -> Mayor\nPlayer2 is -> Archaeologist\nGood luck\n";
-    
-    while(true)
-    {
-        if(dracula == nullptr && invisibleMan == nullptr)
-        {
-            cout << "YOU WON !!!!!\n";
-            break;
-        }
-        showLocs();
-        runHeroPhase();
-        if(BreakOfDawn)
-        runMonsterPhase();
-        else
-        BreakOfDawn = true;
-        clearScreen();
-    }
+    this->killMonster(this->dracula);
+    this->killVillager(this->allVillagers[0]);
 }

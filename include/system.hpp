@@ -58,6 +58,8 @@ public:
     void moveMonster(std::shared_ptr<MonsterBase> monst , std::shared_ptr<Place> newPlace);
     void moveHero(std::shared_ptr<HeroBase> her , std::shared_ptr<Place> newPlace);
     void moveVillager(std::shared_ptr<Villager> vill , std::shared_ptr<Place> newPlace);
+    void killMonster(std::shared_ptr<MonsterBase> monst);
+    void killVillager(std::shared_ptr<Villager> vill);
     std::vector<std::shared_ptr<MonsterBase>> getAllMonsters() { return {dracula , invisibleMan}; }    
     std::vector<std::shared_ptr<HeroBase>> getAllHeros() { return {arch , mayor}; }    
 };
