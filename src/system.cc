@@ -210,6 +210,13 @@ vector<shared_ptr<Place>> System::findShortestPath(shared_ptr<Place> _p){
     return path;
 }
 
+Perk System::getRandomPerk() {
+    if (perkDeck->size() > 0) 
+        return perkDeck->pickOneRandomly(); 
+}
+
+Item System::getRandomItem() { return itemBag->pickOneRandomly(); }
+
 void System::putVillagerInPlace(const string &_placeName , const string &_villName){
     for (auto _vill : this->allVillagers){
         if (_vill->getName() == _villName){

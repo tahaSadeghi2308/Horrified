@@ -54,6 +54,8 @@ public:
     void runGame();
     int getTerrorLevel() const;
     void increaseTerrorLevel();
+    Perk getRandomPerk();
+    Item getRandomItem();
     int foundCluesCount(std::string type);
     void moveMonster(std::shared_ptr<MonsterBase> monst , std::shared_ptr<Place> newPlace);
     void moveHero(std::shared_ptr<HeroBase> her , std::shared_ptr<Place> newPlace);

@@ -39,8 +39,10 @@ public:
     void quitPage() const;
     void displayActions() const;
     void runGame();
+    void backButton();
     void heroPhasePage(std::shared_ptr<HeroBase>& hero , int actions);
     void terrorLevel(int level);
+    void movePage(std::shared_ptr<HeroBase>& hero , int &actions);
 };
 
 #endif // !TUI_HPP

@@ -14,6 +14,8 @@ using namespace std;
 
 Tui::Tui(System *s): sys(s) {}
 
+void Tui::backButton() { this->pageNumber = PageNumbers::HERO_PHASE_PAGE; }
+
 void Tui::header() const {
     cout << "╔════════════════════════════════════════════════════════╗\n";
     cout << "║                   🧟 Horrified Game HUD                ║\n";
@@ -178,6 +180,74 @@ void Tui::heroPhasePage(shared_ptr<HeroBase>& hero , int actions){
     this->pageNumber = page;
 }
 
+void Tui::movePage(shared_ptr<HeroBase>& hero , int &actions) {
+    // page Number 1
+    clearScreen();
+    string current = hero->getCurrentPlace()->getName(); 
+    vector<shared_ptr<Place>> neis = hero->getCurrentPlace()->getNeighbors();
+    vector<shared_ptr<Villager>> hereVills = hero->getCurrentPlace()->getVillagers();
+
+    fmt::println("Ok, At first you can move yourself to an other place !!!");
+    while (true){
+        for(int i {}; i < neis.size(); i++){
+            cout << i + 1 << ". " << neis[i]->getName() << '\n';
+        }
+        cout << neis.size() + 1 << ". Back" << '\n';
+        cout << neis.size() + 2 << ". Exit" << '\n';
+        int num = getCommand("Enter a number to choose where u want to go ");
+
+        if (num > 0 && num <= neis.size()) {
+            sys->moveHero(hero , neis[num - 1]);
+            actions--;
+            break;
+        }
+        else if (num == neis.size() + 1) { this->backButton(); return; }
+        else if (num == neis.size() + 2) { this->pageNumber = PageNumbers::EXIT_PAGE; return; }
+        else fmt::println("Invalid neighboer choies !!!");
+    }
+    clearScreen();
+    fmt::println(
+        "Ok, Now {} is in {}. Do u want to move villagers in {}" , 
+        hero->getHeroName(),
+        hero->getCurrentPlace()->getName(),
+        current 
+    );
+    int ch;
+    while (true) { 
+        ch = getCommand("1.Yes | 2.No");
+        if (ch == 1 || ch == 2) break;
+        else fmt::println("Invalid choise !!!");
+    }
+    if (ch == 2) { this->pageNumber = PageNumbers::HERO_PHASE_PAGE; }
+    else {
+        while (true) {
+            int villNum;
+            for(int i {}; i < hereVills.size(); i++){
+                cout << i + 1 << ". " << hereVills[i]->getName() << '\n';
+            }
+            cout << hereVills.size() + 1 << ". Stop moving" << '\n';
+            villNum = getCommand("Enter a number ");
+            if (villNum > 0 && villNum <= hereVills.size()){
+                sys->moveVillager(hereVills[villNum - 1] , hero->getCurrentPlace());
+                if (hereVills[villNum - 1]->getSafeZone()->getName() == hero->getCurrentPlace()->getName()){
+                    fmt::println(
+                        "You reached a villager {} to its Safe zone :)\n He will give u a perk man",
+                        hereVills[villNum - 1]->getName()
+                    );
+                    // TODO: Add delete villager from system here
+                    sys->killVillager(hereVills[villNum - 1]);
+                    hero->addPerkCard(sys->getRandomPerk());
+                }
+                hereVills.erase(hereVills.begin() + villNum - 1);
+            }
+            else if (villNum == hereVills.size() + 1){
+                this->pageNumber = PageNumbers::HERO_PHASE_PAGE;
+                return;
+            }
+            else fmt::println("Invalid villager choies !!!");
+        }
+    }
+}
 
 void Tui::runGame() {
     this->welcomePage();
@@ -193,7 +263,7 @@ void Tui::runGame() {
         int actions = currentHero->getActionCount();
         while(actions != 0 && pageNumber != PageNumbers::EXIT_PAGE) {
             if (this->pageNumber == PageNumbers::HERO_PHASE_PAGE) this->heroPhasePage(currentHero , actions);
-            // else if (this->pageNumber == PageNumbers::MOVE_PAGE) this->movePage(currentHero , actions);
+            else if (this->pageNumber == PageNumbers::MOVE_PAGE) this->movePage(currentHero , actions);
             // else if (this->pageNumber == PageNumbers::GUIDE_PAGE) this->guidePage(currentHero , actions);
             // else if (this->pageNumber == PageNumbers::PICKUP_PAGE) this->pickUpPage(currentHero , actions);
             // else if (this->pageNumber == PageNumbers::SPECIALACTION_PAGE) this->specialActionPage(currentHero , actions);

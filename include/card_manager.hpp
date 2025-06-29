@@ -57,6 +57,7 @@ public:
     void push(const T &temp);
     void pop(const int index);
     std::vector<Item> getCards();
+    int size() const;
 };
 
 template <class T>
@@ -113,6 +114,9 @@ T CardManagerBase<T>::pickOneRandomly() {
     this->pop(0);
     return temp;
 }
+
+template<class T>
+int CardManagerBase<T>::size() const { return this->cards.size(); }
 
 template <class T>
 MonsterCardDeck<T>::MonsterCardDeck() {
