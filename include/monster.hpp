@@ -16,7 +16,7 @@ class MonsterBase {
     // functions
     void putItems(const int count);
     void doEvent(const std::string& _eventName);
-    // void move();
+    void move(int n , std::string strike);
     // void attack();
 
 public:

@@ -167,7 +167,8 @@ vector<string> System::findPath(string source , SearchType type) {
 
                         for (auto loc : this->allLocations) {
                             if (loc->getPlaceName() == nei) {
-                                if ((loc->getAllVillagers()).size() > 0) { // TODO : and heros should be added  
+                                if ((loc->getAllVillagers()).size() > 0 || (loc->getAllHeros()).size() > 0) 
+                                {
                                     target = nei; 
                                     break; 
                                 }
@@ -270,6 +271,7 @@ void System::moveMonster(string_view _monsterName , string_view _newPLace){
         for(auto monst : loc->getAllMonsters()){
             if (monst->getMonsterName() == currentEntity->getMonsterName()){
                 loc->deleteMonster(currentEntity->getMonsterName());
+                break;
             }
         }
     }
@@ -288,21 +290,21 @@ void System::moveHero(string_view _heroName , string_view _newPlace){
         if (hero->getHeroName() == _heroName) { currentEntity = hero; break; }
     }
 
-    // add to new place 
-    for(auto loc : this->allLocations){
-        if(loc->getPlaceName() == _newPlace) loc->addHero(currentEntity);
-    }
     
     // delete from current place 
     for (auto loc : this->allLocations){
         for(auto hero : loc->getAllHeros()){
             if (hero->getHeroName() == currentEntity->getHeroName()){
                 loc->deleteHero(currentEntity->getHeroName());
-                // break;
+                break;
             }
         }
     }
-
+    
+    // add to new place 
+    for(auto loc : this->allLocations){
+        if(loc->getPlaceName() == _newPlace) loc->addHero(currentEntity);
+    }
     currentEntity->setCurrentPlace(_newPlace);
 }
 

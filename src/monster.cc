@@ -1,5 +1,6 @@
 #include "monster.hpp"
 #include <queue>
+#include "place.hpp"
 
 using namespace std;
 
@@ -65,13 +66,102 @@ void MonsterBase::doEvent(const string& _eventName){
     }
 }
 
+void MonsterBase::move(int n , string strike) 
+{
+    if (strike == "du")
+    {
+        int count = n;
+        bool foundEnemy = false;
+        while (count-- && !foundEnemy)
+        {
+            for (auto place : sys->getLocations())
+            {
+                if (place->getPlaceName() == this->currentPlace)
+                {
+                    if (!place->getAllVillagers().empty() || !place->getAllHeros().empty())
+                    {
+                        foundEnemy = true;
+                    } 
+                    else 
+                    {
+                        vector<string> path = sys->findPath(this->currentPlace , ETO);
+                        sys->moveMonster("dracula" , path[1]);
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    else if (strike == "inm")
+    {
+        int count = n;
+        bool foundEnemy = false;
+        while (count-- && !foundEnemy)
+        {
+            for (auto place : sys->getLocations())
+            {
+                if (place->getPlaceName() == this->currentPlace)
+                {
+                    if (!place->getAllVillagers().empty() || !place->getAllHeros().empty())
+                    {
+                        foundEnemy = true;
+                    } 
+                    else 
+                    {
+                        vector<string> path = sys->findPath(this->currentPlace , ETO);
+                        sys->moveMonster("invisibleMan" , path[1]);
+                    }
+                    break;
+                }
+            }
+        }
+    }
+    else 
+    {
+        for(auto m : sys->getMonsters())
+        {
+            if (m->getIsFrenzed())
+            {
+                int count = n;
+                bool foundEnemy = false;
+                while (count-- && !foundEnemy)
+                {
+                    for (auto place : sys->getLocations())
+                    {
+                        if (place->getPlaceName() == this->currentPlace)
+                        {
+                            if (!place->getAllVillagers().empty() || !place->getAllHeros().empty())
+                            {
+                                foundEnemy = true;
+                            } 
+                            else 
+                            {
+                                vector<string> path = sys->findPath(this->currentPlace , ETO);
+                                sys->moveMonster(m->getMonsterName() , path[1]);
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+            break;
+        }
+    }
+}
+
 void MonsterBase::runMonsterPhase() {
     // get a random monster card 
     MonsterCard currentCard { sys->getRandomMonstCard() };
-    currentCard.name = "Fortune_Teller";
+
     // put items 
     this->putItems(currentCard.itemCount);
 
     // run an event
     this->doEvent(currentCard.name);
+    // moving 
+    for (auto st : currentCard.strikePriorities)
+    {
+        this->move(currentCard.move , st);
+    }
 }
