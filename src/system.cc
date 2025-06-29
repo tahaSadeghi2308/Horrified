@@ -123,6 +123,11 @@ System::System(){
     }
 }
 
+int System::foundCluesCount(string type){
+    if (type == "coffin") return 4 - this->coffins.size();
+    else return 5 - this->evidence.size();
+}
+
 void System::moveMonster(shared_ptr<MonsterBase> monst , shared_ptr<Place> newPlace){
     shared_ptr<Place> currentPlace = monst->getCurrentLocation();
     monst->setCurrentLocation(newPlace);
