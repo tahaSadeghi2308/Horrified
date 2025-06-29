@@ -1,4 +1,5 @@
 cmake_minimum_required (VERSION 3.22)
+set(CMAKE_BUILD_TYPE Debug)
 
 project(Horrified
   LANGUAGES CXX
@@ -21,3 +22,10 @@ set(
 )
 
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})
+
+# parts for packages
+find_package(fmt REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE fmt::fmt)
+
+find_package(Threads REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads)
