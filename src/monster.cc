@@ -150,27 +150,94 @@ void MonsterBase::move(int n , string strike)
     }
 }
 
-int MonsterBase::attack(char dice)
+void MonsterBase::power(string_view monsterName , string_view cHero)
 {
-    if (dice == '*')
+    if (monsterName == "dracula")
     {
-        
+        for (auto h : sys->getHeros())
+        {
+            if (h->getHeroName() == cHero)
+            {
+                if (h->getCurrentPlace() != this->getCurrentLocation())
+                    sys->moveHero(cHero , this->getCurrentLocation());
+                break;
+            }
+        }
+        // sys->moveHero(cHero , this->getCurrentLocation());
+    }
+    else if (monsterName == "invisibleMan")
+    {
+        int count = 2;
+        bool foundEnemy = false;
+        while (count-- && !foundEnemy)
+        {
+            for (auto place : sys->getLocations())
+            {
+                if (place->getPlaceName() == this->currentPlace)
+                {
+                    if (!place->getAllVillagers().empty())
+                    {
+                        foundEnemy = true;
+                    } 
+                    else 
+                    {
+                        vector<string> path = sys->findPath(this->currentPlace , ETV);
+                        if (!path.empty()) sys->moveMonster("invisibleMan" , path[1]);
+                    }
+                    break;
+                }
+            }
+        }
     }
 }
 
+int MonsterBase::attack(char dice , string_view monsterName , string_view cHero)
+{
+    if (dice == '*')
+    {
+        shared_ptr<Place> p {nullptr};
+        for(auto loc : sys->getLocations())
+        {
+            if (loc->getPlaceName() == this->getCurrentLocation())
+            {
+                p = loc;
+                break;
+            }
+        }
+
+        if (!p->getAllVillagers().empty())
+        {
+            sys->killVillager(p->getAllVillagers()[0]->getVillagerName());
+            return 1; // for killing a viilager
+        }
+        else if (!p->getAllHeros().empty())
+        {
+            if (p->getAllHeros()[0]->getHeroName() == "arch") return 2; // for attacing to arch
+            return 3; // for attact to mayor
+        }
+    }
+    else if (dice == '!')
+    {
+        this->power(monsterName , cHero);
+        return 4; // for running monster power
+    }
+    return -1; // for no attack or power
+}
 
 void MonsterBase::runMonsterPhase() {
     // get a random monster card 
     MonsterCard currentCard { sys->getRandomMonstCard() };
-
+    currentCard.name = "Fortune_Teller";
     // put items 
     this->putItems(currentCard.itemCount);
 
     // run an event
     this->doEvent(currentCard.name);
+
     // moving 
-    for (auto st : currentCard.strikePriorities)
-    {
-        this->move(currentCard.move , st);
-    }
+    // for (auto st : currentCard.strikePriorities)
+    // {
+    //     this->move(currentCard.move , st);
+    // }
+    this->power( "dracula" , "arch");
 }

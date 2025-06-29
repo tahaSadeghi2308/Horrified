@@ -24,7 +24,7 @@ void Place::deleteItem(const string& _name){
     }
 }
 
-const vector<Item>& Place::getAllItems() const {
+ vector<Item>& Place::getAllItems()  {
     return this->items;
 }
 
@@ -43,7 +43,7 @@ void Place::deleteMonster(const string& _name){
     }
 }
 
-const vector<shared_ptr<MonsterBase>>& Place::getAllMonsters() const {
+ vector<shared_ptr<MonsterBase>>& Place::getAllMonsters()  {
     return this->monsters;
 }
 
@@ -62,7 +62,7 @@ void Place::deleteVillager(const string& _name){
     }
 }
 
-const vector<shared_ptr<Villager>>& Place::getAllVillagers() const {
+ vector<shared_ptr<Villager>>& Place::getAllVillagers()  {
     return this->villagers;
 }
 
@@ -81,6 +81,6 @@ void Place::deleteHero(const string& _name){
     }
 }
 
-const vector<shared_ptr<HeroBase>>& Place::getAllHeros() const {
+ vector<shared_ptr<HeroBase>>& Place::getAllHeros()  {
     return this->heros;
 }

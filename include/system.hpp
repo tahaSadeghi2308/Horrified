@@ -15,7 +15,8 @@ class MonsterBase;
 class HeroBase;
 
 enum SearchType { 
-    ETO  // eneemy to others
+    ETO, // eneemy to others
+    ETV // to villager only
 };
 
 class System {
@@ -59,7 +60,6 @@ public:
     void moveMonster(std::string_view _monsterName , std::string_view _newPlace);
     void moveHero(std::string_view _monsterName , std::string_view _newPlace);
     std::vector<std::string> findPath(std::string source , SearchType type);
-    // void playPerkCard(const Perk& p);
     std::vector<std::shared_ptr<Place>>& getLocations();
     std::vector<std::shared_ptr<Villager>>& getVillagers();
     std::vector<std::shared_ptr<HeroBase>>& getHeros();

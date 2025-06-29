@@ -17,8 +17,8 @@ class MonsterBase {
     void putItems(const int count);
     void doEvent(const std::string& _eventName);
     void move(int n , std::string strike);
-    int attack(char );
-
+    int attack(char , std::string_view monsterName , std::string_view cHero);
+    void power(std::string_view monsterName , std::string_view cHero);
 public:
     MonsterBase(const std::string &_name , bool _isFrenzed , System *_sys);
     std::string getMonsterName() const;

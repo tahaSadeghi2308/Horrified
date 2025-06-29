@@ -25,6 +25,7 @@ class Tui final {
     void header() const;
     void terrorLevel(int level);
     void displayActions() const;
+    // void monsterPhasePage(shared_ptr<MonsterBase> monster);
     void heroPhasePage(std::shared_ptr<HeroBase>& hero , int actions);
     void heroInfo(std::shared_ptr<HeroBase>& hero);
     void monstersInfo();

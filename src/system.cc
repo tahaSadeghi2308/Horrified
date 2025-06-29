@@ -121,24 +121,27 @@ void System::makeFoundClues(string_view type){
 }
 
 void System::systemInfoShow() {
-    for(auto loc : this->allLocations) {
-        fmt::print("\n---------------- {} -----------  \n" , loc->getPlaceName());
-        fmt::print("      Here items : ");
-        for(auto i : loc->getAllItems()){
-            fmt::print("{} " , i.name);
-        }
-        fmt::print("\n      Here monsters : ");
-        for(auto i : loc->getAllMonsters()){
-            fmt::print("{} " , i->getMonsterName());
-        }
-        fmt::print("\n      Here villagers : ");
-        for(auto i : loc->getAllVillagers()){
-            fmt::print("{} " , i->getVillagerName());
-        }
-        fmt::print("\n      Here heros : ");
-        for(auto i : loc->getAllHeros()){
-            fmt::print("{} " , i->getHeroName());
-        }
+    // for(auto loc : this->allLocations) {
+    //     fmt::print("\n---------------- {} -----------  \n" , loc->getPlaceName());
+    //     fmt::print("      Here items : ");
+    //     for(auto i : loc->getAllItems()){
+    //         fmt::print("{} " , i.name);
+    //     }
+    //     fmt::print("\n      Here monsters : ");
+    //     for(auto i : loc->getAllMonsters()){
+    //         fmt::print("{} " , i->getMonsterName());
+    //     }
+    //     fmt::print("\n      Here villagers : ");
+    //     for(auto i : loc->getAllVillagers()){
+    //         fmt::print("{} " , i->getVillagerName());
+    //     }
+    //     fmt::print("\n      Here heros : ");
+    //     for(auto i : loc->getAllHeros()){
+    //         fmt::print("{} " , i->getHeroName());
+    //     }
+    // }
+    for (auto vill : allVillagers){
+        cout << vill->getVillagerName() << " ";
     }
     // fmt::print("\n----------------------------------\n");
     // cout << this->findPath(monsters[1]->getCurrentLocation() , ETO).size();
@@ -160,7 +163,6 @@ vector<string> System::findPath(string source , SearchType type) {
             while (!q.empty() && target.empty()) {
                 string currentPlace {q.front()};
                 q.pop();
-               
                 for (auto nei : this->gameMap[currentPlace]) {
                     if (!visited[nei]) {
                         visited[nei] = true;
@@ -181,7 +183,32 @@ vector<string> System::findPath(string source , SearchType type) {
                 }
                 
             }
-        break;
+            break;
+        case SearchType::ETV:
+            while (!q.empty() && target.empty()) {
+                string currentPlace {q.front()};
+                q.pop();
+               
+                for (auto nei : this->gameMap[currentPlace]) {
+                    if (!visited[nei]) {
+                        visited[nei] = true;
+                        parent[nei] = currentPlace;
+
+                        for (auto loc : this->allLocations) {
+                            if (loc->getPlaceName() == nei) {
+                                if ((loc->getAllVillagers()).size() > 0) 
+                                {
+                                    target = nei; 
+                                    break; 
+                                }
+                            }
+                        }
+                        if (!target.empty()) break;
+                        q.push(nei);
+                    }
+                }
+            }
+            break;
     }
     vector<string> path;
     if (!target.empty()) {
@@ -417,6 +444,11 @@ void System::placeWithMaxItem() {
 
 void System::run() {
     monsters[0]->runMonsterPhase();
+    // cout << monsters[0]->getCurrentLocation() << "\n";
+    for (auto h : heros) 
+    {
+        cout << h->getCurrentPlace() << "\n";
+    }
 }
 
 int System::getTerrorLevel() const { return this->terrorLevel; }

@@ -21,16 +21,16 @@ public:
     std::string getPlaceName() const;
     void addItem(const Item& i);
     void deleteItem(const std::string& _name);
-    const std::vector<Item>& getAllItems() const;
+    std::vector<Item>& getAllItems() ;
     void addMonster(std::shared_ptr<MonsterBase> m);
     void deleteMonster(const std::string& _name);
-    const std::vector<std::shared_ptr<MonsterBase>>& getAllMonsters() const;
+    std::vector<std::shared_ptr<MonsterBase>>& getAllMonsters() ;
     void addVillager(std::shared_ptr<Villager> m);
     void deleteVillager(const std::string& _name);
-    const std::vector<std::shared_ptr<Villager>>& getAllVillagers() const;
+    std::vector<std::shared_ptr<Villager>>& getAllVillagers() ;
     void addHero(std::shared_ptr<HeroBase> m);
     void deleteHero(const std::string& _name);
-    const std::vector<std::shared_ptr<HeroBase>>& getAllHeros() const;
+    std::vector<std::shared_ptr<HeroBase>>& getAllHeros() ;
 };
 
 #endif // PLACE_HPP
