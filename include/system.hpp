@@ -68,6 +68,8 @@ public:
     std::vector<std::string>& getEvidence() { return evidence; }
     std::vector<std::string>& getCoffins() { return coffins; }
     void addItem(const Item& i) { itemBag->push(i); }
+    std::shared_ptr<InvisibleMan> getInvisible() { return invisibleMan; }
+    std::shared_ptr<ItemBag<Item>> getItemBag() { return itemBag; }
 };
 
 #endif //SYSTEM_HPP

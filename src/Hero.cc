@@ -48,6 +48,15 @@ void HeroBase::specialAction()
     return;
 }
 
+void HeroBase::deletePerk(string_view perkName) {
+    bool isFound {};
+    for (int i {}; i < this->heroPerks.size() && !isFound; i++) {
+        if (this->heroPerks[i].name == perkName){
+            this->heroPerks.erase(heroPerks.begin() + i);
+            isFound = true;
+        }
+    }
+}
 //------help------
 
 void HeroBase::Help()

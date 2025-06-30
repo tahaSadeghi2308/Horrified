@@ -530,7 +530,7 @@ void System::runHeroPhase()
             HeroTurn->defeatAction(coffins, evidence, itemBag, dracula, invisibleMan);
             break;
         case 6:
-            HeroTurn->runPerkCard(arch, mayor, dracula, invisibleMan,allLocations, itemBag,perkDeck,BreakOfDawn);
+            //HeroTurn->runPerkCard(arch, mayor, dracula, invisibleMan,allLocations, itemBag,perkDeck,BreakOfDawn);
             break;
         case 7:
             HeroTurn->Help();
