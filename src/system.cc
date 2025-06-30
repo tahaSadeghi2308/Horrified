@@ -151,7 +151,8 @@ void System::placeWithMaxItem() {
 }
 
 void System::killMonster(shared_ptr<MonsterBase> monst){
-    for(auto loc : this->allLocations){
+    if (!monst) return;
+    for (auto& loc : this->allLocations) {
         loc->deleteMonster(monst->getMonsterName());
     }
     if (monst->getMonsterName() == "dracula") this->dracula = nullptr;
@@ -159,14 +160,15 @@ void System::killMonster(shared_ptr<MonsterBase> monst){
 }
 
 void System::killVillager(shared_ptr<Villager> vill){
-    for (auto loc : this->allLocations){
+    if (!vill) return;
+    for (auto& loc : this->allLocations) {
         loc->deleteVillager(vill->getName());
     }
-    int index {0};
-    for(int i {}; i < this->allVillagers.size(); i++) {
-        if (this->allVillagers[i]->getName() == vill->getName()) { index = i; break; }
-    }
-    this->allVillagers.erase(this->allVillagers.begin() + index);
+    auto it = std::remove_if(
+        this->allVillagers.begin(), this->allVillagers.end(),
+        [&](const shared_ptr<Villager>& v) { return v->getName() == vill->getName(); }
+    );
+    this->allVillagers.erase(it, this->allVillagers.end());
 }
 
 void System::increaseTerrorLevel() { this->terrorLevel++; }
@@ -177,24 +179,30 @@ int System::foundCluesCount(string type){
 }
 
 void System::moveMonster(shared_ptr<MonsterBase> monst , shared_ptr<Place> newPlace){
+    if (!monst || !newPlace) return;
     shared_ptr<Place> currentPlace = monst->getCurrentLocation();
+    if (currentPlace == newPlace) return;
+    if (currentPlace) currentPlace->deleteMonster(monst->getMonsterName());
     monst->setCurrentLocation(newPlace);
     newPlace->addMonster(monst);
-    currentPlace->deleteMonster(monst->getMonsterName());
 }
 
 void System::moveHero(shared_ptr<HeroBase> her , shared_ptr<Place> newPlace){
+    if (!her || !newPlace) return;
     shared_ptr<Place> currentPlace = her->getCurrentPlace();
+    if (currentPlace == newPlace) return;
+    if (currentPlace) currentPlace->deleteHero(her->getHeroName());
     her->setCurrentPlace(newPlace);
     newPlace->addHero(her);
-    currentPlace->deleteHero(her->getHeroName());
 }
 
 void System::moveVillager(shared_ptr<Villager> vill , shared_ptr<Place> newPlace){
+    if (!vill || !newPlace) return;
     shared_ptr<Place> currentPlace = vill->getVillagerLoc();
+    if (currentPlace == newPlace) return;
+    if (currentPlace) currentPlace->deleteVillager(vill->getName());
     vill->changeLoc(newPlace);
     newPlace->addVillager(vill);
-    currentPlace->deleteVillager(vill->getName());
 }
 
 vector<shared_ptr<Place>> System::findShortestPath(

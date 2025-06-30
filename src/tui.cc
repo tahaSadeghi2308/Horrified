@@ -52,52 +52,87 @@ int Tui::monsterPhasePage(shared_ptr<MonsterBase> monst , shared_ptr<HeroBase>& 
     fmt::println("im {} and im now doing my turn to do my job!!!" , monst->getMonsterName());
 
     char dices[3] = {
-        '*',
-        '-',
+        sys->rollDice(),
+        sys->rollDice(),
         sys->rollDice()
     };
 
     bool continuePhase {true};
-
-    for (int i {}; i < 3 && continuePhase; i++){
-        int isEnd = sys->isEndGame();
-        if (isEnd != -1) return isEnd;
-        this_thread::sleep_for(chrono::seconds(2));
-        clearScreen();
-        if (dices[i] == '*') continuePhase = false;
-        fmt::println("Dice sign is {}" , dices[i]);
-        this_thread::sleep_for(chrono::seconds(1));
-        int status = monst->runMonsterPhase(dices[i] , hero);
-        if (status == -1) {
-            fmt::println("You are so lucky man :(");
+    int isEnd;
+    for (auto dice : dices){
+        if (continuePhase) {
+            isEnd = sys->isEndGame();
+            if (isEnd != -1) return isEnd;
             this_thread::sleep_for(chrono::seconds(2));
-            pageNumber = PageNumbers::HERO_PHASE_PAGE;
-        }
-        else {
             clearScreen();
-            if (status != 1) {
-                fmt::println("shit situation is so bad your hero is hurted :)");
-                fmt::println("Dont worry u can pay an item to be safe");
-                int n;
-                while (true) {
-                    fmt::println("Do u want to pay an item ??");
-                    fmt::println("1. Yes");
-                    fmt::println("2. No");
-                    n = getCommand("Choose a number");
-                    if (n != 1 && n != 2) fmt::println ("invalid choose!!!");
-                    else break;
-                }
-                if (n == 1) {
-                    auto colorToString = [](Color c) -> string {
-                        if (c == Color::BLUE) return "blue";
-                        else if (c == Color::RED) return "red";
-                        else if (c == Color::YELLOW) return "yellow";
-                    };
-                    
-                    if (hero->getHeroItems().empty()) {
-                        fmt::println("You dont have any item to pay");
-                        fmt::println("So we punish u becasue of ur lie !!!");
-                        this_thread::sleep_for(chrono::seconds(2));
+            if (dice == '*') continuePhase = false;
+            fmt::println("Dice sign is {}" , dice);
+            this_thread::sleep_for(chrono::seconds(1));
+            int status = monst->runMonsterPhase(dice , hero);
+            if (status == -1) {
+                fmt::println("You are so lucky man :(");
+                this_thread::sleep_for(chrono::seconds(2));
+                pageNumber = PageNumbers::HERO_PHASE_PAGE;
+            }
+            else {
+                clearScreen();
+                if (status != 1) {
+                    fmt::println("shit situation is so bad your hero is hurted :)");
+                    fmt::println("Dont worry u can pay an item to be safe");
+                    int n;
+                    while (true) {
+                        fmt::println("Do u want to pay an item ??");
+                        fmt::println("1. Yes");
+                        fmt::println("2. No");
+                        n = getCommand("Choose a number");
+                        if (n != 1 && n != 2) fmt::println ("invalid choose!!!");
+                        else break;
+                    }
+                    if (n == 1) {
+                        auto colorToString = [](Color c) -> string {
+                            if (c == Color::BLUE) return "blue";
+                            else if (c == Color::RED) return "red";
+                            else if (c == Color::YELLOW) return "yellow";
+                        };
+                        
+                        if (hero->getHeroItems().empty()) {
+                            fmt::println("You dont have any item to pay");
+                            fmt::println("So we punish u becasue of ur lie !!!");
+                            this_thread::sleep_for(chrono::seconds(2));
+                            sys->increaseTerrorLevel();
+                            for(auto loc : sys->getAllLocations()){
+                                if (loc->getName() == "hospital"){
+                                    sys->moveHero(hero , loc);
+                                    break;
+                                }
+                            }
+                            pageNumber = PageNumbers::HERO_PHASE_PAGE;
+                        }
+                        else {
+                            int j;
+                            while(true) {   
+                                for (int i {}; i < hero->getHeroItems().size(); i++) {
+                                    fmt::println(
+                                        "{}. {} {} ({})",
+                                        i + 1,
+                                        (hero->getHeroItems())[i].name,
+                                        colorToString((hero->getHeroItems())[i].color),
+                                        (hero->getHeroItems())[i].power
+                                    );
+                                }
+                                j = getCommand("Enter item number");
+                                if (j < 0 || j > hero->getHeroItems().size()) fmt::println("invaid number for item");
+                                else break;
+                            }
+                            sys->addItem(hero->getHeroItems()[j - 1]);
+                            hero->deleteItem(hero->getHeroItems()[j - 1].name);
+                            continuePhase = true;
+                            pageNumber = PageNumbers::HERO_PHASE_PAGE;
+                            break;
+                        }  
+                    }
+                    else {
+                        fmt::println("Ok we do respect to ur choice");
                         sys->increaseTerrorLevel();
                         for(auto loc : sys->getAllLocations()){
                             if (loc->getName() == "hospital"){
@@ -107,50 +142,18 @@ int Tui::monsterPhasePage(shared_ptr<MonsterBase> monst , shared_ptr<HeroBase>& 
                         }
                         pageNumber = PageNumbers::HERO_PHASE_PAGE;
                     }
-                    else {
-                        int j;
-                        while(true) {   
-                            for (int i {}; i < hero->getHeroItems().size(); i++) {
-                                fmt::println(
-                                    "{}. {} {} ({})",
-                                    i + 1,
-                                    (hero->getHeroItems())[i].name,
-                                    colorToString((hero->getHeroItems())[i].color),
-                                    (hero->getHeroItems())[i].power
-                                );
-                            }
-                            j = getCommand("Enter item number");
-                            if (j < 0 || j > hero->getHeroItems().size()) fmt::println("invaid number for item");
-                            else break;
-                        }
-                        sys->addItem(hero->getHeroItems()[j - 1]);
-                        hero->deleteItem(hero->getHeroItems()[j - 1].name);
-                        continuePhase = true;
-                        pageNumber = PageNumbers::HERO_PHASE_PAGE;
-                        break;
-                    }  
                 }
                 else {
-                    fmt::println("Ok we do respect to ur choice");
+                    fmt::println("We lost one villager !!!!!");
                     sys->increaseTerrorLevel();
-                    for(auto loc : sys->getAllLocations()){
-                        if (loc->getName() == "hospital"){
-                            sys->moveHero(hero , loc);
-                            break;
-                        }
-                    }
+                    this_thread::sleep_for(chrono::seconds(2));
                     pageNumber = PageNumbers::HERO_PHASE_PAGE;
                 }
             }
-            else {
-                fmt::println("We lost one villager !!!!!");
-                sys->increaseTerrorLevel();
-                this_thread::sleep_for(chrono::seconds(2));
-                pageNumber = PageNumbers::HERO_PHASE_PAGE;
-            }
         }
     }
-}
+    return isEnd;
+}    
 
 void Tui::monstersInfo() {
     cout << "╔═══════════════════════╗\n";
