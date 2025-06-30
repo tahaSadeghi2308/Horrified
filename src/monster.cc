@@ -64,6 +64,90 @@ void MonsterBase::doEvent(const string& _eventName){
     else if (_eventName == "The_Ichthyologist"){
         sys->moveVillager("dr.reed" , "institute");
     }
+    else if (_eventName == "Hypnotic_Gaze")
+    {
+        string draculaLoc;
+
+        for (auto& monster : sys->getMonsters())
+        {
+            if (monster->getMonsterName() == "Dracula")
+            {
+                draculaLoc = monster->getCurrentLocation();
+                break;
+            }
+        }
+
+        if (draculaLoc.empty()) {
+            fmt::println("Dracula is dead.");
+            return;
+        }
+
+        auto path = sys->findPath(draculaLoc, SearchType::ETO);
+
+        if (path.size() < 2) {
+            fmt::println("target is in the draculas location.");
+            return;
+        }
+
+        std::string targetPlace = path.back();      
+        std::string nextPlace = path[path.size()-2]; 
+
+        shared_ptr<Place> targetLocation;
+        shared_ptr<Place> nextLocation;
+        for (auto& place : sys->getLocations()) 
+        {
+            if (place->getPlaceName() == targetPlace)
+                targetLocation = place;
+            if(place->getPlaceName() == nextPlace)
+                nextLocation = place;
+        }
+
+        if(!targetLocation->getAllHeros().empty())
+        {
+            for (auto& hero : sys->getHeros()) 
+            {
+                if (hero->getCurrentPlace() == targetPlace) 
+                {
+                    sys->moveHero(hero->getHeroName(), nextPlace);
+                    fmt::println("{} (hero) moved toward Dracula.", hero->getHeroName());
+                    break;
+                }
+            }
+        }
+        else
+        {
+            vector<shared_ptr<Villager>> temp = targetLocation -> getAllVillagers();
+            targetLocation->deleteVillager(temp[0]->getVillagerName());
+            nextLocation->addVillager(temp[0]);
+            fmt::println("{} (villager) moved toward Dracula.", temp[0]->getVillagerName());
+        }
+    }
+    
+    else if (_eventName == "On_The_Move")
+    {
+        vector<shared_ptr<MonsterBase>> monst = sys->getMonsters();
+        if(monst.size() == 1)
+        {
+            bool state = monst[0]->getIsFrenzed();
+            monst[0]->changeFrenzedState(!state);
+        }
+        else if(monst.size() == 2)
+        {
+            bool state0 = monst[0]->getIsFrenzed();
+            bool state1 = monst[1]->getIsFrenzed();
+            if(state0)
+            {
+                monst[0]->changeFrenzedState(false);
+                monst[1]->changeFrenzedState(true);
+            }
+            else
+            {
+                monst[0]->changeFrenzedState(true);
+                monst[1]->changeFrenzedState(false);
+            }
+        }
+        // implementing villagers to get closer to safe zone
+    }
 }
 
 void MonsterBase::move(int n , string strike) 

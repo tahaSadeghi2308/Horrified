@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 4.0)
+cmake_minimum_required(VERSION 3.0)
 project(Horrified)
 set(CMAKE_BUILD_TYPE Debug)
 

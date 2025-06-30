@@ -1003,6 +1003,28 @@ void Tui::runGame() {
             shared_ptr<MonsterBase> m = (sys->getMonsters())[round % playerCount];
             this->monsterPhasePage(m , currentHeroName);
         }
+        
+        if (sys->getMonsters().empty())
+        {
+            clearScreen();
+            fmt::println("YOU WON!!!!! All monsters have been killed.");
+            this_thread::sleep_for(chrono::seconds(2));
+            this->pageNumber = PageNumbers::EXIT_PAGE;
+        }
+        else if (sys->getTerrorLevel() >= 5)
+        {
+            clearScreen();
+            fmt::println("GAME OVER!!!!Terror level is 5.");
+            this_thread::sleep_for(chrono::seconds(2));
+            this->pageNumber = PageNumbers::EXIT_PAGE;
+        }
+        else if (sys->getMonsterCards().getCards().empty())
+        {
+            clearScreen();
+            fmt::println("GAME OVER! No monstercard is available.");
+            this_thread::sleep_for(chrono::seconds(2));
+            this->pageNumber = PageNumbers::EXIT_PAGE;
+        }
         round++;
     }
     this->quitPage();

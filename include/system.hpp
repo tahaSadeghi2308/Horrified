@@ -72,6 +72,7 @@ public:
     int foundClues(std::string_view type);
     void killMonster(std::string_view monsterName);
     void killVillager(std::string_view villName);
+    MonsterCardDeck<MonsterCard> getMonsterCards() const;
 };
 
 #endif // SYSTEM_HPP

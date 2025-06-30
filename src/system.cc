@@ -454,3 +454,5 @@ void System::run() {
 int System::getTerrorLevel() const { return this->terrorLevel; }
 
 void System::increaseTerrorLevel() { (this->terrorLevel)++; }
+
+MonsterCardDeck<MonsterCard> System::getMonsterCards() const { return monsterCards;}
