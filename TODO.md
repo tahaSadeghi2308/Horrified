@@ -4,3 +4,4 @@
 - [ ] Indicate which hero is current hero
 - [ ] implement monster's power with pure virtual
 - [ ] add a parameter to FSP function for finding based on situation
+- [ ] dices should be implemented for each strike !!!
