@@ -11,6 +11,10 @@
 #include "monster.hpp"
 #include "utility.hpp"
 
+enum SearchingType {
+    ETO,
+    ETV
+};
 class System {
     std::shared_ptr<MonsterCardDeck<MonsterCard>> monsterDeck {nullptr};
     std::shared_ptr<ItemBag<Item>> itemBag {nullptr};
@@ -42,28 +46,35 @@ class System {
     void putVillagerInPlace(const std::string &_place , const std::string &_villName);
     char rollDice();
     int terrorLevel {0};
-    std::vector<std::shared_ptr<Place>> findShortestPath(std::shared_ptr<Place> _monst);
-
-public:
+    
+    public:
     System();
     // TODO: we should create a function for saving game with destructor !!!
     // ~System();
+    std::vector<std::shared_ptr<Place>> findShortestPath(
+        std::shared_ptr<Place> _place,
+        SearchingType type
+    );
     void showLocs();
-    void runMonsterPhase();
+    // void runMonsterPhase();
     void runHeroPhase();
     void runGame();
     int getTerrorLevel() const;
     void increaseTerrorLevel();
     Perk getRandomPerk();
     Item getRandomItem();
+    void putItemInPlace(std::string_view placeName , Item i);
     int foundCluesCount(std::string type);
     void moveMonster(std::shared_ptr<MonsterBase> monst , std::shared_ptr<Place> newPlace);
     void moveHero(std::shared_ptr<HeroBase> her , std::shared_ptr<Place> newPlace);
     void moveVillager(std::shared_ptr<Villager> vill , std::shared_ptr<Place> newPlace);
     void killMonster(std::shared_ptr<MonsterBase> monst);
     void killVillager(std::shared_ptr<Villager> vill);
+    void placeWithMaxItem();
     std::vector<std::shared_ptr<MonsterBase>> getAllMonsters() { return {dracula , invisibleMan}; }    
-    std::vector<std::shared_ptr<HeroBase>> getAllHeros() { return {arch , mayor}; }    
+    std::vector<std::shared_ptr<HeroBase>> getAllHeros() { return {arch , mayor}; }
+    std::vector<std::shared_ptr<Place>> getAllLocations() { return this->allLocations; } 
+    std::vector<std::shared_ptr<Villager>> getAllVillagers () { return this->allVillagers; } 
 };
 
 #endif //SYSTEM_HPP
