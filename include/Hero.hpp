@@ -36,7 +36,7 @@ public:
     void addPerkCard(const Perk &perk);
     void setCurrentPlace(std::shared_ptr<Place> _place); // delete & here bug possibility !!
     std::shared_ptr<Place> getCurrentPlace();
-    std::vector<Item> getHeroItems();
+    std::vector<Item>& getHeroItems();
     void addHeroItems(Item);
     virtual ~HeroBase() = default;
 };

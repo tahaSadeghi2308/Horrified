@@ -35,7 +35,7 @@ void HeroBase::setCurrentPlace(shared_ptr<Place> _place) {
 
 shared_ptr<Place> HeroBase::getCurrentPlace() { return this->currentPlace; }
 
-std::vector<Item> HeroBase::getHeroItems() { return this->heroItems; }
+std::vector<Item>& HeroBase::getHeroItems() { return this->heroItems; }
 
 void HeroBase::addHeroItems(Item _item)
 {

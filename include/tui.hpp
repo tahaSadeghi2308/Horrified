@@ -45,6 +45,9 @@ public:
     void movePage(std::shared_ptr<HeroBase>& hero , int &actions);
     void guidePage(std::shared_ptr<HeroBase>& hero ,int &actions);
     void pickUpPage(std::shared_ptr<HeroBase>& hero ,int &actions);
+    void advancedPage(std::shared_ptr<HeroBase>& hero,int &actions);
+    void specialActionPage(std::shared_ptr<HeroBase>& hero,int &actions);
+    void playPerkPage(std::shared_ptr<HeroBase>& hero , int &actions , bool &doMonsterPhase);
 };
 
 #endif // !TUI_HPP

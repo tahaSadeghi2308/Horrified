@@ -37,7 +37,7 @@ class System {
     //bool for hero turn if true -> arch if false -> mayor
     bool turn ;
 
-    bool BreakOfDawn = true;
+    //bool BreakOfDawn = true; handeled in tui
 
     void putVillagerInPlace(const std::string &_place , const std::string &_villName);
     char rollDice();
@@ -64,7 +64,10 @@ public:
     void killVillager(std::shared_ptr<Villager> vill);
     std::vector<std::shared_ptr<MonsterBase>> getAllMonsters() { return {dracula , invisibleMan}; }    
     std::vector<std::shared_ptr<HeroBase>> getAllHeros() { return {arch , mayor}; }   
-    std::vector<std::shared_ptr<Place>> getLocations() {return allLocations;} 
+    std::vector<std::shared_ptr<Place>> getLocations() { return allLocations; } 
+    std::vector<std::string>& getEvidence() { return evidence; }
+    std::vector<std::string>& getCoffins() { return coffins; }
+    void addItem(const Item& i) { itemBag->push(i); }
 };
 
 #endif //SYSTEM_HPP

@@ -9,6 +9,7 @@
 #include "utility.hpp"
 #include <chrono>
 #include <thread>
+#include <set>
 
 using namespace std;
 
@@ -456,6 +457,243 @@ void Tui::guidePage(std::shared_ptr<HeroBase>& hero ,int &actions)
     }
 }
 
+void Tui::advancedPage(shared_ptr<HeroBase>& hero , int &actions){
+    // page number 4
+    clearScreen();
+    bool flag = true;
+
+    if(hero->getCurrentPlace()->getName() == "precinct")
+    {
+        flag=false;
+        std::cout << "your providing evidence for invisible man (since your in precinct you cant do anything else)\n";
+        bool check=true;
+        std::vector<Item> validItems;
+        for(auto& evi:sys->getEvidence())
+        {
+            for(auto& item:hero->getHeroItems())
+            {
+                if(item.place == evi)
+                {
+                    check=false;
+                    validItems.push_back(item);
+                }
+            }
+        }
+
+        if(check)
+        {
+            std::cout << "you dont have a item that has come from barn, inn , laboraory, institute or mansion\n";
+            this_thread::sleep_for(chrono::seconds(3));
+            this->pageNumber = PageNumbers::HERO_PHASE_PAGE;
+            return;
+        }
+
+        while(true)//if choice was invalid it didnt get out of the advance it will get another value
+        {
+            for(int i = 0;i < validItems.size();i++)
+            {
+                std::cout << "the Items that you can choose as evidence\n";
+                std::cout << i+1 << " - " << validItems[i] << '\n';
+            }
+
+            int choice;
+            choice=getCommand();
+            
+            if (choice < 1 || choice > validItems.size() )
+            {
+                std::cout << "invalid choice try again\n";
+                continue;
+            }
+
+                Item selectedItem = validItems[choice - 1];
+                for(auto removeItem = hero->getHeroItems().begin();removeItem!=hero->getHeroItems().end();removeItem++)
+                {
+                    if(removeItem->name == selectedItem.name)
+                    {
+                        hero->getHeroItems().erase(removeItem);
+                        sys->addItem(*removeItem);
+                        break;
+                    }
+                }
+
+                for(auto removeItem = sys->getEvidence().begin();removeItem!=sys->getEvidence().end();removeItem++)
+                {
+                    if( *removeItem == selectedItem.place)
+                    {
+                        sys->getEvidence().erase(removeItem);
+                        break;
+                    }
+                }
+
+                std::cout << "you successfully added " << selectedItem  << "\nto invisble mans board\n";
+                actions--;
+                break;
+        }
+    }
+    
+    vector<string> coffins = sys->getCoffins();
+
+    for(auto coffin = coffins.begin();coffin!=coffins.end();coffin++)
+    {
+        if(hero->getCurrentPlace()->getName() == *coffin)
+        {
+            flag = false;
+            int totalRedItemPower = 0;
+            std::vector<Item> redItems;
+        for (const auto& item : hero->getHeroItems())
+        {
+            if (item.color == Color::RED)
+            {
+                totalRedItemPower += item.power;
+                redItems.push_back(item);
+            }
+        }
+
+        if (totalRedItemPower < 6)
+        {
+            std::cout << "not enough red item to destroy a coffin\n";
+            this_thread::sleep_for(chrono::seconds(3));
+        this->pageNumber = PageNumbers::HERO_PHASE_PAGE;
+        return;   
+        }
+        std::cout << "destroying a coffin in -> " << *coffin << std::endl;
+            std::cout << "choose some red item with a valuation more than 6\n";
+
+            int chosenItemsPower = 0 ;
+            std::vector<Item> usedItem;
+            while(chosenItemsPower < 6)
+            {
+                for (int i = 0; i < redItems.size(); i++)
+                {
+                    std::cout << i + 1 << " - " << redItems[i].name << " Power-> " << redItems[i].power << '\n';
+                }
+                int choice;
+                choice = getCommand();
+                if (choice < 1 || choice > redItems.size())
+                {
+                    std::cout << "invalid choice try again\n";
+                    continue;
+                }
+
+                Item selectedItem = redItems[choice - 1];
+                usedItem.push_back(selectedItem);
+                chosenItemsPower += selectedItem.power;
+
+                redItems.erase(redItems.begin() + (choice - 1));
+            }
+
+            for (const auto& item : usedItem) {
+                for (auto removeItem = hero->getHeroItems().begin(); removeItem != hero->getHeroItems().end(); removeItem++) {
+                    if (removeItem->name == item.name)
+                    {
+                        hero->getHeroItems().erase(removeItem);
+                        sys->addItem(*removeItem);
+                        break; 
+                    }
+                }
+            }
+
+
+            coffins.erase(coffin);
+            actions--;
+            std::cout << "the coffin destroyed successfully in -> " << hero->getCurrentPlace()->getName() <<std::endl;             
+            break;
+    }
+}
+    if(flag)
+    {
+        std::cout << "you cant use advanced action in your current location-> " << hero->getCurrentPlace()->getName() << '\n';
+        this_thread::sleep_for(chrono::seconds(3));
+        this->pageNumber = PageNumbers::HERO_PHASE_PAGE;
+        return;
+    }
+}
+
+void Tui::specialActionPage(shared_ptr<HeroBase>& hero , int &actions){
+    //page number 7
+    clearScreen();
+    string current = hero->getCurrentPlace()->getName();
+    vector<shared_ptr<Place>> neis = hero->getCurrentPlace()->getNeighbors();
+    if (hero->getHeroName() == "mayor"){
+        fmt::print("Mayor has not any special action !!!");
+        while (true)
+        {
+            int num;
+            fmt::println("1. Back");
+            fmt::println("2. Exit");
+            num = getCommand("Enter a option");
+            if (num == 1) { this->backButton(); return;}
+            else if (num == 2) { this->pageNumber = PageNumbers::EXIT_PAGE; return; }
+            else fmt::println("Invalid option entered!!");
+        }
+    }
+    else {
+        int neiNum;
+        fmt::println("First enter your neighbor which u want");
+        while(true){
+            int num;
+            for (int i {}; i < neis.size(); i++){
+                fmt::println("{}. {}", i + 1 , neis[i]->getName());
+            }
+            fmt::println("{}. Back" , neis.size() + 1);
+            fmt::println("{}. Exit" , neis.size() + 2);
+            num = getCommand("Enter a place to pickup its items");
+            if (num > 0 && num <= neis.size()) { neiNum = num - 1; break; }
+            else if (num == neis.size() + 1) { this->backButton(); return;}
+            else if (num == neis.size() + 2) { this->pageNumber = PageNumbers::EXIT_PAGE; return; }
+            else fmt::println("Invalid place entered!!");
+        }
+        clearScreen();
+        string curr = neis[neiNum]->getName();
+        auto colorToString = [](Color c) -> string {
+            if (c == Color::BLUE) return "blue";
+            else if (c == Color::RED) return "red";
+            else if (c == Color::YELLOW) return "yellow";
+        };
+        vector<Item> hereItems;
+        for(auto loc : sys->getLocations()){
+            if (loc->getName() == curr){
+                for(auto item : loc->getItems()) hereItems.push_back(item);
+            }
+        }
+        int firstItemsSize = hereItems.size();
+        while(true){
+            int itemNum;
+            for(int i {}; i < hereItems.size(); i++){
+                fmt::println(
+                    "{}. {} {} ({})",
+                    i + 1,
+                    hereItems[i].name,
+                    hereItems[i].name,
+                    hereItems[i].power
+                ); 
+            }
+            cout << hereItems.size() + 1 << ". Stop picking" << '\n';
+            itemNum = getCommand("Enter a item number");
+            if (itemNum > 0 && itemNum <= hereItems.size() + 1){
+                if (itemNum == hereItems.size() + 1){
+                    if (firstItemsSize != hereItems.size()) actions--;
+                    this->pageNumber = PageNumbers::HERO_PHASE_PAGE;
+                    return;
+                }
+                else {
+                    hero->addHeroItems(hereItems[itemNum - 1]);
+                    for(auto loc : sys->getLocations()){
+                        if (loc->getName() == current){
+                            loc->removeItem(hereItems[itemNum - 1]);
+                            break;
+                        }
+                    }           
+                }
+            }
+            else {
+                fmt::println("Invalid item Entered");
+            }
+        }
+    }
+}
+
+
 
 
 void Tui::runGame() {
@@ -463,7 +701,11 @@ void Tui::runGame() {
     int round {0};
     int playerCount = playerPriority.size();
     bool doNextPhase {true};
-    while (this->pageNumber != PageNumbers::EXIT_PAGE) {
+    while (this->pageNumber != PageNumbers::EXIT_PAGE)
+    {
+
+        doNextPhase = true;
+
         string currentHeroName = playerPriority[round % playerCount];
         shared_ptr<HeroBase> currentHero {nullptr};
         for (auto h : sys->getAllHeros()){
@@ -475,10 +717,10 @@ void Tui::runGame() {
             else if (this->pageNumber == PageNumbers::MOVE_PAGE) this->movePage(currentHero , actions);
             else if (this->pageNumber == PageNumbers::GUIDE_PAGE) this->guidePage(currentHero , actions);
             else if (this->pageNumber == PageNumbers::PICKUP_PAGE) this->pickUpPage(currentHero , actions);
-            // else if (this->pageNumber == PageNumbers::SPECIALACTION_PAGE) this->specialActionPage(currentHero , actions);
-            // else if (this->pageNumber == PageNumbers::ADVANCED_PAGE) this->advancedPage(currentHero , actions);
+            else if (this->pageNumber == PageNumbers::SPECIALACTION_PAGE) this->specialActionPage(currentHero , actions);
+            else if (this->pageNumber == PageNumbers::ADVANCED_PAGE) this->advancedPage(currentHero , actions);
             // else if (this->pageNumber == PageNumbers::DEFEAT_PAGE) this->defeatPage(currentHero , actions);
-            // else if (this->pageNumber == PageNumbers::PLAYPERK_PAGE) this->playPerkPage(currentHero , actions , doNextPhase);
+            else if (this->pageNumber == PageNumbers::PLAYPERK_PAGE) this->playPerkPage(currentHero , actions , doNextPhase);
         }
         if (this->pageNumber != PageNumbers::EXIT_PAGE && doNextPhase == true) 
         {
