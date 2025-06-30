@@ -56,13 +56,15 @@ class System {
         SearchingType type
     );
     void showLocs();
-    // void runMonsterPhase();
     void runHeroPhase();
     void runGame();
+    char rollDice() const;
     int getTerrorLevel() const;
     void increaseTerrorLevel();
     Perk getRandomPerk();
     Item getRandomItem();
+    MonsterCard getRandomMonstCard();
+    bool isEndGame() const;
     void putItemInPlace(std::string_view placeName , Item i);
     int foundCluesCount(std::string type);
     void moveMonster(std::shared_ptr<MonsterBase> monst , std::shared_ptr<Place> newPlace);

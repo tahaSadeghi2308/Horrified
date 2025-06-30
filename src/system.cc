@@ -260,6 +260,25 @@ Perk System::getRandomPerk() {
         return perkDeck->pickOneRandomly(); 
 }
 
+MonsterCard System::getRandomMonstCard() {
+    return monsterDeck->pickOneRandomly();
+}
+
+bool System::isEndGame() const {
+    if (monsterDeck->size() == 0) return true;
+    else if (this->dracula == nullptr && this->invisibleMan == nullptr) return true;
+    else if (this->terrorLevel == 5) return true;
+    return false;
+}
+
+char System::rollDice() const {
+    char diceChars[6] = {'-' , '*' , '-' , '-' , '!' , '-'};
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<> distrib(0, 5);
+    return diceChars[distrib(gen)];
+}
+
 Item System::getRandomItem() { return itemBag->pickOneRandomly(); }
 
 void System::putVillagerInPlace(const string &_placeName , const string &_villName){
