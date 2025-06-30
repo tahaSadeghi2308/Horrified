@@ -264,14 +264,16 @@ MonsterCard System::getRandomMonstCard() {
     return monsterDeck->pickOneRandomly();
 }
 
-bool System::isEndGame() const {
-    if (monsterDeck->size() == 0) return true;
-    else if (this->dracula == nullptr && this->invisibleMan == nullptr) return true;
-    else if (this->terrorLevel == 5) return true;
-    return false;
+int System::isEndGame() const {
+    if (monsterDeck->size() == 0) return 1;
+    else if (this->dracula == nullptr && this->invisibleMan == nullptr) return 2;
+    else if (this->terrorLevel == 5) return 3;
+    return -1;
 }
 
-char System::rollDice() const {
+void System::addItem(Item i) { this->itemBag->push(i); }
+
+char System::rollDice() {
     char diceChars[6] = {'-' , '*' , '-' , '-' , '!' , '-'};
     random_device rd;
     mt19937 gen(rd());
@@ -297,14 +299,6 @@ void System::putVillagerInPlace(const string &_placeName , const string &_villNa
             }
         }
     }
-}
-
-char System::rollDice(){
-    char diceChars[6] = {'-' , '*' , '-' , '-' , '!' , '-'};
-    random_device rd;
-    mt19937 gen(rd());
-    uniform_int_distribution<> distrib(0, 5);
-    return diceChars[distrib(gen)];
 }
 
 void System::showLocs() {

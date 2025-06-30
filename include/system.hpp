@@ -44,10 +44,9 @@ class System {
     bool BreakOfDawn = true;
 
     void putVillagerInPlace(const std::string &_place , const std::string &_villName);
-    char rollDice();
     int terrorLevel {0};
     
-    public:
+public:
     System();
     // TODO: we should create a function for saving game with destructor !!!
     // ~System();
@@ -58,13 +57,14 @@ class System {
     void showLocs();
     void runHeroPhase();
     void runGame();
-    char rollDice() const;
+    char rollDice();
+    void addItem(Item i);
     int getTerrorLevel() const;
     void increaseTerrorLevel();
     Perk getRandomPerk();
     Item getRandomItem();
     MonsterCard getRandomMonstCard();
-    bool isEndGame() const;
+    int isEndGame() const;
     void putItemInPlace(std::string_view placeName , Item i);
     int foundCluesCount(std::string type);
     void moveMonster(std::shared_ptr<MonsterBase> monst , std::shared_ptr<Place> newPlace);

@@ -40,6 +40,7 @@ public:
     void displayActions() const;
     void runGame();
     void backButton();
+    int monsterPhasePage(std::shared_ptr<MonsterBase> monst , std::shared_ptr<HeroBase>& hero);
     void heroPhasePage(std::shared_ptr<HeroBase>& hero , int actions);
     void terrorLevel(int level);
     void movePage(std::shared_ptr<HeroBase>& hero , int &actions);
