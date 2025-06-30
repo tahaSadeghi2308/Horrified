@@ -11,7 +11,8 @@
 #include "exceptions.hpp"
 #include "location.hpp"
 
-enum Color { RED , BLUE , YELLOW };
+
+    enum Color { RED , BLUE , YELLOW };
 
 constexpr int ITEM_COUNT {2};
 
@@ -56,7 +57,7 @@ public:
     T pickOneRandomly();
     void push(const T &temp);
     void pop(const int index);
-    std::vector<Item> getCards();
+    std::vector<T> getCards();
     int size() const;
 };
 
@@ -92,7 +93,7 @@ void CardManagerBase<T>::shuffleCards() {
 }
 
 template <class T>
-std::vector<Item> CardManagerBase<T>::getCards()
+std::vector<T> CardManagerBase<T>::getCards()
     {
         return cards;
     }

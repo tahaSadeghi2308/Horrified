@@ -249,6 +249,215 @@ void Tui::movePage(shared_ptr<HeroBase>& hero , int &actions) {
     }
 }
 
+void Tui::guidePage(std::shared_ptr<HeroBase>& hero ,int &actions)
+{
+        // page number 2
+        clearScreen();
+        fmt::println("Ok , Now you can choose one villager and move it");
+        int ch;
+        while(true)
+        {
+            fmt::println("1. Move a villager to neighbor place");
+            fmt::println("2. Bring a villager from neighbor place");
+            fmt::println("3. Back");
+            fmt::println("4. Exit");
+            ch = getCommand("Please Enter your choise");
+            if (ch <= 0 || ch > 4) fmt::println("Invalid choise for guide method");
+            else
+            break;
+        }
+        clearScreen();
+        if (ch == 1)
+        {
+            string current = hero->getCurrentPlace()->getName();
+            vector<shared_ptr<Place>> neis = hero->getCurrentPlace()->getNeighbors();
+            vector<shared_ptr<Villager>> hereVills;
+    
+            for(auto loc : sys->getLocations())
+            {
+                if (loc->getName() == current)
+                {
+                    for(auto vill : loc->getVillagers())
+                    hereVills.push_back(vill);
+                    break;
+                }
+            }
+            int villNum, locNum;
+            if (hereVills.size() == 0) {
+                this->pageNumber = PageNumbers::GUIDE_PAGE;
+                return; 
+            }
+            else {
+                // choose villager
+                while(true)
+                {
+                    for(int i {}; i < hereVills.size(); i++)
+                    {
+                        cout << i + 1 << ". " << hereVills[i]->getName() << '\n';
+                    }
+                    villNum = getCommand("Enter a villager number");
+                    if (villNum <= 0 || villNum > hereVills.size()){
+                        fmt::println("invalid villager number");
+                    }
+                    else 
+                    break;
+                }
+                // choose place 
+                while (true)
+                {
+                    for(int i {}; i < neis.size(); i++)
+                    {
+                        cout << i + 1 << ". " << neis[i] << '\n';
+                    }
+                    locNum = getCommand("Enter a place Number");
+                    if (locNum <= 0 || locNum > neis.size()){
+                        fmt::println("invalid villager number");
+                    }
+                    else 
+                    break;
+                }
+
+                sys->moveVillager(hereVills[villNum - 1] , neis[locNum - 1]);
+
+
+                if (hereVills[villNum - 1]->getSafeZone() == neis[locNum - 1])
+                {
+                    fmt::println(
+                        "You reached a villager {} to its Safe zone :)\n He will give u a perk man",
+                        hereVills[villNum - 1]->getName()
+                    );
+                    sys->killVillager(hereVills[villNum - 1]);
+                    hero->addPerkCard(sys->getRandomPerk());
+                }
+                actions--;
+                this->pageNumber = PageNumbers::HERO_PHASE_PAGE;
+            }
+        }
+    
+        else if (ch == 2){
+            // choose place
+            int villNum , locNum;
+            string current = hero->getCurrentPlace()->getName();
+            vector<shared_ptr<Place>> neis = hero->getCurrentPlace()->getNeighbors();
+            fmt::println("Choose the place with u want to bring a villager from");
+            while (true)
+            {
+                for(int i {}; i < neis.size(); i++)
+                {
+                    cout << i + 1 << ". " << neis[i]->getName() << '\n';
+                }
+                locNum = getCommand("Enter a place Number");
+                if (locNum <= 0 || locNum > neis.size())\
+                {
+                    fmt::println("invalid villager number");
+                }
+                else
+                break;
+            }
+            vector<shared_ptr<Villager>> hereVills;
+            for(auto loc : sys->getLocations())
+            {
+                if (loc->getName() == neis[locNum - 1]->getName())
+                {
+                    for(auto vill : loc->getVillagers()) 
+                    hereVills.push_back(vill);
+                    break;
+                }
+            }
+            if (hereVills.size() == 0)
+            {
+                this->pageNumber = PageNumbers::GUIDE_PAGE; return;
+            }
+            while(true)
+            {
+                for(int i {}; i < hereVills.size(); i++)
+                {
+                    cout << i + 1 << ". " << hereVills[i]->getName() << '\n';
+                }
+                villNum = getCommand("Enter a villager number");
+                if (villNum <= 0 || villNum > hereVills.size())
+                {
+                    fmt::println("invalid villager number");
+                }
+                else 
+                break;
+            }
+
+            sys->moveVillager(hereVills[villNum - 1],neis[locNum - 1]);
+            
+            if (hereVills[villNum - 1]->getSafeZone() == neis[locNum - 1]){
+                fmt::println(
+                    "You reached a villager {} to its Safe zone :)\n He will give u a perk man",
+                    hereVills[villNum - 1]->getName()
+                );
+                sys->killVillager(hereVills[villNum - 1]);
+                hero->addPerkCard(sys->getRandomPerk());
+            }
+            actions--;
+            this->pageNumber = PageNumbers::HERO_PHASE_PAGE;
+        }
+        else if (ch == 3) { this->backButton(); return; }
+        else if (ch == 4){ this->pageNumber = PageNumbers::EXIT_PAGE; return; }
+    }
+
+    void Tui::pickUpPage(std::shared_ptr<HeroBase>& hero ,int &actions)
+    {
+         //page number 3
+    clearScreen();
+    fmt::println("You can pick up here items");
+    fmt::println("you can back from this page with chosing stop picking");
+    string current = hero->getCurrentPlace()->getName();
+    auto colorToString = [](Color c) -> string {
+        if (c == Color::BLUE) return "blue";
+        else if (c == Color::RED) return "red";
+        else if (c == Color::YELLOW) return "yellow";
+    };
+    vector<Item> hereItems;
+    for(auto loc : sys->getLocations())
+    {
+        if (loc->getName() == current)
+        {
+            for(auto item : loc->getItems()) 
+            hereItems.push_back(item);
+        }
+    }
+    int firstItemsSize = hereItems.size();
+    while(true)
+    {
+        int itemNum;
+        for(int i {}; i < hereItems.size(); i++)
+        {
+            fmt::println("{}. {} {} ({})", i + 1 ,hereItems[i].name ,hereItems[i].name ,hereItems[i].power); 
+        }
+        cout << hereItems.size() + 1 << ". Stop picking" << '\n';
+        itemNum = getCommand("Enter a item number");
+        if (itemNum > 0 && itemNum <= hereItems.size() + 1){
+            if (itemNum == hereItems.size() + 1){
+                if (firstItemsSize != hereItems.size()) actions--;
+                this->pageNumber = PageNumbers::HERO_PHASE_PAGE;
+                return;
+            }
+            else {
+                hero->addHeroItems(hereItems[itemNum - 1]);
+                for(auto loc : sys->getLocations())
+                {
+                    if (loc->getName() == current)
+                    {
+                        loc->removeItem(hereItems[itemNum - 1]);
+                        break;
+                    }
+                }           
+            }
+        }
+        else 
+        {
+            fmt::println("Invalid item Entered");
+        }
+    }
+}
+
+
+
 void Tui::runGame() {
     this->welcomePage();
     int round {0};
@@ -264,8 +473,8 @@ void Tui::runGame() {
         while(actions != 0 && pageNumber != PageNumbers::EXIT_PAGE) {
             if (this->pageNumber == PageNumbers::HERO_PHASE_PAGE) this->heroPhasePage(currentHero , actions);
             else if (this->pageNumber == PageNumbers::MOVE_PAGE) this->movePage(currentHero , actions);
-            // else if (this->pageNumber == PageNumbers::GUIDE_PAGE) this->guidePage(currentHero , actions);
-            // else if (this->pageNumber == PageNumbers::PICKUP_PAGE) this->pickUpPage(currentHero , actions);
+            else if (this->pageNumber == PageNumbers::GUIDE_PAGE) this->guidePage(currentHero , actions);
+            else if (this->pageNumber == PageNumbers::PICKUP_PAGE) this->pickUpPage(currentHero , actions);
             // else if (this->pageNumber == PageNumbers::SPECIALACTION_PAGE) this->specialActionPage(currentHero , actions);
             // else if (this->pageNumber == PageNumbers::ADVANCED_PAGE) this->advancedPage(currentHero , actions);
             // else if (this->pageNumber == PageNumbers::DEFEAT_PAGE) this->defeatPage(currentHero , actions);

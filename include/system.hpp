@@ -63,7 +63,8 @@ public:
     void killMonster(std::shared_ptr<MonsterBase> monst);
     void killVillager(std::shared_ptr<Villager> vill);
     std::vector<std::shared_ptr<MonsterBase>> getAllMonsters() { return {dracula , invisibleMan}; }    
-    std::vector<std::shared_ptr<HeroBase>> getAllHeros() { return {arch , mayor}; }    
+    std::vector<std::shared_ptr<HeroBase>> getAllHeros() { return {arch , mayor}; }   
+    std::vector<std::shared_ptr<Place>> getLocations() {return allLocations;} 
 };
 
 #endif //SYSTEM_HPP
