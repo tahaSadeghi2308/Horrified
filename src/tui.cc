@@ -595,7 +595,7 @@ void Tui::advancedPage(shared_ptr<HeroBase>& hero , int &actions){
             }
         }
     }
-    if (ch == 2) {
+    else if (ch == 2) {
         for (auto monst : sys->getAllMonsters()){
             if (
                 monst->getMonsterName() == "invisible" &&
@@ -862,6 +862,166 @@ void Tui::playPerkPage(shared_ptr<HeroBase>& hero , int &actions , bool &doMonst
     }
 }
 
+void Tui::defeatPage(shared_ptr<HeroBase>& hero , int &actions){
+    clearScreen();
+    fmt::println("first clarify which of monsters u want to defeat");
+    int ch;
+    while (true){
+        fmt::println("1. Dracula");
+        fmt::println("2. Invisible Man");
+        fmt::println("3. Back");
+        fmt::println("4. Exit");
+        ch = getCommand("Enter your choise to defeat");
+        if(ch == 3) { this->pageNumber = PageNumbers::HERO_PHASE_PAGE; return; }
+        else if(ch == 4) { this->pageNumber = PageNumbers::EXIT_PAGE; return; }
+        else if ( ch < 0 || ch > 4) {
+            fmt::println("Invaid choise for defeat!!!");
+        }
+        else break;
+    }
+    if (ch == 1) {
+        for (auto monst : sys->getAllMonsters()){
+            if (
+                monst->getMonsterName() == "dracula" &&
+                monst == nullptr
+            ){
+                clearScreen();
+                fmt::println("Man dracula is dead how many times u want to kill him ??");
+                fmt::println("Im gonna redirect u to defeat page to choose another option");
+                this_thread::sleep_for(chrono::seconds(2));
+                this->pageNumber = PageNumbers::DEFEAT_PAGE; return;
+            }
+        }
+
+        // they should be in same place 
+        bool isInSamePlace {false};
+        for(auto monst : sys->getAllMonsters()){
+            if (monst->getMonsterName() == "dracula"){
+                if (monst->getCurrentLocation() == hero->getCurrentPlace()) { isInSamePlace = true; break; }
+            }
+        }
+
+        if (isInSamePlace == false){
+            fmt::println("you cant kill dracula !!");
+            this_thread::sleep_for(chrono::seconds(2));
+            this->pageNumber = PageNumbers::DEFEAT_PAGE; return;
+        }
+
+        else {
+            vector<Item> yellowItems;
+            int itemsPowerSum = 0;
+            for(auto i : hero->getHeroItems()){
+                if (i.color == Color::YELLOW) { 
+                    yellowItems.push_back(i); 
+                    itemsPowerSum += i.power;
+                    if (itemsPowerSum >= 6) break; 
+                }
+            }
+            if ( itemsPowerSum < 6 ){
+                fmt::println("you cant kill dracula we haven't enogth item !!");
+                this_thread::sleep_for(chrono::seconds(2));
+                this->pageNumber = PageNumbers::DEFEAT_PAGE; return;
+            }
+            else {
+                if (sys->foundCluesCount("coffin") != 4){
+                    fmt::println("we have not found all coffins yet");
+                    this_thread::sleep_for(chrono::seconds(2));
+                    this->pageNumber = PageNumbers::DEFEAT_PAGE; return;
+                }
+                else {
+                    // pay items
+                    for(auto i : yellowItems){
+                        hero->deleteItem(i.name);
+                        sys->addItem(i);
+                    }
+
+                    // kill monster
+                    for (int i {}; i < sys->getAllMonsters().size(); i++){
+                        if (sys->getAllMonsters()[i]->getMonsterName() == "dracula"){
+                            sys->killMonster(sys->getAllMonsters()[i]);
+                            break;
+                        }
+                    }
+
+                    actions--;
+                    fmt::println("soooo we killed dracula");
+                    this_thread::sleep_for(chrono::seconds(2));
+                    this->pageNumber = PageNumbers::HERO_PHASE_PAGE; return;
+                }
+            }
+        }
+    }
+    else if (ch == 2) {
+        for (auto monst : sys->getAllMonsters()){
+            if (
+                monst->getMonsterName() == "invisibleMan" &&
+                monst == nullptr
+            ){
+                clearScreen();
+                fmt::println("Man invisibleMan is dead how many times u want to kill him ??");
+                fmt::println("Im gonna redirect u to defeat page to choose another option");
+                this_thread::sleep_for(chrono::seconds(2));
+                this->pageNumber = PageNumbers::DEFEAT_PAGE; return;
+            }
+        }
+
+        bool isInSamePlace {false};
+        for(auto monst : sys->getAllMonsters()){
+            if (monst->getMonsterName() == "invisibleMan"){
+                if (monst->getCurrentLocation() == hero->getCurrentPlace()) { isInSamePlace = true; break; }
+            }
+        }
+
+        if (isInSamePlace == false){
+            fmt::println("you cant kill invisibleMan !!");
+            this_thread::sleep_for(chrono::seconds(2));
+            this->pageNumber = PageNumbers::DEFEAT_PAGE; return;
+        }
+        else {
+            vector<Item> redItems;
+            int itemsPowerSum = 0;
+            for(auto i : hero->getHeroItems()){
+                if (i.color == Color::RED) { 
+                    redItems.push_back(i); 
+                    itemsPowerSum += i.power;
+                    if (itemsPowerSum >= 9) break; 
+                }
+            }
+            if ( itemsPowerSum < 9 ){
+                fmt::println("you cant kill invisibleMan we haven't enogth item !!");
+                this_thread::sleep_for(chrono::seconds(2));
+                this->pageNumber = PageNumbers::DEFEAT_PAGE; return;
+            }
+            else {
+                if (sys->foundCluesCount("evidence") != 6){
+                    fmt::println("we have not found all evidences yet");
+                    this_thread::sleep_for(chrono::seconds(2));
+                    this->pageNumber = PageNumbers::DEFEAT_PAGE; return;
+                }
+                else {
+                    for(auto i : redItems){
+                        hero->deleteItem(i.name);
+                        sys->addItem(i);
+                    }
+                    
+                    // kill monster
+                    for (int i {}; i < sys->getAllMonsters().size(); i++){
+                        if (sys->getAllMonsters()[i]->getMonsterName() == "invisibleMan"){
+                            sys->killMonster(sys->getAllMonsters()[i]);
+                            break;
+                        }
+                    }
+
+                    actions--;
+                    fmt::println("soooo we killed invisibleMan");
+                    this_thread::sleep_for(chrono::seconds(2));
+                    this->pageNumber = PageNumbers::HERO_PHASE_PAGE; return;
+                }
+            }
+        }
+    }
+}
+
 void Tui::runGame() {
     this->welcomePage();
     int round {0};
@@ -883,7 +1043,7 @@ void Tui::runGame() {
             else if (this->pageNumber == PageNumbers::PICKUP_PAGE) this->pickUpPage(currentHero , actions);
             else if (this->pageNumber == PageNumbers::SPECIALACTION_PAGE) this->specialActionPage(currentHero , actions);
             else if (this->pageNumber == PageNumbers::ADVANCED_PAGE) this->advancedPage(currentHero , actions);
-            // else if (this->pageNumber == PageNumbers::DEFEAT_PAGE) this->defeatPage(currentHero , actions);
+            else if (this->pageNumber == PageNumbers::DEFEAT_PAGE) this->defeatPage(currentHero , actions);
             else if (this->pageNumber == PageNumbers::PLAYPERK_PAGE) this->playPerkPage(currentHero , actions , doNextPhase);
         }
         if (this->pageNumber != PageNumbers::EXIT_PAGE && doNextPhase == true && isEnd == -1) {
