@@ -11,6 +11,10 @@
 #include "monster.hpp"
 #include "utility.hpp"
 
+enum SearchingType {
+    ETO,
+    ETV
+};
 class System {
     std::shared_ptr<MonsterCardDeck<MonsterCard>> monsterDeck {nullptr};
     std::shared_ptr<ItemBag<Item>> itemBag {nullptr};
@@ -40,36 +44,39 @@ class System {
     //bool BreakOfDawn = true; handeled in tui
 
     void putVillagerInPlace(const std::string &_place , const std::string &_villName);
-    char rollDice();
     int terrorLevel {0};
-    std::vector<std::shared_ptr<Place>> findShortestPath(std::shared_ptr<Place> _monst);
-
+    
 public:
     System();
     // TODO: we should create a function for saving game with destructor !!!
     // ~System();
+    std::vector<std::shared_ptr<Place>> findShortestPath(
+        std::shared_ptr<Place> _place,
+        SearchingType type
+    );
     void showLocs();
-    void runMonsterPhase();
     void runHeroPhase();
     void runGame();
+    char rollDice();
+    void addItem(Item i);
     int getTerrorLevel() const;
     void increaseTerrorLevel();
     Perk getRandomPerk();
     Item getRandomItem();
+    MonsterCard getRandomMonstCard();
+    int isEndGame() const;
+    void putItemInPlace(std::string_view placeName , Item i);
     int foundCluesCount(std::string type);
     void moveMonster(std::shared_ptr<MonsterBase> monst , std::shared_ptr<Place> newPlace);
     void moveHero(std::shared_ptr<HeroBase> her , std::shared_ptr<Place> newPlace);
     void moveVillager(std::shared_ptr<Villager> vill , std::shared_ptr<Place> newPlace);
     void killMonster(std::shared_ptr<MonsterBase> monst);
     void killVillager(std::shared_ptr<Villager> vill);
+    void placeWithMaxItem();
     std::vector<std::shared_ptr<MonsterBase>> getAllMonsters() { return {dracula , invisibleMan}; }    
-    std::vector<std::shared_ptr<HeroBase>> getAllHeros() { return {arch , mayor}; }   
-    std::vector<std::shared_ptr<Place>> getLocations() { return allLocations; } 
-    std::vector<std::string>& getEvidence() { return evidence; }
-    std::vector<std::string>& getCoffins() { return coffins; }
-    void addItem(const Item& i) { itemBag->push(i); }
-    std::shared_ptr<InvisibleMan> getInvisible() { return invisibleMan; }
-    std::shared_ptr<ItemBag<Item>> getItemBag() { return itemBag; }
+    std::vector<std::shared_ptr<HeroBase>> getAllHeros() { return {arch , mayor}; }
+    std::vector<std::shared_ptr<Place>> getAllLocations() { return this->allLocations; } 
+    std::vector<std::shared_ptr<Villager>> getAllVillagers () { return this->allVillagers; } 
 };
 
 #endif //SYSTEM_HPP

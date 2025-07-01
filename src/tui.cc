@@ -47,6 +47,115 @@ void Tui::showNeighborsInfo(shared_ptr<HeroBase>& hero) {
     cout << table << "\n\n";
 }
 
+int Tui::monsterPhasePage(shared_ptr<MonsterBase> monst , shared_ptr<HeroBase>& hero){
+    clearScreen();
+    fmt::println("HA HA HA its time for us to attack :)");
+    fmt::println("im {} and im now doing my turn to do my job!!!" , monst->getMonsterName());
+
+    char dices[3] = {
+        sys->rollDice(),
+        sys->rollDice(),
+        sys->rollDice()
+    };
+
+    bool continuePhase {true};
+    int isEnd;
+    for (auto dice : dices){
+        if (continuePhase) {
+            isEnd = sys->isEndGame();
+            if (isEnd != -1) return isEnd;
+            this_thread::sleep_for(chrono::seconds(2));
+            clearScreen();
+            if (dice == '*') continuePhase = false;
+            fmt::println("Dice sign is {}" , dice);
+            this_thread::sleep_for(chrono::seconds(1));
+            int status = monst->runMonsterPhase(dice , hero);
+            if (status == -1) {
+                fmt::println("You are so lucky man :(");
+                this_thread::sleep_for(chrono::seconds(2));
+                pageNumber = PageNumbers::HERO_PHASE_PAGE;
+            }
+            else {
+                clearScreen();
+                if (status != 1) {
+                    fmt::println("shit situation is so bad your hero is hurted :)");
+                    fmt::println("Dont worry u can pay an item to be safe");
+                    int n;
+                    while (true) {
+                        fmt::println("Do u want to pay an item ??");
+                        fmt::println("1. Yes");
+                        fmt::println("2. No");
+                        n = getCommand("Choose a number");
+                        if (n != 1 && n != 2) fmt::println ("invalid choose!!!");
+                        else break;
+                    }
+                    if (n == 1) {
+                        auto colorToString = [](Color c) -> string {
+                            if (c == Color::BLUE) return "blue";
+                            else if (c == Color::RED) return "red";
+                            else if (c == Color::YELLOW) return "yellow";
+                        };
+                        
+                        if (hero->getHeroItems().empty()) {
+                            fmt::println("You dont have any item to pay");
+                            fmt::println("So we punish u becasue of ur lie !!!");
+                            this_thread::sleep_for(chrono::seconds(2));
+                            sys->increaseTerrorLevel();
+                            for(auto loc : sys->getAllLocations()){
+                                if (loc->getName() == "hospital"){
+                                    sys->moveHero(hero , loc);
+                                    break;
+                                }
+                            }
+                            pageNumber = PageNumbers::HERO_PHASE_PAGE;
+                        }
+                        else {
+                            int j;
+                            while(true) {   
+                                for (int i {}; i < hero->getHeroItems().size(); i++) {
+                                    fmt::println(
+                                        "{}. {} {} ({})",
+                                        i + 1,
+                                        (hero->getHeroItems())[i].name,
+                                        colorToString((hero->getHeroItems())[i].color),
+                                        (hero->getHeroItems())[i].power
+                                    );
+                                }
+                                j = getCommand("Enter item number");
+                                if (j < 0 || j > hero->getHeroItems().size()) fmt::println("invaid number for item");
+                                else break;
+                            }
+                            sys->addItem(hero->getHeroItems()[j - 1]);
+                            hero->deleteItem(hero->getHeroItems()[j - 1].name);
+                            continuePhase = true;
+                            pageNumber = PageNumbers::HERO_PHASE_PAGE;
+                            break;
+                        }  
+                    }
+                    else {
+                        fmt::println("Ok we do respect to ur choice");
+                        sys->increaseTerrorLevel();
+                        for(auto loc : sys->getAllLocations()){
+                            if (loc->getName() == "hospital"){
+                                sys->moveHero(hero , loc);
+                                break;
+                            }
+                        }
+                        pageNumber = PageNumbers::HERO_PHASE_PAGE;
+                    }
+                }
+                else {
+                    fmt::println("We lost one villager !!!!!");
+                    sys->increaseTerrorLevel();
+                    this_thread::sleep_for(chrono::seconds(2));
+                    pageNumber = PageNumbers::HERO_PHASE_PAGE;
+                }
+            }
+        }
+    }
+    return isEnd;
+}    
+
 void Tui::monstersInfo() {
     cout << "╔═══════════════════════╗\n";
     cout << "║     Monster Status    ║\n";
@@ -921,18 +1030,16 @@ void Tui::runGame() {
     int round {0};
     int playerCount = playerPriority.size();
     bool doNextPhase {true};
-    while (this->pageNumber != PageNumbers::EXIT_PAGE)
-    {
-
-        doNextPhase = true;
-
+    int isEnd {-1};
+    while (this->pageNumber != PageNumbers::EXIT_PAGE && isEnd == -1) {
         string currentHeroName = playerPriority[round % playerCount];
         shared_ptr<HeroBase> currentHero {nullptr};
         for (auto h : sys->getAllHeros()){
             if (h->getHeroName() == currentHeroName) { currentHero = h; break;}
         }
         int actions = currentHero->getActionCount();
-        while(actions != 0 && pageNumber != PageNumbers::EXIT_PAGE) {
+        while(actions != 0 && pageNumber != PageNumbers::EXIT_PAGE && isEnd == -1) {
+            isEnd = sys->isEndGame();
             if (this->pageNumber == PageNumbers::HERO_PHASE_PAGE) this->heroPhasePage(currentHero , actions);
             else if (this->pageNumber == PageNumbers::MOVE_PAGE) this->movePage(currentHero , actions);
             else if (this->pageNumber == PageNumbers::GUIDE_PAGE) this->guidePage(currentHero , actions);
@@ -942,12 +1049,16 @@ void Tui::runGame() {
             // else if (this->pageNumber == PageNumbers::DEFEAT_PAGE) this->defeatPage(currentHero , actions);
             else if (this->pageNumber == PageNumbers::PLAYPERK_PAGE) this->playPerkPage(currentHero , actions , doNextPhase);
         }
-        if (this->pageNumber != PageNumbers::EXIT_PAGE && doNextPhase == true) 
-        {
+        if (this->pageNumber != PageNumbers::EXIT_PAGE && doNextPhase == true && isEnd == -1) {
             shared_ptr<MonsterBase> m = (sys->getAllMonsters())[round % playerCount];
-            // this->monsterPhasePage(m , currentHeroName);
+            if (m != nullptr) 
+                isEnd = this->monsterPhasePage(m , currentHero);
         }
         round++;
+    }
+    if (isEnd != -1) {
+        if (isEnd == 1 || isEnd == 3) fmt::println("Monsters win !!!!");
+        else fmt::println("villagers and heros win !!!!");
     }
     this->quitPage();
 }

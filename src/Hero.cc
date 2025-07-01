@@ -33,6 +33,15 @@ void HeroBase::setCurrentPlace(shared_ptr<Place> _place) {
     this->currentPlace = _place;
 }
 
+void HeroBase::deleteItem(std::string_view itemName) {
+    bool isFound {};
+    for (int i {}; i < this->heroItems.size(); i++) {
+        if (heroItems[i].name == itemName) {
+            this->heroItems.erase(heroItems.begin() + i);
+        }
+    }
+}
+
 shared_ptr<Place> HeroBase::getCurrentPlace() { return this->currentPlace; }
 
 std::vector<Item>& HeroBase::getHeroItems() { return this->heroItems; }
