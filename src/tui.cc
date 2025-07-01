@@ -53,7 +53,7 @@ int Tui::monsterPhasePage(shared_ptr<MonsterBase> monst , shared_ptr<HeroBase>& 
     fmt::println("im {} and im now doing my turn to do my job!!!" , monst->getMonsterName());
 
     char dices[3] = {
-        sys->rollDice(),
+        '!',
         sys->rollDice(),
         sys->rollDice()
     };
@@ -164,18 +164,20 @@ void Tui::monstersInfo() {
     tabulate::Table table;
     table.add_row({"Monster", "Location", "Clue Items"});
     for (const auto& monster : sys->getAllMonsters()) {
-        string clueText;
-        if (monster->getMonsterName() == "dracula"){
-            clueText = to_string(sys->foundCluesCount("coffin")) + " coffins found";   
+        if (monster != nullptr){
+            string clueText;
+            if (monster->getMonsterName() == "dracula"){
+                clueText = to_string(sys->foundCluesCount("coffin")) + " coffins found";   
+            }
+            else{
+                clueText = to_string(sys->foundCluesCount("clue")) + " clues found";   
+            }
+            table.add_row({
+                monster->getMonsterName(), 
+                monster->getCurrentLocation()->getName(), 
+                clueText
+            });
         }
-        else{
-            clueText = to_string(sys->foundCluesCount("clue")) + " clues found";   
-        }
-        table.add_row({
-            monster->getMonsterName(), 
-            monster->getCurrentLocation()->getName(), 
-            clueText
-        });
     }
     table.format()
         .border_top("═").border_bottom("═")
@@ -201,6 +203,7 @@ void Tui::heroInfo(shared_ptr<HeroBase>& hero){
     cout << '\n';
     cout << "    ├── Hero Items: ";
     for (auto item : hero->getHeroItems()) {
+        cout << '\n';
         tabulate::Table t;
         string text = item.name + "(" + to_string(item.power) + ")";
         t.add_row({text});
@@ -360,91 +363,34 @@ void Tui::movePage(shared_ptr<HeroBase>& hero , int &actions) {
 }
 
 void Tui::guidePage(std::shared_ptr<HeroBase>& hero ,int &actions){
-        // page number 2
-        clearScreen();
-        fmt::println("Ok , Now you can choose one villager and move it");
-        int ch;
-        while(true){
-            fmt::println("1. Move a villager to neighbor place");
-            fmt::println("2. Bring a villager from neighbor place");
-            fmt::println("3. Back");
-            fmt::println("4. Exit");
-            ch = getCommand("Please Enter your choise");
-            if (ch <= 0 || ch > 4) fmt::println("Invalid choise for guide method");
-            else
-            break;
+    // page number 2
+    clearScreen();
+    fmt::println("Ok , Now you can choose one villager and move it");
+    int ch;
+    while(true){
+        fmt::println("1. Move a villager to neighbor place");
+        fmt::println("2. Bring a villager from neighbor place");
+        fmt::println("3. Back");
+        fmt::println("4. Exit");
+        ch = getCommand("Please Enter your choise");
+        if (ch <= 0 || ch > 4) fmt::println("Invalid choise for guide method");
+        else
+        break;
+    }
+    clearScreen();
+    if (ch == 1) {
+        shared_ptr<Place> current = hero->getCurrentPlace();
+        vector<shared_ptr<Place>> neis = hero->getCurrentPlace()->getNeighbors();
+        vector<shared_ptr<Villager>> hereVills = current->getVillagers();
+        int villNum, locNum;
+        if (hereVills.size() == 0) {
+            this->pageNumber = PageNumbers::GUIDE_PAGE;
+            return; 
         }
-        clearScreen();
-        if (ch == 1) {
-            shared_ptr<Place> current = hero->getCurrentPlace();
-            vector<shared_ptr<Place>> neis = hero->getCurrentPlace()->getNeighbors();
-            vector<shared_ptr<Villager>> hereVills = current->getVillagers();
-            int villNum, locNum;
-            if (hereVills.size() == 0) {
-                this->pageNumber = PageNumbers::GUIDE_PAGE;
-                return; 
-            }
-            else {
-                // choose villager
-                while(true) {
-                    for(int i {}; i < hereVills.size(); i++) {
-                        cout << i + 1 << ". " << hereVills[i]->getName() << '\n';
-                    }
-                    villNum = getCommand("Enter a villager number");
-                    if (villNum <= 0 || villNum > hereVills.size()){
-                        fmt::println("invalid villager number");
-                    }
-                    else break;
-                }
-                // choose place 
-                while (true) {
-                    for(int i {}; i < neis.size(); i++) {
-                        cout << i + 1 << ". " << neis[i]->getName() << '\n';
-                    }
-                    locNum = getCommand("Enter a place Number");
-                    if (locNum <= 0 || locNum > neis.size()){
-                        fmt::println("invalid villager number");
-                    }
-                    else break;
-                }
-
-                sys->moveVillager(hereVills[villNum - 1] , neis[locNum - 1]);
-
-                if (hereVills[villNum - 1]->getSafeZone() == neis[locNum - 1]){
-                    fmt::println(
-                        "You reached a villager {} to its Safe zone :)\n He will give u a perk man",
-                        hereVills[villNum - 1]->getName()
-                    );
-                    sys->killVillager(hereVills[villNum - 1]);
-                    hero->addPerkCard(sys->getRandomPerk());
-                }
-                actions--;
-                this->pageNumber = PageNumbers::HERO_PHASE_PAGE;
-            }
-        }
-    
-        else if (ch == 2){
-            // choose place
-            int villNum , locNum;
-            shared_ptr<Place> current = hero->getCurrentPlace();
-            vector<shared_ptr<Place>> neis = hero->getCurrentPlace()->getNeighbors();
-            fmt::println("Choose the place with u want to bring a villager from");
-            while (true){
-                for(int i {}; i < neis.size(); i++){
-                    cout << i + 1 << ". " << neis[i]->getName() << '\n';
-                }
-                locNum = getCommand("Enter a place Number");
-                if (locNum <= 0 || locNum > neis.size()){
-                    fmt::println("invalid villager number");
-                }
-                else break;
-            }
-            vector<shared_ptr<Villager>> hereVills = neis[locNum - 1]->getVillagers();
-            if (hereVills.size() == 0){
-                this->pageNumber = PageNumbers::GUIDE_PAGE; return;
-            }
-            while(true){
-                for(int i {}; i < hereVills.size(); i++){
+        else {
+            // choose villager
+            while(true) {
+                for(int i {}; i < hereVills.size(); i++) {
                     cout << i + 1 << ". " << hereVills[i]->getName() << '\n';
                 }
                 villNum = getCommand("Enter a villager number");
@@ -453,9 +399,20 @@ void Tui::guidePage(std::shared_ptr<HeroBase>& hero ,int &actions){
                 }
                 else break;
             }
+            // choose place 
+            while (true) {
+                for(int i {}; i < neis.size(); i++) {
+                    cout << i + 1 << ". " << neis[i]->getName() << '\n';
+                }
+                locNum = getCommand("Enter a place Number");
+                if (locNum <= 0 || locNum > neis.size()){
+                    fmt::println("invalid villager number");
+                }
+                else break;
+            }
 
-            sys->moveVillager(hereVills[villNum - 1],neis[locNum - 1]);
-            
+            sys->moveVillager(hereVills[villNum - 1] , neis[locNum - 1]);
+
             if (hereVills[villNum - 1]->getSafeZone() == neis[locNum - 1]){
                 fmt::println(
                     "You reached a villager {} to its Safe zone :)\n He will give u a perk man",
@@ -467,9 +424,55 @@ void Tui::guidePage(std::shared_ptr<HeroBase>& hero ,int &actions){
             actions--;
             this->pageNumber = PageNumbers::HERO_PHASE_PAGE;
         }
-        else if (ch == 3) { this->backButton(); return; }
-        else if (ch == 4){ this->pageNumber = PageNumbers::EXIT_PAGE; return; }
     }
+
+    else if (ch == 2){
+        // choose place
+        int villNum , locNum;
+        shared_ptr<Place> current = hero->getCurrentPlace();
+        vector<shared_ptr<Place>> neis = hero->getCurrentPlace()->getNeighbors();
+        fmt::println("Choose the place with u want to bring a villager from");
+        while (true){
+            for(int i {}; i < neis.size(); i++){
+                cout << i + 1 << ". " << neis[i]->getName() << '\n';
+            }
+            locNum = getCommand("Enter a place Number");
+            if (locNum <= 0 || locNum > neis.size()){
+                fmt::println("invalid villager number");
+            }
+            else break;
+        }
+        vector<shared_ptr<Villager>> hereVills = neis[locNum - 1]->getVillagers();
+        if (hereVills.size() == 0){
+            this->pageNumber = PageNumbers::GUIDE_PAGE; return;
+        }
+        while(true){
+            for(int i {}; i < hereVills.size(); i++){
+                cout << i + 1 << ". " << hereVills[i]->getName() << '\n';
+            }
+            villNum = getCommand("Enter a villager number");
+            if (villNum <= 0 || villNum > hereVills.size()){
+                fmt::println("invalid villager number");
+            }
+            else break;
+        }
+
+        sys->moveVillager(hereVills[villNum - 1] , current);
+        
+        if (hereVills[villNum - 1]->getSafeZone() == current){
+            fmt::println(
+                "You reached a villager {} to its Safe zone :)\n He will give u a perk man",
+                hereVills[villNum - 1]->getName()
+            );
+            sys->killVillager(hereVills[villNum - 1]);
+            hero->addPerkCard(sys->getRandomPerk());
+        }
+        actions--;
+        this->pageNumber = PageNumbers::HERO_PHASE_PAGE;
+    }
+    else if (ch == 3) { this->backButton(); return; }
+    else if (ch == 4){ this->pageNumber = PageNumbers::EXIT_PAGE; return; }
+}
 
 void Tui::pickUpPage(std::shared_ptr<HeroBase>& hero ,int &actions){
     //page number 3
@@ -565,9 +568,9 @@ void Tui::advancedPage(shared_ptr<HeroBase>& hero , int &actions){
         }
         else {
             if (
-                hero->getCurrentPlace()->getName() != "cave" ||
-                hero->getCurrentPlace()->getName() != "crypt" ||
-                hero->getCurrentPlace()->getName() != "dungeon" ||
+                hero->getCurrentPlace()->getName() != "cave" &&
+                hero->getCurrentPlace()->getName() != "crypt" &&
+                hero->getCurrentPlace()->getName() != "dungeon" &&
                 hero->getCurrentPlace()->getName() != "graveyard"
             ){
                 fmt::println("you cant advance for dracula . there is no coffin here!!");
@@ -1061,9 +1064,9 @@ void Tui::runGame() {
     this->welcomePage();
     int round {0};
     int playerCount = playerPriority.size();
-    bool doNextPhase {true};
     int isEnd {-1};
     while (this->pageNumber != PageNumbers::EXIT_PAGE && isEnd == -1) {
+        bool doNextPhase {true};
         string currentHeroName = playerPriority[round % playerCount];
         shared_ptr<HeroBase> currentHero {nullptr};
         for (auto h : sys->getAllHeros()){

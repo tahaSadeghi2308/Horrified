@@ -61,6 +61,7 @@ void MonsterBase::power(shared_ptr<MonsterBase> monst , shared_ptr<HeroBase> cHe
 }
 
 void MonsterBase::doEvent(string_view eventName){
+    cout << "Playing perk card is " << eventName << '\n';
     if (eventName == "Sunrise"){
         for(auto monst : sys->getAllMonsters()){
             if (monst != nullptr && monst->getMonsterName() == "dracula"){
@@ -88,7 +89,7 @@ void MonsterBase::doEvent(string_view eventName){
         for(auto vill : sys->getAllVillagers()){
             if (vill->getName() == "maleva"){
                 for(auto loc : sys->getAllLocations()){
-                    if (loc->getName() == "camp") { sys->moveVillager(vill , loc); break; }
+                    if (loc->getName() == "tower") { sys->moveVillager(vill , loc); break; }
                 }
                 break;
             }
