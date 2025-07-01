@@ -1022,6 +1022,41 @@ void Tui::defeatPage(shared_ptr<HeroBase>& hero , int &actions){
     }
 }
 
+void Tui::helpPage() {
+    clearScreen();
+    int n;
+    while (true) {
+        fmt::println("first choose with page u want to see its manual ??");
+        fmt::println("1. Move page");
+        fmt::println("2. Guide page");
+        fmt::println("3. Pick up page");
+        fmt::println("4. Advance page");
+        fmt::println("5. Defeat Page");
+        fmt::println("6. Special action page");
+        fmt::println("7. Play perk page");
+        fmt::println("8. Back");
+        fmt::println("9. Exit");
+        n = getCommand("Enter ur choice");
+        if (n < 0 || n > 9) fmt::println("wrong input !!!");
+        else break;
+    }
+    if (n == 1){
+        clearScreen();
+        fmt::println("In this page u can move ur hero one step to another place");
+        fmt::println("Also u can move villagers from current place to another place");
+        while (true){
+            fmt::println("1. Back");
+            fmt::println("2. Exit");
+            int x = getCommand("Enter a number");
+            if (x == 1) return;
+            else if (x == 2){
+                this->pageNumber = PageNumbers::EXIT_PAGE; return;
+            }
+            else fmt::println("Invaild choise");
+        }
+    }
+}
+
 void Tui::runGame() {
     this->welcomePage();
     int round {0};

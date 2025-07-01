@@ -50,6 +50,7 @@ public:
     void specialActionPage(std::shared_ptr<HeroBase>& hero,int &actions);
     void playPerkPage(std::shared_ptr<HeroBase>& hero , int &actions , bool &doMonsterPhase );
     void defeatPage(std::shared_ptr<HeroBase>& hero , int &actions);
+    void helpPage();
 };
 
 #endif // !TUI_HPP
