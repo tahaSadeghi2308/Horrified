@@ -671,12 +671,11 @@ void Tui::pickUpPage(std::shared_ptr<HeroBase>& hero ,int &actions){
 void Tui::specialActionPage(shared_ptr<HeroBase>& hero , int &actions){
     //page number 7
     clearScreen();
-    string current = hero->getCurrentPlace()->getName();
+    shared_ptr<Place> current = hero->getCurrentPlace();
     vector<shared_ptr<Place>> neis = hero->getCurrentPlace()->getNeighbors();
     if (hero->getHeroName() == "mayor"){
         fmt::print("Mayor has not any special action !!!");
-        while (true)
-        {
+        while (true) {
             int num;
             fmt::println("1. Back");
             fmt::println("2. Exit");
@@ -689,7 +688,7 @@ void Tui::specialActionPage(shared_ptr<HeroBase>& hero , int &actions){
     else {
         int neiNum;
         fmt::println("First enter your neighbor which u want");
-        while(true){
+        while(true) {
             int num;
             for (int i {}; i < neis.size(); i++){
                 fmt::println("{}. {}", i + 1 , neis[i]->getName());
@@ -703,18 +702,13 @@ void Tui::specialActionPage(shared_ptr<HeroBase>& hero , int &actions){
             else fmt::println("Invalid place entered!!");
         }
         clearScreen();
-        string curr = neis[neiNum]->getName();
+        shared_ptr<Place> curr = neis[neiNum];
         auto colorToString = [](Color c) -> string {
             if (c == Color::BLUE) return "blue";
             else if (c == Color::RED) return "red";
             else if (c == Color::YELLOW) return "yellow";
         };
-        vector<Item> hereItems;
-        for(auto loc : sys->getLocations()){
-            if (loc->getName() == curr){
-                for(auto item : loc->getItems()) hereItems.push_back(item);
-            }
-        }
+        vector<Item> hereItems = curr->getItems();
         int firstItemsSize = hereItems.size();
         while(true){
             int itemNum;
@@ -723,7 +717,7 @@ void Tui::specialActionPage(shared_ptr<HeroBase>& hero , int &actions){
                     "{}. {} {} ({})",
                     i + 1,
                     hereItems[i].name,
-                    hereItems[i].name,
+                    colorToString(hereItems[i].color),
                     hereItems[i].power
                 ); 
             }
@@ -737,12 +731,7 @@ void Tui::specialActionPage(shared_ptr<HeroBase>& hero , int &actions){
                 }
                 else {
                     hero->addHeroItems(hereItems[itemNum - 1]);
-                    for(auto loc : sys->getLocations()){
-                        if (loc->getName() == curr){ 
-                            loc->removeItem(hereItems[itemNum - 1]);
-                            break;
-                        }
-                    }
+                    curr->removeItem(hereItems[itemNum - 1]);
                     hereItems.erase(hereItems.begin() + (itemNum - 1)); 
                 }
             }
@@ -753,8 +742,7 @@ void Tui::specialActionPage(shared_ptr<HeroBase>& hero , int &actions){
     }
 }
 
-void Tui::playPerkPage(shared_ptr<HeroBase>& hero , int &actions , bool &doMonsterPhase)
-{
+void Tui::playPerkPage(shared_ptr<HeroBase>& hero , int &actions , bool &doMonsterPhase) {
     // page number 8
     clearScreen();
     unordered_set<string> uniqePerkNames;
@@ -762,13 +750,10 @@ void Tui::playPerkPage(shared_ptr<HeroBase>& hero , int &actions , bool &doMonst
 
     for (auto perk : hero->getHeroPerks()) uniqePerkNames.insert(perk.name);
     fmt::println("First choose which perk u want to play");
-
     string perkName;
-    while(true) 
-    {
+    while(true) {
         int i {0} , perkNum;
-        for(auto perk : uniqePerkNames)
-        {
+        for(auto perk : uniqePerkNames) {
             fmt::println("{}. {}" , i + 1 , perk);
             test[i] = perk;
             i++;
@@ -785,30 +770,26 @@ void Tui::playPerkPage(shared_ptr<HeroBase>& hero , int &actions , bool &doMonst
         else if (perkNum == i + 2) { this->pageNumber = PageNumbers::EXIT_PAGE; return; }
         else fmt::println("Wrong perk or option entered!!");
     }
-    if (perkName == "Visit_from_the_Detective")
-    {
+    if (perkName == "Visit_from_the_Detective"){
         int n;
         clearScreen();
         fmt::println("you choosed Visit_from_the_Detective");
         fmt::println("enter your place to put invisible man");
-        while(true) 
-        {
-            for(int i {}; i < sys->getLocations().size(); i++){
-                fmt::println("{}. {}" , i+1, ((sys->getLocations())[i])->getName());
+        while(true)  {
+            for(int i {}; i < sys->getAllLocations().size(); i++){
+                fmt::println("{}. {}" , i+1, ((sys->getAllLocations())[i])->getName());
             }
-            fmt::println("{}. Back" , sys->getLocations().size() + 1);
-            fmt::println("{}. Exit" , sys->getLocations().size() + 2);
+            fmt::println("{}. Back" , sys->getAllLocations().size() + 1);
+            fmt::println("{}. Exit" , sys->getAllLocations().size() + 2);
             n = getCommand("Your place is");
-            if (n > 0 && n <= sys->getLocations().size())
-            {
+            if (n > 0 && n <= sys->getAllLocations().size()){
                 auto invisible = sys->getInvisible();
                 invisible -> setCurrentLocation(sys->getLocations()[n-1]);
                 this->pageNumber = PageNumbers::HERO_PHASE_PAGE; 
                 return;
             }
-            else if (n == sys->getLocations().size() + 1) 
-            {
-                 this->pageNumber = PageNumbers::HERO_PHASE_PAGE; return; 
+            else if (n == sys->getLocations().size() + 1) {
+                this->pageNumber = PageNumbers::HERO_PHASE_PAGE; return; 
             }
             else if (n == sys->getLocations().size() + 2) 
             { 
