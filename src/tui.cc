@@ -783,23 +783,25 @@ void Tui::playPerkPage(shared_ptr<HeroBase>& hero , int &actions , bool &doMonst
             fmt::println("{}. Exit" , sys->getAllLocations().size() + 2);
             n = getCommand("Your place is");
             if (n > 0 && n <= sys->getAllLocations().size()){
-                auto invisible = sys->getInvisible();
-                invisible -> setCurrentLocation(sys->getLocations()[n-1]);
+                for (auto monst : sys->getAllMonsters()){
+                    if (monst->getMonsterName() == "invisibleMan"){
+                        monst->setCurrentLocation(sys->getAllLocations()[n - 1]);
+                        break;
+                    }
+                }
                 this->pageNumber = PageNumbers::HERO_PHASE_PAGE; 
                 return;
             }
-            else if (n == sys->getLocations().size() + 1) {
+            else if (n == sys->getAllLocations().size() + 1) {
                 this->pageNumber = PageNumbers::HERO_PHASE_PAGE; return; 
             }
-            else if (n == sys->getLocations().size() + 2) 
-            { 
+            else if (n == sys->getAllLocations().size() + 2) { 
                 this->pageNumber = PageNumbers::EXIT_PAGE; return;
             }
             else fmt::println("Invalid place entered!!");
         }
     }
-    else if (perkName == "Break_of_Dawn")
-    {
+    else if (perkName == "Break_of_Dawn") {
         doMonsterPhase = false;
         for(int i {} ; i < 2; i++){
             Item temp = sys->getRandomItem();
@@ -807,84 +809,11 @@ void Tui::playPerkPage(shared_ptr<HeroBase>& hero , int &actions , bool &doMonst
         }
         this->pageNumber = PageNumbers::HERO_PHASE_PAGE; return;
     }
-    else if (perkName == "Overstock")
-    {
-        fmt::println("the player that is running this code please choose your item to add it to your place\n");
-        auto allItems = sys->getItemBag()->getCards();
-        vector<Item> possibleItems;
-        vector<int> index;
-        for(int i = 0; i < allItems.size(); i++)
-            {
-                if(i == 0 || allItems[i].name != allItems[i-1].name)
-                {
-                    possibleItems.push_back(allItems[i]);
-                    index.push_back(i);
-                }
-            }
-            while(true)
-            {
-                for(int i = 0; i < possibleItems.size(); i++)
-                cout << i+1 << " - " << possibleItems[i] << endl;
-                int itemChoice; 
-                itemChoice = getCommand();
-                if(itemChoice < 1 || itemChoice > possibleItems.size())
-                {
-                    cout << "invalid choice\n";
-                    continue;
-                }
-                hero->getCurrentPlace()->addItem(possibleItems[itemChoice-1]);
-
-                sys->getItemBag()->pop(index[itemChoice-1]);
-                cout << "the item -> "<< possibleItems[itemChoice-1].name << " has been added to your location\n";
-                break;
-            }
-            allItems = sys->getItemBag()->getCards();
-            possibleItems.clear();
-            index.clear();
-            for(int i = 0; i < allItems.size(); i++)
-            {
-                if(i == 0 || allItems[i].name != allItems[i-1].name)
-                {
-                    possibleItems.push_back(allItems[i]);
-                    index.push_back(i);
-                }
-            }
-            std::shared_ptr<HeroBase> secondHero = nullptr;
-                for (auto& h : sys->getAllHeros()) {
-                    if (h != hero) {
-                        secondHero = h;
-                        break;
-                    }
-                    }
-
-        fmt::println("{} please choose one item to add to your current location.", secondHero->getHeroName());
-
-        while(true)
-        {
-
-            for (int i = 0; i < possibleItems.size(); i++) 
-            {
-                cout << i+1 << " - " << possibleItems[i] << endl;
-            }
-
-
-            int itemChoice2 = getCommand();
-            if (itemChoice2 < 1 || itemChoice2 > possibleItems.size()) 
-            {
-                fmt::println("Invalid choice.");
-                continue;
-            }
-
-            Item selectedItem2 = possibleItems[itemChoice2 - 1];
-            secondHero->getCurrentPlace()->addItem(selectedItem2);
-            sys->getItemBag()->pop(index[itemChoice2 - 1]);
-            fmt::println("{} added to {}", selectedItem2.name, secondHero->getCurrentPlace()->getName());
-            break;
+    else if (perkName == "Overstock") {
+        for (auto her : sys->getAllHeros()){
+            Item temp = sys->getRandomItem();
+            sys->putItemInPlace(temp.place , temp);
         }
-
-
-        this->pageNumber = PageNumbers::HERO_PHASE_PAGE; 
-        return;
     }
     else if (perkName == "Late_into_the_Night") {
         actions += 2;
@@ -897,16 +826,14 @@ void Tui::playPerkPage(shared_ptr<HeroBase>& hero , int &actions , bool &doMonst
         for (auto m : sys->getAllMonsters()){
             for (int j {}; j < 2; j++) {
                 fmt::println("Move {} to ...." , m->getMonsterName());
-                string current = m->getCurrentLocation()->getName(); 
                 vector<shared_ptr<Place>> neis = m->getCurrentLocation()->getNeighbors();
-                while (true){
+                while (true) {
                     for(int i {}; i < neis.size(); i++){
                         cout << i + 1 << ". " << neis[i]->getName() << '\n';
                     }
                     cout << neis.size() + 1 << ". Back" << '\n';
                     cout << neis.size() + 2 << ". Exit" << '\n';
                     int num = getCommand("Enter a number to choose where u want to go ");
-    
                     if (num > 0 && num <= neis.size()) {
                         sys->moveMonster(m , neis[num - 1]);
                         break;
@@ -922,26 +849,20 @@ void Tui::playPerkPage(shared_ptr<HeroBase>& hero , int &actions , bool &doMonst
     else if (perkName == "Hurry") {
         clearScreen();
         fmt::println("Now we can move all heroes two times");
-        for (auto h : sys->getAllHeros())
-        {
-            for (int j {}; j < 2; j++) 
-            {
+        for (auto h : sys->getAllHeros()){
+            for (int j {}; j < 2; j++) {
                 fmt::println("Move {} to ...." , h->getHeroName());
-                string current = h->getCurrentPlace()->getName(); 
                 vector<shared_ptr<Place>> neis = h->getCurrentPlace()->getNeighbors();
-                while (true)
-                {
-                    for(int i {}; i < neis.size(); i++)
-                    {
+                while (true) {
+                    for(int i {}; i < neis.size(); i++){
                         cout << i + 1 << ". " << neis[i]->getName() << '\n';
                     }
                     cout << neis.size() + 1 << ". Back" << '\n';
                     cout << neis.size() + 2 << ". Exit" << '\n';
                     int num = getCommand("Enter a number to choose where u want to go ");
     
-                    if (num > 0 && num <= neis.size())
-                    {
-                        sys->moveHero(h , neis[num-1]);
+                    if (num > 0 && num <= neis.size()) {
+                        sys->moveHero(h , neis[num - 1]);
                         break;
                     }
                     else if (num == neis.size() + 1) { this->backButton(); return; }
@@ -953,7 +874,6 @@ void Tui::playPerkPage(shared_ptr<HeroBase>& hero , int &actions , bool &doMonst
         this->pageNumber = PageNumbers::HERO_PHASE_PAGE; return;
     }
 }
-
 
 void Tui::runGame() {
     this->welcomePage();
