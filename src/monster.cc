@@ -144,6 +144,9 @@ void MonsterBase::doEvent(string_view eventName){
             }
         }
     }
+    else if (eventName == "Hypnotic_Gaze"){
+        this->move(1 , "du");            
+    }
 }
 
 void MonsterBase::move(int n , string strike){
