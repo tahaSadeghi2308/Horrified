@@ -38,11 +38,6 @@ class System {
     //saving evidence
     std::vector<std::string> evidence = {"inn","barn","mansion","laboratory","institute"};
 
-    //bool for hero turn if true -> arch if false -> mayor
-    bool turn ;
-
-    //bool BreakOfDawn = true; handeled in tui
-
     void putVillagerInPlace(const std::string &_place , const std::string &_villName);
     int terrorLevel {0};
     
@@ -55,7 +50,7 @@ public:
         SearchingType type
     );
     void showLocs();
-    void runHeroPhase();
+    // void runHeroPhase();
     void runGame();
     char rollDice();
     void addItem(Item i);
@@ -67,6 +62,7 @@ public:
     int isEndGame() const;
     void putItemInPlace(std::string_view placeName , Item i);
     int foundCluesCount(std::string type);
+    bool destroyClue(std::string type , std::string_view clueNamePlace); 
     void moveMonster(std::shared_ptr<MonsterBase> monst , std::shared_ptr<Place> newPlace);
     void moveHero(std::shared_ptr<HeroBase> her , std::shared_ptr<Place> newPlace);
     void moveVillager(std::shared_ptr<Villager> vill , std::shared_ptr<Place> newPlace);

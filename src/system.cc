@@ -131,6 +131,27 @@ void System::putItemInPlace(string_view placeName , Item i){
     }
 }
 
+bool System::destroyClue(string type , string_view clueNamePlace){
+    if (type == "coffin"){
+        for (int i {}; i < this->coffins.size(); i++){
+            if (this->coffins[i] == clueNamePlace){
+                this->coffins.erase(this->coffins.begin() + i);
+                return true;
+            }
+        }
+        return false;
+    }
+    else if (type == "evidence"){
+        for (int i {}; i < this->evidence.size(); i++){
+            if (this->evidence[i] == clueNamePlace){
+                this->evidence.erase(this->evidence.begin() + i);
+                return true;
+            }
+        }
+        return false;
+    }
+}
+
 void System::placeWithMaxItem() {
     int itemCount {0};
     shared_ptr<Place> maxPlace {nullptr};
@@ -558,68 +579,68 @@ void System::showLocs() {
 
 //-----HeroPhase----
 
-void System::runHeroPhase()
-{
-    shared_ptr<HeroBase> HeroTurn;
+// void System::runHeroPhase()
+// {
+//     shared_ptr<HeroBase> HeroTurn;
 
-    if(turn)
-    HeroTurn = arch;
-    else
-    HeroTurn = mayor;
+//     if(turn)
+//     HeroTurn = arch;
+//     else
+//     HeroTurn = mayor;
 
-    turn = !turn;
+//     turn = !turn;
 
-    while(HeroTurn -> getActionCount() != 0)
-    {
-         cout <<"select your option\n";
-         cout << "1-Move\n2-Pick up\n3-Guid\n4-Advanced\n5-defeat\n6-Using perks\n7-help\n8-Quit\n";
-         if(HeroTurn->getHeroName() == "archaeologist")
-         cout << "9-Speciall action\n";
-         cout << "your current location is -> " << HeroTurn->getCurrentPlace()->getName() << endl;
-         int choice;
-         cin >> choice;
-         switch (choice)
-         {
-        case 1:
-            HeroTurn->moveAction(perkDeck);
-            break;
-        case 2:
-            HeroTurn->pickUpAction();
-            break;
-        case 3:
-            HeroTurn->guideAction(perkDeck);
-            break;
-        case 4:
-            HeroTurn->advanceAction(coffins, evidence, itemBag);
-            break;
-        case 5:
-            HeroTurn->defeatAction(coffins, evidence, itemBag, dracula, invisibleMan);
-            break;
-        case 6:
-            //HeroTurn->runPerkCard(arch, mayor, dracula, invisibleMan,allLocations, itemBag,perkDeck,BreakOfDawn);
-            break;
-        case 7:
-            HeroTurn->Help();
-        case 8:
-            return;
-        case 9:
-        if (HeroTurn->getHeroName() == "archaeologist")
-        {
-            HeroTurn->specialAction();
-        }
-        else
-        {
-            std::cout << "invalid choice try again\n";
-        }
-            break;
-         default:
-            cout << "invalid choice try again\n";
-            break;
-        }
-    }
-    HeroTurn->setActionCount((turn)?4:5);
+//     while(HeroTurn -> getActionCount() != 0)
+//     {
+//          cout <<"select your option\n";
+//          cout << "1-Move\n2-Pick up\n3-Guid\n4-Advanced\n5-defeat\n6-Using perks\n7-help\n8-Quit\n";
+//          if(HeroTurn->getHeroName() == "archaeologist")
+//          cout << "9-Speciall action\n";
+//          cout << "your current location is -> " << HeroTurn->getCurrentPlace()->getName() << endl;
+//          int choice;
+//          cin >> choice;
+//          switch (choice)
+//          {
+//         case 1:
+//             HeroTurn->moveAction(perkDeck);
+//             break;
+//         case 2:
+//             HeroTurn->pickUpAction();
+//             break;
+//         case 3:
+//             HeroTurn->guideAction(perkDeck);
+//             break;
+//         case 4:
+//             HeroTurn->advanceAction(coffins, evidence, itemBag);
+//             break;
+//         case 5:
+//             HeroTurn->defeatAction(coffins, evidence, itemBag, dracula, invisibleMan);
+//             break;
+//         case 6:
+//             //HeroTurn->runPerkCard(arch, mayor, dracula, invisibleMan,allLocations, itemBag,perkDeck,BreakOfDawn);
+//             break;
+//         case 7:
+//             HeroTurn->Help();
+//         case 8:
+//             return;
+//         case 9:
+//         if (HeroTurn->getHeroName() == "archaeologist")
+//         {
+//             HeroTurn->specialAction();
+//         }
+//         else
+//         {
+//             std::cout << "invalid choice try again\n";
+//         }
+//             break;
+//          default:
+//             cout << "invalid choice try again\n";
+//             break;
+//         }
+//     }
+//     HeroTurn->setActionCount((turn)?4:5);
     
-}
+// }
 
 //-------game---------
 
