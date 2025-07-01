@@ -359,14 +359,12 @@ void Tui::movePage(shared_ptr<HeroBase>& hero , int &actions) {
     }
 }
 
-void Tui::guidePage(std::shared_ptr<HeroBase>& hero ,int &actions)
-{
+void Tui::guidePage(std::shared_ptr<HeroBase>& hero ,int &actions){
         // page number 2
         clearScreen();
         fmt::println("Ok , Now you can choose one villager and move it");
         int ch;
-        while(true)
-        {
+        while(true){
             fmt::println("1. Move a villager to neighbor place");
             fmt::println("2. Bring a villager from neighbor place");
             fmt::println("3. Back");
@@ -377,21 +375,10 @@ void Tui::guidePage(std::shared_ptr<HeroBase>& hero ,int &actions)
             break;
         }
         clearScreen();
-        if (ch == 1)
-        {
-            string current = hero->getCurrentPlace()->getName();
+        if (ch == 1) {
+            shared_ptr<Place> current = hero->getCurrentPlace();
             vector<shared_ptr<Place>> neis = hero->getCurrentPlace()->getNeighbors();
-            vector<shared_ptr<Villager>> hereVills;
-    
-            for(auto loc : sys->getLocations())
-            {
-                if (loc->getName() == current)
-                {
-                    for(auto vill : loc->getVillagers())
-                    hereVills.push_back(vill);
-                    break;
-                }
-            }
+            vector<shared_ptr<Villager>> hereVills = current->getVillagers();
             int villNum, locNum;
             if (hereVills.size() == 0) {
                 this->pageNumber = PageNumbers::GUIDE_PAGE;
@@ -399,39 +386,31 @@ void Tui::guidePage(std::shared_ptr<HeroBase>& hero ,int &actions)
             }
             else {
                 // choose villager
-                while(true)
-                {
-                    for(int i {}; i < hereVills.size(); i++)
-                    {
+                while(true) {
+                    for(int i {}; i < hereVills.size(); i++) {
                         cout << i + 1 << ". " << hereVills[i]->getName() << '\n';
                     }
                     villNum = getCommand("Enter a villager number");
                     if (villNum <= 0 || villNum > hereVills.size()){
                         fmt::println("invalid villager number");
                     }
-                    else 
-                    break;
+                    else break;
                 }
                 // choose place 
-                while (true)
-                {
-                    for(int i {}; i < neis.size(); i++)
-                    {
-                        cout << i + 1 << ". " << neis[i] << '\n';
+                while (true) {
+                    for(int i {}; i < neis.size(); i++) {
+                        cout << i + 1 << ". " << neis[i]->getName() << '\n';
                     }
                     locNum = getCommand("Enter a place Number");
                     if (locNum <= 0 || locNum > neis.size()){
                         fmt::println("invalid villager number");
                     }
-                    else 
-                    break;
+                    else break;
                 }
 
                 sys->moveVillager(hereVills[villNum - 1] , neis[locNum - 1]);
 
-
-                if (hereVills[villNum - 1]->getSafeZone() == neis[locNum - 1])
-                {
+                if (hereVills[villNum - 1]->getSafeZone() == neis[locNum - 1]){
                     fmt::println(
                         "You reached a villager {} to its Safe zone :)\n He will give u a perk man",
                         hereVills[villNum - 1]->getName()
@@ -447,50 +426,32 @@ void Tui::guidePage(std::shared_ptr<HeroBase>& hero ,int &actions)
         else if (ch == 2){
             // choose place
             int villNum , locNum;
-            string current = hero->getCurrentPlace()->getName();
+            shared_ptr<Place> current = hero->getCurrentPlace();
             vector<shared_ptr<Place>> neis = hero->getCurrentPlace()->getNeighbors();
             fmt::println("Choose the place with u want to bring a villager from");
-            while (true)
-            {
-                for(int i {}; i < neis.size(); i++)
-                {
+            while (true){
+                for(int i {}; i < neis.size(); i++){
                     cout << i + 1 << ". " << neis[i]->getName() << '\n';
                 }
                 locNum = getCommand("Enter a place Number");
-                if (locNum <= 0 || locNum > neis.size())\
-                {
+                if (locNum <= 0 || locNum > neis.size()){
                     fmt::println("invalid villager number");
                 }
-                else
-                break;
+                else break;
             }
-            vector<shared_ptr<Villager>> hereVills;
-            for(auto loc : sys->getLocations())
-            {
-                if (loc->getName() == neis[locNum - 1]->getName())
-                {
-                    for(auto vill : loc->getVillagers()) 
-                    hereVills.push_back(vill);
-                    break;
-                }
-            }
-            if (hereVills.size() == 0)
-            {
+            vector<shared_ptr<Villager>> hereVills = current->getVillagers();
+            if (hereVills.size() == 0){
                 this->pageNumber = PageNumbers::GUIDE_PAGE; return;
             }
-            while(true)
-            {
-                for(int i {}; i < hereVills.size(); i++)
-                {
+            while(true){
+                for(int i {}; i < hereVills.size(); i++){
                     cout << i + 1 << ". " << hereVills[i]->getName() << '\n';
                 }
                 villNum = getCommand("Enter a villager number");
-                if (villNum <= 0 || villNum > hereVills.size())
-                {
+                if (villNum <= 0 || villNum > hereVills.size()){
                     fmt::println("invalid villager number");
                 }
-                else 
-                break;
+                else break;
             }
 
             sys->moveVillager(hereVills[villNum - 1],neis[locNum - 1]);
