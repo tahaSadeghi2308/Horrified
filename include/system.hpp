@@ -41,7 +41,7 @@ class System {
     //bool for hero turn if true -> arch if false -> mayor
     bool turn ;
 
-    bool BreakOfDawn = true;
+    //bool BreakOfDawn = true; handeled in tui
 
     void putVillagerInPlace(const std::string &_place , const std::string &_villName);
     int terrorLevel {0};

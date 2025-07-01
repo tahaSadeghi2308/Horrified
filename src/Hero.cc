@@ -44,7 +44,7 @@ void HeroBase::deleteItem(std::string_view itemName) {
 
 shared_ptr<Place> HeroBase::getCurrentPlace() { return this->currentPlace; }
 
-std::vector<Item> HeroBase::getHeroItems() { return this->heroItems; }
+std::vector<Item>& HeroBase::getHeroItems() { return this->heroItems; }
 
 void HeroBase::addHeroItems(Item _item)
 {
@@ -57,6 +57,15 @@ void HeroBase::specialAction()
     return;
 }
 
+void HeroBase::deletePerk(string_view perkName) {
+    bool isFound {};
+    for (int i {}; i < this->heroPerks.size() && !isFound; i++) {
+        if (this->heroPerks[i].name == perkName){
+            this->heroPerks.erase(heroPerks.begin() + i);
+            isFound = true;
+        }
+    }
+}
 //------help------
 
 void HeroBase::Help()
