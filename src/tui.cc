@@ -439,7 +439,7 @@ void Tui::guidePage(std::shared_ptr<HeroBase>& hero ,int &actions){
                 }
                 else break;
             }
-            vector<shared_ptr<Villager>> hereVills = current->getVillagers();
+            vector<shared_ptr<Villager>> hereVills = neis[locNum - 1]->getVillagers();
             if (hereVills.size() == 0){
                 this->pageNumber = PageNumbers::GUIDE_PAGE; return;
             }
@@ -471,34 +471,30 @@ void Tui::guidePage(std::shared_ptr<HeroBase>& hero ,int &actions){
         else if (ch == 4){ this->pageNumber = PageNumbers::EXIT_PAGE; return; }
     }
 
-    void Tui::pickUpPage(std::shared_ptr<HeroBase>& hero ,int &actions)
-    {
-         //page number 3
+void Tui::pickUpPage(std::shared_ptr<HeroBase>& hero ,int &actions){
+    //page number 3
     clearScreen();
     fmt::println("You can pick up here items");
     fmt::println("you can back from this page with chosing stop picking");
-    string current = hero->getCurrentPlace()->getName();
+    shared_ptr<Place> current = hero->getCurrentPlace();
     auto colorToString = [](Color c) -> string {
         if (c == Color::BLUE) return "blue";
         else if (c == Color::RED) return "red";
         else if (c == Color::YELLOW) return "yellow";
     };
-    vector<Item> hereItems;
-    for(auto loc : sys->getLocations())
-    {
-        if (loc->getName() == current)
-        {
-            for(auto item : loc->getItems()) 
-            hereItems.push_back(item);
-        }
-    }
+
+    vector<Item> hereItems = current->getItems();
+
     int firstItemsSize = hereItems.size();
-    while(true)
-    {
+    while(true){
         int itemNum;
-        for(int i {}; i < hereItems.size(); i++)
-        {
-            fmt::println("{}. {} {} ({})", i + 1 ,hereItems[i].name ,hereItems[i].name ,hereItems[i].power); 
+        for(int i {}; i < hereItems.size(); i++){
+            fmt::println("{}. {} {} ({})",
+                i + 1,
+                hereItems[i].name,
+                colorToString(hereItems[i].color),
+                hereItems[i].power
+            ); 
         }
         cout << hereItems.size() + 1 << ". Stop picking" << '\n';
         itemNum = getCommand("Enter a item number");
@@ -510,19 +506,11 @@ void Tui::guidePage(std::shared_ptr<HeroBase>& hero ,int &actions){
             }
             else {
                 hero->addHeroItems(hereItems[itemNum - 1]);
-                for(auto loc : sys->getLocations())
-                {
-                    if (loc->getName() == current)
-                    {
-                        loc->removeItem(hereItems[itemNum - 1]);
-                        break;
-                    }
-                }           
+                current->removeItem(hereItems[itemNum - 1]);
                 hereItems.erase(hereItems.begin() + (itemNum - 1));
             }
         }
-        else 
-        {
+        else {
             fmt::println("Invalid item Entered");
         }
     }

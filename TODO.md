@@ -5,3 +5,4 @@
 - [ ] implement monster's power with pure virtual
 - [ ] add a parameter to FSP function for finding based on situation
 - [ ] dices should be implemented for each strike !!!
+- [ ] Test all hero phase actions
