@@ -7,3 +7,4 @@
 - [X] dices should be implemented for each strike !!!
 - [ ] Test all hero phase actions
 - [ ] Checking validation range for smaller than 1 not 0 !!
+- [ ] Validation in invisibleMan power for is villager in game ??
