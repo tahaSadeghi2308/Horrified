@@ -10,6 +10,7 @@
 #include <chrono>
 #include <thread>
 #include <unordered_set>
+#include <unordered_map>
 
 using namespace std;
 
@@ -47,50 +48,85 @@ void Tui::showNeighborsInfo(shared_ptr<HeroBase>& hero) {
     cout << table << "\n\n";
 }
 
-int Tui::monsterPhasePage(shared_ptr<MonsterBase> monst , shared_ptr<HeroBase>& hero){
+int Tui::monsterPhasePage(shared_ptr<HeroBase>& hero){
     clearScreen();
     fmt::println("HA HA HA its time for us to attack :)");
-    fmt::println("im {} and im now doing my turn to do my job!!!" , monst->getMonsterName());
-
-    // char dices[3] = {
-    //     '!',
-    //     sys->rollDice(),
-    //     sys->rollDice()
-    // };
-
-    vector<char> dices; 
     MonsterCard currentCard {sys->getRandomMonstCard()};
 
-    monst->doEvent("Thief");
-    monst->putItem(currentCard.itemCount);
-
-    this_thread::sleep_for(chrono::seconds(2));
-
-    for(int i{} ; i < currentCard.dice ; i++) {
-        dices.push_back(sys->rollDice());
+    for (auto monst : sys->getAllMonsters()){
+        if (monst != nullptr) {
+            monst->doEvent(currentCard.name);
+            monst->putItem(currentCard.itemCount);
+            break;
+        }
     }
 
     bool continuePhase {true};
-    int isEnd;
-    for (auto dice : dices){
-        if (continuePhase) {
-            isEnd = sys->isEndGame();
-            if (isEnd != -1) return isEnd;
-            this_thread::sleep_for(chrono::seconds(2));
-            clearScreen();
-            if (dice == '*') continuePhase = false;
-            fmt::println("Dice sign is {}" , dice);
-            this_thread::sleep_for(chrono::seconds(1));
-            int status = monst->runMonsterPhase(currentCard , dice , hero);
-            if (status == -1) {
-                fmt::println("You are so lucky man :(");
-                this_thread::sleep_for(chrono::seconds(2));
-                continuePhase = true;
-                pageNumber = PageNumbers::HERO_PHASE_PAGE;
+    int isEnd { -1 }; 
+
+    unordered_map<string , shared_ptr<MonsterBase>> strikeMap;
+    for (auto st : currentCard.strikePriorities){
+        if (st == "du"){
+            for (auto m : sys->getAllMonsters()){
+                if (m->getMonsterName() == "dracula"){
+                    strikeMap["du"] = m;
+                }
             }
-            else {
-                clearScreen();
-                if (status != 1) {
+        }
+        else if (st == "inm"){
+            for (auto m : sys->getAllMonsters()){
+                if (m->getMonsterName() == "invisibleMan"){
+                    strikeMap["inm"] = m;
+                }
+            }
+        }
+        else {
+            for (auto m : sys->getAllMonsters()){
+                if (m->getIsFrenzed()){
+                    strikeMap["fz"] = m;
+                }
+            }
+        }
+    }
+
+    for (auto [stPhase , m] : strikeMap){
+        if ( isEnd != -1 ) break;
+        if (continuePhase){
+            fmt::println("Im {} which gonna fuck u !!!!" , m->getMonsterName());
+            m->move(currentCard.move , stPhase);
+            vector<char> dices;
+            for (int i{}; i < currentCard.dice; i++) dices.push_back(sys->rollDice());
+            for (char dice : dices){
+                isEnd = sys->isEndGame();
+                // endGame situation
+                if ( isEnd != -1 ) break;
+                if (!continuePhase) break;
+
+                fmt::println("Dice sign now is : {}" , dice);
+                this_thread::sleep_for(chrono::seconds(2));
+                if (dice == '*') continuePhase = false;           
+                int status = m->attack(dice , m , hero);
+
+                // no attack or power ran !!
+                if (status == -1 || status == 4) {
+                    fmt::println("You are so lucky man :(");
+                    string text = (status == -1) ? "Dice was empty so no attack" : "Power of " + m->getMonsterName() + " ran!!";
+                    fmt::println(text);
+                    this_thread::sleep_for(chrono::seconds(2));
+                    continuePhase = true;
+                    pageNumber = PageNumbers::HERO_PHASE_PAGE;
+                }
+                // attack to current hero!!
+                else if (status == 2 || status == 3) {
+                    // find which of heros has been attacked !!!!
+                    shared_ptr<HeroBase> attacedHero;
+                    if (status == 2) attacedHero = hero;
+                    else {
+                        for (auto h : sys->getAllHeros()){
+                            if (h->getHeroName() != hero->getHeroName()) attacedHero = h;
+                        }
+                    }
+                    clearScreen();
                     fmt::println("shit situation is so bad your hero is hurted :)");
                     fmt::println("Dont worry u can pay an item to be safe");
                     int n;
@@ -107,16 +143,18 @@ int Tui::monsterPhasePage(shared_ptr<MonsterBase> monst , shared_ptr<HeroBase>& 
                             if (c == Color::BLUE) return "blue";
                             else if (c == Color::RED) return "red";
                             else if (c == Color::YELLOW) return "yellow";
+                            return "";
                         };
                         
-                        if (hero->getHeroItems().empty()) {
+                        if (attacedHero->getHeroItems().empty()) {
                             fmt::println("You dont have any item to pay");
                             fmt::println("So we punish u becasue of ur lie !!!");
                             this_thread::sleep_for(chrono::seconds(2));
                             sys->increaseTerrorLevel();
                             for(auto loc : sys->getAllLocations()){
                                 if (loc->getName() == "hospital"){
-                                    sys->moveHero(hero , loc);
+                                    sys->moveHero(attacedHero , loc);
+                                    continuePhase = false;
                                     break;
                                 }
                             }
@@ -125,21 +163,21 @@ int Tui::monsterPhasePage(shared_ptr<MonsterBase> monst , shared_ptr<HeroBase>& 
                         else {
                             int j;
                             while(true) {   
-                                for (int i {}; i < hero->getHeroItems().size(); i++) {
+                                for (int i {}; i < attacedHero->getHeroItems().size(); i++) {
                                     fmt::println(
                                         "{}. {} {} ({})",
                                         i + 1,
-                                        (hero->getHeroItems())[i].name,
-                                        colorToString((hero->getHeroItems())[i].color),
-                                        (hero->getHeroItems())[i].power
+                                        (attacedHero->getHeroItems())[i].name,
+                                        colorToString((attacedHero->getHeroItems())[i].color),
+                                        (attacedHero->getHeroItems())[i].power
                                     );
                                 }
                                 j = getCommand("Enter item number");
-                                if (j < 0 || j > hero->getHeroItems().size()) fmt::println("invaid number for item");
+                                if (j < 0 || j > attacedHero->getHeroItems().size()) fmt::println("invaid number for item");
                                 else break;
                             }
-                            sys->addItem(hero->getHeroItems()[j - 1]);
-                            hero->deleteItem(hero->getHeroItems()[j - 1].name);
+                            sys->addItem(attacedHero->getHeroItems()[j - 1]);
+                            attacedHero->deleteItem(attacedHero->getHeroItems()[j - 1].name);
                             continuePhase = true;
                             pageNumber = PageNumbers::HERO_PHASE_PAGE;
                             break;
@@ -150,24 +188,28 @@ int Tui::monsterPhasePage(shared_ptr<MonsterBase> monst , shared_ptr<HeroBase>& 
                         sys->increaseTerrorLevel();
                         for(auto loc : sys->getAllLocations()){
                             if (loc->getName() == "hospital"){
-                                sys->moveHero(hero , loc);
+                                sys->moveHero(attacedHero , loc);
+                                continuePhase = false;
                                 break;
                             }
                         }
                         pageNumber = PageNumbers::HERO_PHASE_PAGE;
                     }
                 }
+                // attaced to a villager
                 else {
                     fmt::println("We lost one villager !!!!!");
                     sys->increaseTerrorLevel();
+                    continuePhase = false;
                     this_thread::sleep_for(chrono::seconds(2));
                     pageNumber = PageNumbers::HERO_PHASE_PAGE;
                 }
+                clearScreen();
             }
         }
     }
     return isEnd;
-}    
+} 
 
 void Tui::monstersInfo() {
     cout << "╔═══════════════════════╗\n";
@@ -256,9 +298,9 @@ void Tui::welcomePage() {
     fmt::println("But monsters hate Garlics");
     fmt::println("You can enter q instead of each input to quit the game !!!");
     int player1Days = getCommand("How many days has it been since you last ate garlic player1");
-    if (player1Days == -1) { this->quitPage(); return; }
+    if (player1Days == -1) { this->pageNumber = PageNumbers::EXIT_PAGE; return; }
     int player2Days = getCommand("How many days has it been since you last ate garlic player2");
-    if (player2Days == -1) { this->quitPage(); return; }
+    if (player2Days == -1) { this->pageNumber = PageNumbers::EXIT_PAGE; return; }
     cout << player1Days << " " << player2Days << '\n';
     int playerNumber = (player1Days > player2Days) ? 1 : 2;
     while(true) {
@@ -497,6 +539,7 @@ void Tui::pickUpPage(std::shared_ptr<HeroBase>& hero ,int &actions){
         if (c == Color::BLUE) return "blue";
         else if (c == Color::RED) return "red";
         else if (c == Color::YELLOW) return "yellow";
+        return "";
     };
 
     vector<Item> hereItems = current->getItems();
@@ -710,6 +753,7 @@ void Tui::specialActionPage(shared_ptr<HeroBase>& hero , int &actions){
             if (c == Color::BLUE) return "blue";
             else if (c == Color::RED) return "red";
             else if (c == Color::YELLOW) return "yellow";
+            return "";
         };
         vector<Item> hereItems = curr->getItems();
         int firstItemsSize = hereItems.size();
@@ -1097,10 +1141,9 @@ void Tui::runGame() {
             else if (this->pageNumber == PageNumbers::DEFEAT_PAGE) this->defeatPage(currentHero , actions);
             else if (this->pageNumber == PageNumbers::PLAYPERK_PAGE) this->playPerkPage(currentHero , actions , doNextPhase);
         }
+        isEnd = sys->isEndGame();
         if (this->pageNumber != PageNumbers::EXIT_PAGE && doNextPhase == true && isEnd == -1) {
-            shared_ptr<MonsterBase> m = (sys->getAllMonsters())[round % playerCount];
-            if (m != nullptr) 
-                isEnd = this->monsterPhasePage(m , currentHero);
+            this->monsterPhasePage(currentHero);
         }
         round++;
     }

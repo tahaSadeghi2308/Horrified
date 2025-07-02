@@ -72,9 +72,9 @@ void MonsterBase::doEvent(string_view eventName){
             }
         }
     }
-    else if (eventName == "Thief"){
-        sys->placeWithMaxItem();
-    }
+    // else if (eventName == "Thief"){
+    //     sys->placeWithMaxItem();
+    // }
     else if (eventName == "The_Delivery"){
         for(auto vill : sys->getAllVillagers()){
             if (vill->getName() == "wilbur&chick"){
@@ -146,7 +146,12 @@ void MonsterBase::doEvent(string_view eventName){
         }
     }
     else if (eventName == "Hypnotic_Gaze"){
-        this->move(1 , "du");            
+        for (auto monst : sys->getAllMonsters()){
+            if (monst->getMonsterName() == "dracula"){
+                this->move(1 , "du");
+                break;            
+            }
+        }
     }
 }
 
@@ -247,6 +252,7 @@ void MonsterBase::move(int n , string strike){
     }
 }
 
+
 int MonsterBase::attack(
     char dice , 
     shared_ptr<MonsterBase> monst , 
@@ -286,7 +292,7 @@ int MonsterBase::runMonsterPhase(MonsterCard currentCard , char dice , shared_pt
     // moving 
     for (auto st : currentCard.strikePriorities)
     {
-        this->move(currentCard.move , st);
+        // this->move(currentCard.move , st);
         if (st == "du") {
             for (auto m : sys->getAllMonsters()) {
                 if (m->getMonsterName() == "dracula"){

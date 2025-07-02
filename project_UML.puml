@@ -6,6 +6,11 @@ enum Color {
     YELLOW
 }
 
+enum SearchingType {
+    ETO
+    ETV
+}
+
 ' Structures
 class Item {
     +int power
@@ -41,10 +46,36 @@ abstract class HeroBase {
     #string heroName
     #vector<Item> heroItems
     #vector<Perk> heroPerks
+    #shared_ptr<Place> currentPlace
     +int getActionCount()
     +void setActionCount(const int)
     +string getHeroName()
     +void addPerkCard(const Perk&)
+    +void setCurrentPlace(shared_ptr<Place>)
+    +shared_ptr<Place> getCurrentPlace()
+    +vector<Item>& getHeroItems()
+    +void addHeroItems(Item)
+    +vector<Perk> getHeroPerks() const
+    +void deletePerk(string_view)
+}
+
+abstract class MonsterBase {
+    -string name
+    -bool isFrenzed
+    -shared_ptr<Place> currentPlace
+    -System* sys
+    +MonsterBase(string, bool, System*)
+    +string getMonsterName()
+    +bool getIsFrenzed()
+    +void changeFrenzedState(bool)
+    +void setCurrentLocation(shared_ptr<Place>)
+    +shared_ptr<Place> getCurrentLocation()
+    +void putItem(int)
+    +void doEvent(string_view)
+    +void move(int, string)
+    +void power(shared_ptr<MonsterBase>, shared_ptr<HeroBase>)
+    +int attack(char, shared_ptr<MonsterBase>, shared_ptr<HeroBase>)
+    +int runMonsterPhase(char, shared_ptr<HeroBase>)
 }
 
 ' Derived Classes
@@ -61,23 +92,93 @@ class MonsterCardDeck<T> {
     +MonsterCardDeck()
 }
 
-class Archaeologist {
+class Archaeologist final {
     +Archaeologist(const int&, string_view, const Perk&)
+    +void specialAction() override
 }
 
-class Mayor {
+class Mayor final {
     +Mayor(const int&, string_view, const Perk&)
 }
 
-class System {
-    -shared_ptr<MonsterCardDeck<MonsterCard>> monsterDeck
-    -shared_ptr<ItemBag<Item>> itemBag
-    -shared_ptr<PerkDeck<Perk>> perkDeck
-    -shared_ptr<Archaeologist> arch
-    -shared_ptr<Mayor> mayor
-    -vector<shared_ptr<Place>> allLocations
-    +System()
-    +void showLocs() const
+class Dracula final {
+    +Dracula(const string&, bool, System*)
+}
+
+class InvisibleMan final {
+    +InvisibleMan(const string&, bool, System*)
+}
+
+class Place {
+    -string name
+    -vector<shared_ptr<Place>> neighbors
+    -vector<shared_ptr<HeroBase>> heroes
+    -vector<shared_ptr<Villager>> villagers
+    -vector<Item> currentItems
+    -vector<shared_ptr<MonsterBase>> monsters
+    +Place(const string&)
+    +string getName()
+    +void setNeighbors(vector<shared_ptr<Place>>)
+    +vector<shared_ptr<Place>> getNeighbors()
+    +void addHero(shared_ptr<HeroBase>)
+    +void deleteHero(const string&)
+    +void addVillager(shared_ptr<Villager>)
+    +void deleteVillager(const string&)
+    +vector<shared_ptr<Villager>> getVillagers()
+    +shared_ptr<HeroBase> getHeros(const string&)
+    +void addItem(Item)
+    +vector<Item>& getItems()
+    +void removeItem(Item)
+    +void addMonster(shared_ptr<MonsterBase>)
+    +void deleteMonster(const string&)
+    +vector<shared_ptr<MonsterBase>> getMonsters()
+    +vector<shared_ptr<HeroBase>> getAllHeroes() const
+    +shared_ptr<MonsterBase> getOneMonster(const string&)
+}
+
+class Villager final {
+    -string name
+    -shared_ptr<Place> villagerLoc
+    -shared_ptr<Place> safeZone
+    +Villager(const string&)
+    +string getName() const
+    +shared_ptr<Place> getVillagerLoc() const
+    +void changeLoc(shared_ptr<Place>)
+    +void setSafeZone(shared_ptr<Place>)
+    +shared_ptr<Place> getSafeZone()
+}
+
+class Tui final {
+    -System* sys
+    -vector<string> playerPriority
+    -int pageNumber
+    +Tui(System*)
+    +void header() const
+    +void heroInfo(shared_ptr<HeroBase>&)
+    +void showNeighborsInfo(shared_ptr<HeroBase>&)
+    +void monstersInfo()
+    +void welcomePage()
+    +void quitPage() const
+    +void displayActions() const
+    +void runGame()
+    +void backButton()
+    +int monsterPhasePage(shared_ptr<MonsterBase>, shared_ptr<HeroBase>&)
+    +void heroPhasePage(shared_ptr<HeroBase>&, int)
+    +void terrorLevel(int)
+    +void movePage(shared_ptr<HeroBase>&, int&)
+    +void guidePage(shared_ptr<HeroBase>&, int&)
+    +void pickUpPage(shared_ptr<HeroBase>&, int&)
+    +void advancedPage(shared_ptr<HeroBase>&, int&)
+    +void specialActionPage(shared_ptr<HeroBase>&, int&)
+    +void playPerkPage(shared_ptr<HeroBase>&, int&, bool&)
+    +void defeatPage(shared_ptr<HeroBase>&, int&)
+    +void helpPage()
+}
+
+class FileOpenningExecption extends std::exception {
+    -string message
+    +FileOpenningExecption(const string& msg = "Bad address exception")
+    +const char* what() const noexcept
 }
 
 ' Inheritance Relationships
@@ -86,6 +187,8 @@ CardManagerBase <|-- PerkDeck
 CardManagerBase <|-- MonsterCardDeck
 HeroBase <|-- Archaeologist
 HeroBase <|-- Mayor
+MonsterBase <|-- Dracula
+MonsterBase <|-- InvisibleMan
 
 ' Composition Relationships
 System o-- MonsterCardDeck
@@ -93,10 +196,44 @@ System o-- ItemBag
 System o-- PerkDeck
 System o-- Archaeologist
 System o-- Mayor
+System o-- Dracula
+System o-- InvisibleMan
 System o-- Place
+System o-- Villager
+Place o-- HeroBase
+Place o-- Villager
+Place o-- MonsterBase
+Place o-- Item
+Tui o-- System
+Villager o-- Place
 
 ' Usage Relationships
 HeroBase --> Item
 HeroBase --> Perk
+HeroBase --> Place
+HeroBase --> PerkDeck
+HeroBase --> ItemBag
+HeroBase --> Dracula
+HeroBase --> InvisibleMan
 System --> Place
+System --> Villager
+System --> MonsterBase
+System --> HeroBase
+System --> Dracula
+System --> InvisibleMan
+System --> Archaeologist
+System --> Mayor
+System --> PerkDeck
+System --> ItemBag
+System --> MonsterCardDeck
+System --> Item
+System --> Perk
+System --> MonsterCard
+System --> SearchingType
+Tui --> System
+Tui --> HeroBase
+Tui --> MonsterBase
+Tui --> Place
+Tui --> Villager
+FileOpenningExecption --> std::exception
 @enduml
