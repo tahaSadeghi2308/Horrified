@@ -73,6 +73,8 @@ public:
     std::vector<std::shared_ptr<HeroBase>> getAllHeros() { return {arch , mayor}; }
     std::vector<std::shared_ptr<Place>> getAllLocations() { return this->allLocations; } 
     std::vector<std::shared_ptr<Villager>> getAllVillagers () { return this->allVillagers; } 
+    std::vector<std::string> getCoffins() {return this->coffins; }
+    std::vector<std::string> getEvidence() { return this->evidence;}
 };
 
 #endif //SYSTEM_HPP

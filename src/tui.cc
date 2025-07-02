@@ -606,111 +606,141 @@ void Tui::advancedPage(shared_ptr<HeroBase>& hero , int &actions){
                 this->pageNumber = PageNumbers::ADVANCED_PAGE; return;
             }
         }
+        bool isCoffin {true};
 
-        vector<Item> redItems;
-        int itemsPowerSum = 0;
-        for(auto i : hero->getHeroItems()){
-            if (i.color == Color::RED) { 
-                redItems.push_back(i); 
-                itemsPowerSum += i.power;
-                if (itemsPowerSum >= 6) break; 
-            }
-        }
-
-        if ( itemsPowerSum < 6 ){
-            fmt::println("you cant advance for dracula !!");
-            this_thread::sleep_for(chrono::seconds(2));
-            this->pageNumber = PageNumbers::ADVANCED_PAGE; return;
-        }
-        else {
-            if (
-                hero->getCurrentPlace()->getName() != "cave" &&
-                hero->getCurrentPlace()->getName() != "crypt" &&
-                hero->getCurrentPlace()->getName() != "dungeon" &&
-                hero->getCurrentPlace()->getName() != "graveyard"
-            ){
+        for(auto coffin : sys ->getCoffins())
+            if (hero->getCurrentPlace()->getName() == coffin) isCoffin = false;
+            if(isCoffin){
                 fmt::println("you cant advance for dracula . there is no coffin here!!");
                 this_thread::sleep_for(chrono::seconds(2));
                 this->pageNumber = PageNumbers::ADVANCED_PAGE; return;
             }
             else {
-                // pay items
-                for(auto i : redItems){
-                    hero->deleteItem(i.name);
-                    sys->addItem(i);
+                bool isEnough {true};
+                vector<Item> redItems;
+                int itemsPowerSum = 0;
+                for(auto i : hero->getHeroItems()){
+                    if (i.color == Color::RED) { 
+                        redItems.push_back(i); 
+                        itemsPowerSum += i.power;
+                    if (itemsPowerSum >= 6){       
+                        isEnough = false;
+                        }  
+                    }
                 }
-                if (sys->destroyClue(
-                    "coffin",
-                    hero->getCurrentPlace()->getName()
-                )){
-                    actions--;
-                    fmt::println("Fuck !!! we destroied one coffin");
-                }
+                if ( isEnough ){
+                        fmt::println("not enough red item to advance Dracula !!");
+                        this_thread::sleep_for(chrono::seconds(2));
+                        this->pageNumber = PageNumbers::ADVANCED_PAGE; return;
+                    }
                 else {
-                    fmt::println("Dude We dont have coffin here !!!!");
+                    cout << "choose some red item with a valuation more than 6\n";
+
+                    int chosenItemsPower = 0 ;
+                    vector<Item> usedItem;
+                    while(chosenItemsPower < 6)
+                    {
+                        for (int i = 0; i < redItems.size(); i++)
+                        {
+                            std::cout << i + 1 << " - " << redItems[i] << '\n';
+                        }
+                        int choice;
+                        choice = getCommand();
+                        if (choice < 1 || choice > redItems.size())
+                        {
+                            std::cout << "invalid choice try again\n";
+                            continue;
+                        }
+
+                        Item selectedItem = redItems[choice - 1];
+                        hero->deleteItem(selectedItem.name);
+                        sys->addItem(selectedItem);
+                        chosenItemsPower += selectedItem.power;
+                        redItems.erase(redItems.begin() + (choice - 1));
+                    }
+                    sys->destroyClue("coffin",hero->getCurrentPlace()->getName());
+                    actions--;
+                    std::cout << "the coffin destroyed successfully in -> " << hero->getCurrentPlace()->getName() <<std::endl;             
+                    this_thread::sleep_for(chrono::seconds(2));
+                    this->pageNumber = PageNumbers::HERO_PHASE_PAGE; return;
                 }
-                this_thread::sleep_for(chrono::seconds(2));
-                this->pageNumber = PageNumbers::HERO_PHASE_PAGE; return;
             }
         }
-    }
     else if (ch == 2) {
         for (auto monst : sys->getAllMonsters()){
             if (
                 monst->getMonsterName() == "invisible" &&
                 monst == nullptr
-            ){
+                ){
                 clearScreen();
-                fmt::println("Man invisible is dead how many times u want to kill him ??");
-                fmt::println("Im gonna redirect u to advance page to choose another option");
-                this_thread::sleep_for(chrono::seconds(2));
-                this->pageNumber = PageNumbers::ADVANCED_PAGE; return;
+                    fmt::println("Man invisible is dead how many times u want to kill him ??");
+                    fmt::println("Im gonna redirect u to advance page to choose another option");
+                    this_thread::sleep_for(chrono::seconds(2));
+                    this->pageNumber = PageNumbers::ADVANCED_PAGE; return;
+                }
+                    }
+        bool flag = true;
+
+    if(hero->getCurrentPlace()->getName() == "precinct")
+    {
+        flag=false;
+        cout << "your providing evidence for invisible man\n";
+        bool check{true};
+        vector<Item> validItems;
+        for(auto& evi:sys->getEvidence())
+        {
+            for(auto& item:hero->getHeroItems())
+            {
+                if(item.place == evi)
+                {
+                    check=false;
+                    validItems.push_back(item);
+                }
             }
         }
 
-        vector<Item> clueItems;
-        for(auto i : hero->getHeroItems()){
-            if (
-                i.place == "inn" || 
-                i.place == "barn" ||
-                i.place == "mansion" ||
-                i.place == "laboratory" ||
-                i.place == "institute"
-            ){
-                clueItems.push_back(i);
-            }
-        }
-
-        if (clueItems.empty()) {
-            fmt::println("you cant advance for Invisible man !!");
+        if(check)
+        {
+            cout << "you dont have a item that has come from barn, inn , laboraory, institute or mansion\n";
             this_thread::sleep_for(chrono::seconds(2));
             this->pageNumber = PageNumbers::ADVANCED_PAGE; return;
         }
-        else {
-            if (hero->getCurrentPlace()->getName() != "precinct"){
-                fmt::println("you cant advance for Invisible man !!");
-                this_thread::sleep_for(chrono::seconds(2));
-                this->pageNumber = PageNumbers::ADVANCED_PAGE; return;
-            }
-            else {
-                // pay items
-                hero->deleteItem(clueItems[0].name);
-                sys->addItem(clueItems[0]);
 
-                if (sys->destroyClue(
-                    "evidence",
-                    hero->getCurrentPlace()->getName()
-                )){
-                    actions--;
-                    fmt::println("Fuck !!! we destroied one evidence");
-                }
-                else {
-                    fmt::println("Dude We dont have evidence here !!!!");
-                }
-                this_thread::sleep_for(chrono::seconds(2));
-                this->pageNumber = PageNumbers::HERO_PHASE_PAGE; return;
+        while(true)//if choice was invalid it didnt get out of the advance it will get another value
+        {
+            for(int i = 0;i < validItems.size();i++)
+            {
+                cout << "the Items that you can choose as evidence\n";
+                cout << i+1 << " - " << validItems[i] << '\n';
             }
+
+            int choice;
+            choice = getCommand();
+            
+            if (choice < 1 || choice > validItems.size())
+            {
+                std::cout << "invalid choice try again\n";
+                continue;
+            }
+
+                Item selectedItem = validItems[choice - 1];
+
+                hero->deleteItem(selectedItem.name);
+
+                sys->addItem(selectedItem);
+
+                cout << "you successfully added " << selectedItem  << "\nto invisble mans board\n";
+                sys->destroyClue("evidence",selectedItem.place);
+                actions--;
+                this_thread::sleep_for(chrono::seconds(3));
+                this->pageNumber = PageNumbers::ADVANCED_PAGE; return;
         }
+    }
+    else{
+        fmt::println("you must be in precinct to add some item on invisible mans board");
+        this_thread::sleep_for(chrono::seconds(2));
+        this->pageNumber = PageNumbers::ADVANCED_PAGE; return;
+    }
     }
 }
 
