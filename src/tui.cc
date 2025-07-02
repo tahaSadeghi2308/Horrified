@@ -52,11 +52,23 @@ int Tui::monsterPhasePage(shared_ptr<MonsterBase> monst , shared_ptr<HeroBase>& 
     fmt::println("HA HA HA its time for us to attack :)");
     fmt::println("im {} and im now doing my turn to do my job!!!" , monst->getMonsterName());
 
-    char dices[3] = {
-        '!',
-        sys->rollDice(),
-        sys->rollDice()
-    };
+    // char dices[3] = {
+    //     '!',
+    //     sys->rollDice(),
+    //     sys->rollDice()
+    // };
+
+    vector<char> dices; 
+    MonsterCard currentCard {sys->getRandomMonstCard()};
+
+    monst->doEvent("Thief");
+    monst->putItem(currentCard.itemCount);
+
+    this_thread::sleep_for(chrono::seconds(2));
+
+    for(int i{} ; i < currentCard.dice ; i++) {
+        dices.push_back(sys->rollDice());
+    }
 
     bool continuePhase {true};
     int isEnd;
@@ -69,10 +81,11 @@ int Tui::monsterPhasePage(shared_ptr<MonsterBase> monst , shared_ptr<HeroBase>& 
             if (dice == '*') continuePhase = false;
             fmt::println("Dice sign is {}" , dice);
             this_thread::sleep_for(chrono::seconds(1));
-            int status = monst->runMonsterPhase(dice , hero);
+            int status = monst->runMonsterPhase(currentCard , dice , hero);
             if (status == -1) {
                 fmt::println("You are so lucky man :(");
                 this_thread::sleep_for(chrono::seconds(2));
+                continuePhase = true;
                 pageNumber = PageNumbers::HERO_PHASE_PAGE;
             }
             else {

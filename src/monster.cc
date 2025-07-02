@@ -61,7 +61,7 @@ void MonsterBase::power(shared_ptr<MonsterBase> monst , shared_ptr<HeroBase> cHe
 }
 
 void MonsterBase::doEvent(string_view eventName){
-    cout << "Playing perk card is " << eventName << '\n';
+    cout << "Playing monster card is " << eventName << '\n';
     if (eventName == "Sunrise"){
         for(auto monst : sys->getAllMonsters()){
             if (monst != nullptr && monst->getMonsterName() == "dracula"){
@@ -272,15 +272,16 @@ int MonsterBase::attack(
     return -1; // for no attack or power
 }
 
-int MonsterBase::runMonsterPhase(char dice , shared_ptr<HeroBase> cHero) {
+int MonsterBase::runMonsterPhase(MonsterCard currentCard , char dice , shared_ptr<HeroBase> cHero) {
     // get a random monster card 
-    MonsterCard currentCard { sys->getRandomMonstCard() };
+    //MonsterCard currentCard { sys->getRandomMonstCard() }; doing it in monsterPage
     // currentCard.name = "Fortune_Teller";
     // put items 
-    this->putItem(currentCard.itemCount);
+
+    //this->putItem(currentCard.itemCount); doing it in monsterPage
 
     // run an event
-    this->doEvent(currentCard.name);
+    //this->doEvent(currentCard.name);  doing it in monsterPage
 
     // moving 
     for (auto st : currentCard.strikePriorities)
