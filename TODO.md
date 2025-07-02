@@ -1,8 +1,9 @@
 - [x] implement perk and monster and item card with inheritance and polymorphism !!
-- [ ] Write test for card_manager !!!
+- [X] Write test for card_manager !!!
 - [X] Test that ur changes in one place effects in all of them !!
-- [ ] Indicate which hero is current hero
+- [X] Indicate which hero is current hero
 - [ ] implement monster's power with pure virtual
 - [ ] add a parameter to FSP function for finding based on situation
-- [ ] dices should be implemented for each strike !!!
+- [X] dices should be implemented for each strike !!!
 - [ ] Test all hero phase actions
+- [ ] Checking validation range for smaller than 1 not 0 !!
