@@ -29,6 +29,7 @@ class Tui final {
     System *sys {nullptr};
     std::vector<std::string> playerPriority;
     int pageNumber {0};
+    std::string playedMonsterCard = "This is the first round";
 public:
     explicit Tui(System *s);
     void header() const;

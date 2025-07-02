@@ -61,6 +61,7 @@ int Tui::monsterPhasePage(shared_ptr<HeroBase>& hero){
         }
     }
 
+    playedMonsterCard = currentCard.name;
     bool continuePhase {true};
     int isEnd { -1 }; 
 
@@ -217,20 +218,26 @@ void Tui::monstersInfo() {
     cout << "╚═══════════════════════╝\n";
 
     tabulate::Table table;
-    table.add_row({"Monster", "Location", "Clue Items"});
+    table.add_row({"Monster", "Location", "Clue Items" , "Remaining Clue"});
     for (const auto& monster : sys->getAllMonsters()) {
         if (monster != nullptr){
             string clueText;
+            string Clue;
             if (monster->getMonsterName() == "dracula"){
-                clueText = to_string(sys->foundCluesCount("coffin")) + " coffins found";   
+                clueText = to_string(sys->foundCluesCount("coffin")) + " coffins smashed";
+                for(auto coffin:sys->getCoffins())
+                Clue += coffin + ' ';    
             }
             else{
-                clueText = to_string(sys->foundCluesCount("clue")) + " clues found";   
+                clueText = to_string(sys->foundCluesCount("clue")) + " evidence found";
+                for(auto evi:sys ->getEvidence())
+                Clue += evi + ' ';
             }
             table.add_row({
                 monster->getMonsterName(), 
                 monster->getCurrentLocation()->getName(), 
-                clueText
+                clueText,
+                Clue
             });
         }
     }
@@ -260,7 +267,7 @@ void Tui::heroInfo(shared_ptr<HeroBase>& hero){
     for (auto item : hero->getHeroItems()) {
         cout << '\n';
         tabulate::Table t;
-        string text = item.name + "(" + to_string(item.power) + ")";
+        string text = item.name + "(" + to_string(item.power) + ")" + " -> " + item.place;
         t.add_row({text});
         if (item.color == Color::RED)
             t[0][0].format().font_color(tabulate::Color::red).font_style({tabulate::FontStyle::bold});
@@ -339,6 +346,7 @@ void Tui::heroPhasePage(shared_ptr<HeroBase>& hero , int actions){
     this->showNeighborsInfo(hero);
     this->monstersInfo();
     this->terrorLevel(sys->getTerrorLevel());
+    fmt::println("The last MonsterCard that has been played is -> {}\n",playedMonsterCard);   
     this->displayActions();
     int page = getCommand("Enter a action number ");
     while (page <= 0 || page > 9) {
