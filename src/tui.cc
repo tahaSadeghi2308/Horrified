@@ -616,19 +616,15 @@ void Tui::advancedPage(shared_ptr<HeroBase>& hero , int &actions){
                 this->pageNumber = PageNumbers::ADVANCED_PAGE; return;
             }
             else {
-                bool isEnough {true};
                 vector<Item> redItems;
                 int itemsPowerSum = 0;
-                for(auto i : hero->getHeroItems()){
+                for(auto i : hero->getHeroItems()) {
                     if (i.color == Color::RED) { 
                         redItems.push_back(i); 
-                        itemsPowerSum += i.power;
-                    if (itemsPowerSum >= 6){       
-                        isEnough = false;
-                        }  
+                        itemsPowerSum += i.power;  
                     }
                 }
-                if ( isEnough ){
+                if ( itemsPowerSum < 6 ) {
                         fmt::println("not enough red item to advance Dracula !!");
                         this_thread::sleep_for(chrono::seconds(2));
                         this->pageNumber = PageNumbers::ADVANCED_PAGE; return;
@@ -992,7 +988,7 @@ void Tui::defeatPage(shared_ptr<HeroBase>& hero , int &actions){
         }
 
         if (isInSamePlace == false){
-            fmt::println("you cant kill dracula !!");
+            fmt::println("your not in the same place with Dracula !!");
             this_thread::sleep_for(chrono::seconds(2));
             this->pageNumber = PageNumbers::DEFEAT_PAGE; return;
         }
@@ -1003,44 +999,61 @@ void Tui::defeatPage(shared_ptr<HeroBase>& hero , int &actions){
             for(auto i : hero->getHeroItems()){
                 if (i.color == Color::YELLOW) { 
                     yellowItems.push_back(i); 
-                    itemsPowerSum += i.power;
-                    if (itemsPowerSum >= 6) break; 
+                    itemsPowerSum += i.power; 
                 }
             }
             if ( itemsPowerSum < 6 ){
-                fmt::println("you cant kill dracula we haven't enogth item !!");
+                fmt::println("you cant kill dracula we haven't enogth yellow item !!");
                 this_thread::sleep_for(chrono::seconds(2));
                 this->pageNumber = PageNumbers::DEFEAT_PAGE; return;
             }
             else {
                 if (sys->foundCluesCount("coffin") != 4){
-                    fmt::println("we have not found all coffins yet");
+                    fmt::println("we have not smashed all coffins yet");
                     this_thread::sleep_for(chrono::seconds(2));
                     this->pageNumber = PageNumbers::DEFEAT_PAGE; return;
                 }
                 else {
-                    // pay items
-                    for(auto i : yellowItems){
-                        hero->deleteItem(i.name);
-                        sys->addItem(i);
+                    cout << "choose some yellow items with a valuation more than 6\n";
+
+                        int sumPower = 0;
+                    while (sumPower < 6)
+                    {
+                        for (int i = 0; i < yellowItems.size(); ++i)
+                        {
+                            std::cout << i+1 << " - " << yellowItems[i].name << " Power->" << yellowItems[i].power << '\n';
+                        }
+                        int choose;
+                        choose = getCommand();
+                        if (choose < 1 || choose > yellowItems.size())
+                        {
+                            cout << "invalid choice try again\n";
+                            continue;
+                        }
+                        Item selected = yellowItems[choose - 1];
+                        hero->deleteItem(selected.name);
+                        sys->addItem(selected);
+                        sumPower += selected.power;
+                        yellowItems.erase(yellowItems.begin() + (choose - 1));
                     }
 
-                    // kill monster
+                
                     for (int i {}; i < sys->getAllMonsters().size(); i++){
-                        if (sys->getAllMonsters()[i]->getMonsterName() == "dracula"){
-                            sys->killMonster(sys->getAllMonsters()[i]);
-                            break;
+                            if (sys->getAllMonsters()[i]->getMonsterName() == "dracula"){
+                                sys->killMonster(sys->getAllMonsters()[i]);
+                                break;
+                            }
                         }
-                    }
 
                     actions--;
                     fmt::println("soooo we killed dracula");
-                    this_thread::sleep_for(chrono::seconds(2));
+                    this_thread::sleep_for(chrono::seconds(3));
                     this->pageNumber = PageNumbers::HERO_PHASE_PAGE; return;
+                        
+                    } 
                 }
             }
         }
-    }
     else if (ch == 2) {
         for (auto monst : sys->getAllMonsters()){
             if (
@@ -1063,7 +1076,7 @@ void Tui::defeatPage(shared_ptr<HeroBase>& hero , int &actions){
         }
 
         if (isInSamePlace == false){
-            fmt::println("you cant kill invisibleMan !!");
+            fmt::println("you'r not in the same place with invisibleMan !!");
             this_thread::sleep_for(chrono::seconds(2));
             this->pageNumber = PageNumbers::DEFEAT_PAGE; return;
         }
@@ -1074,25 +1087,42 @@ void Tui::defeatPage(shared_ptr<HeroBase>& hero , int &actions){
                 if (i.color == Color::RED) { 
                     redItems.push_back(i); 
                     itemsPowerSum += i.power;
-                    if (itemsPowerSum >= 9) break; 
                 }
             }
             if ( itemsPowerSum < 9 ){
-                fmt::println("you cant kill invisibleMan we haven't enogth item !!");
+                fmt::println("you cant kill invisibleMan we haven't enougth red item !!");
                 this_thread::sleep_for(chrono::seconds(2));
                 this->pageNumber = PageNumbers::DEFEAT_PAGE; return;
             }
             else {
-                if (sys->foundCluesCount("evidence") != 6){
+                if (sys->foundCluesCount("evidence") != 5){
                     fmt::println("we have not found all evidences yet");
                     this_thread::sleep_for(chrono::seconds(2));
                     this->pageNumber = PageNumbers::DEFEAT_PAGE; return;
                 }
                 else {
-                    for(auto i : redItems){
-                        hero->deleteItem(i.name);
-                        sys->addItem(i);
+                    cout << "choose some red items with a valuation more than 6\n";
+
+                        int sumPower = 0;
+                    while (sumPower < 6)
+                    {
+                        for (int i = 0; i < redItems.size(); ++i)
+                        {
+                            std::cout << i+1 << " - " << redItems[i].name << " Power->" << redItems[i].power << '\n';
+                        }
+                        int choose;
+                        choose = getCommand();
+                        if (choose < 1 || choose > redItems.size())
+                        {
+                            cout << "invalid choice try again\n";
+                            continue;
+                        }
+                        Item selected = redItems[choose - 1];
+                        hero->deleteItem(selected.name);
+                        sumPower += selected.power;
+                        redItems.erase(redItems.begin() + (choose - 1));
                     }
+
                     
                     // kill monster
                     for (int i {}; i < sys->getAllMonsters().size(); i++){
