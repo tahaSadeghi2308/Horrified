@@ -15,8 +15,8 @@ System::System(){
     perkDeck = make_shared<PerkDeck<Perk>>();
 
     // setup heroes
-    arch = make_shared<Archaeologist>(1 , "archaeologist" , perkDeck->pickOneRandomly());
-    mayor = make_shared<Mayor>(6 , "mayor" , perkDeck->pickOneRandomly());
+    arch = make_shared<Archaeologist>(4 , "archaeologist" , perkDeck->pickOneRandomly());
+    mayor = make_shared<Mayor>(5 , "mayor" , perkDeck->pickOneRandomly());
 
     // setup monsters
     dracula = make_shared<Dracula>("dracula" , true , this);

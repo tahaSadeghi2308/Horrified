@@ -275,7 +275,7 @@ void Tui::heroInfo(shared_ptr<HeroBase>& hero){
 
 void Tui::quitPage() const {
     // page number = 9
-    clearScreen();
+    // clearScreen();
     fmt::println("I hope u enjoy this game :(: ");
 }
 
@@ -1132,7 +1132,8 @@ void Tui::runGame() {
         int actions = currentHero->getActionCount();
         while(actions != 0 && pageNumber != PageNumbers::EXIT_PAGE && isEnd == -1) {
             isEnd = sys->isEndGame();
-            if (this->pageNumber == PageNumbers::HERO_PHASE_PAGE) this->heroPhasePage(currentHero , actions);
+            if (isEnd != -1) break;
+            else if (this->pageNumber == PageNumbers::HERO_PHASE_PAGE) this->heroPhasePage(currentHero , actions);
             else if (this->pageNumber == PageNumbers::MOVE_PAGE) this->movePage(currentHero , actions);
             else if (this->pageNumber == PageNumbers::GUIDE_PAGE) this->guidePage(currentHero , actions);
             else if (this->pageNumber == PageNumbers::PICKUP_PAGE) this->pickUpPage(currentHero , actions);
