@@ -153,15 +153,18 @@ bool System::destroyClue(string type , string_view clueNamePlace){
 }
 
 void System::placeWithMaxItem() {
+    bool noItem {true};
     int itemCount {0};
     shared_ptr<Place> maxPlace {nullptr};
     for(auto loc : this->allLocations){
         if (loc->getItems().size() > itemCount){
             itemCount = loc->getItems().size();
             maxPlace = loc;
+            noItem = false;
         }
     }
 
+    if(noItem) return;
     vector<Item> items = maxPlace->getItems();
 
     for (auto i : items) {
@@ -169,6 +172,7 @@ void System::placeWithMaxItem() {
     }
 
     if (invisibleMan != nullptr) this->moveMonster(invisibleMan , maxPlace);
+
 }
 
 void System::killMonster(shared_ptr<MonsterBase> monst){

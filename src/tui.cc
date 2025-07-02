@@ -61,7 +61,7 @@ int Tui::monsterPhasePage(shared_ptr<MonsterBase> monst , shared_ptr<HeroBase>& 
     vector<char> dices; 
     MonsterCard currentCard {sys->getRandomMonstCard()};
 
-    monst->doEvent("Thief");
+    monst->doEvent(currentCard.name);
     monst->putItem(currentCard.itemCount);
 
     this_thread::sleep_for(chrono::seconds(2));
