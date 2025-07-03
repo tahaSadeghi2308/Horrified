@@ -55,7 +55,7 @@ int Tui::monsterPhasePage(shared_ptr<HeroBase>& hero){
 
     for (auto monst : sys->getAllMonsters()){
         if (monst != nullptr) {
-            monst->doEvent(currentCard.name);
+            monst->doEvent(currentCard.name , hero);
             monst->putItem(currentCard.itemCount);
             break;
         }

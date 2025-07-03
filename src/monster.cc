@@ -64,10 +64,23 @@ void MonsterBase::power(shared_ptr<MonsterBase> monst , shared_ptr<HeroBase> cHe
     }
 }
 
-void MonsterBase::doEvent(string_view eventName){
-    eventName = "On_The_Move";
+void MonsterBase::doEvent(
+    string_view eventName,
+    shared_ptr<HeroBase> cHero
+){
     cout << "Playing monster card is " << eventName << '\n';
-    if (eventName == "Sunrise"){
+    if (eventName == "Form_of_the_Bat"){
+        for(auto monst : sys->getAllMonsters()){
+            if (monst != nullptr && monst->getMonsterName() == "dracula"){
+                for(auto loc : sys->getAllLocations()){
+                    sys->moveMonster(monst , cHero->getCurrentPlace()); 
+                    break;
+                }
+                break;
+            }
+        }
+    }
+    else if (eventName == "Sunrise"){
         for(auto monst : sys->getAllMonsters()){
             if (monst != nullptr && monst->getMonsterName() == "dracula"){
                 for(auto loc : sys->getAllLocations()){

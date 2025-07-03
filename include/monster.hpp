@@ -23,7 +23,7 @@ public:
     void setCurrentLocation(std::shared_ptr<Place> _newLoc);
     std::shared_ptr<Place> getCurrentLocation();
     void putItem(const int count);
-    void doEvent(std::string_view eventName);
+    void doEvent(std::string_view eventName , std::shared_ptr<HeroBase> cHero);
     void move(int n , std::string strike);
     void power(std::shared_ptr<MonsterBase> monst , std::shared_ptr<HeroBase> cHero);
     int attack(char dice , std::shared_ptr<MonsterBase> monst , std::shared_ptr<HeroBase> cHero);
