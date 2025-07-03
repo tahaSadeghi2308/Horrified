@@ -18,10 +18,13 @@ class HeroBase {
     std::vector<Item> heroItems;
     std::vector<Perk> heroPerks;
     std::shared_ptr<Place> currentPlace {nullptr};
+    std::string last_played_perk_;
 
 public:
     HeroBase() = default;
     void Help();
+    std::string getLastPlayedName() { return this->last_played_perk_; }
+    void setLastPlayed(std::string_view p) { this->last_played_perk_ = p; }
     virtual void specialAction();
     HeroBase(const int &_num , std::string_view _name , const Perk &perk);
     int getActionCount();

@@ -258,12 +258,13 @@ void Tui::heroInfo(shared_ptr<HeroBase>& hero){
     cout << "📍 Location: " << hero->getCurrentPlace()->getName() << '\n';
     cout << "    ├── Neighbors: ";
     for (auto nei : hero->getCurrentPlace()->getNeighbors()) cout << nei->getName() << " ";
-
     cout << '\n';
     cout << "    ├── Here Villagers: "; 
     for (auto vill : hero->getCurrentPlace()->getVillagers()) cout << vill->getName() << " ";
     cout << '\n';
     cout << "    ├── Hero Items: ";
+    cout << '\n';
+    cout << "    ├── Last Played Perk: "; cout << hero->getLastPlayedName();
     for (auto item : hero->getHeroItems()) {
         cout << '\n';
         tabulate::Table t;
@@ -851,6 +852,7 @@ void Tui::playPerkPage(shared_ptr<HeroBase>& hero , int &actions , bool &doMonst
         else if (perkNum == i + 2) { this->pageNumber = PageNumbers::EXIT_PAGE; return; }
         else fmt::println("Wrong perk or option entered!!");
     }
+    hero->setLastPlayed(perkName);
     if (perkName == "Visit_from_the_Detective"){
         int n;
         clearScreen();

@@ -12,6 +12,7 @@ HeroBase::HeroBase (
     const Perk &perk
 ) : actionCount(_num) , heroName(_name) {
     this->addPerkCard(perk);
+    this->last_played_perk_ = "Nothing";
 }
 
 int HeroBase::getActionCount() { return this->actionCount; }
