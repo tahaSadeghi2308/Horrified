@@ -1,12 +1,12 @@
 3 2 Form_of_the_Bat 1 2 inm_
-5 2 Thief 1 3 inm_du_
+5 2 Thief 1 3 du_inm_
 2 3 On_The_Move 3 2 fz_
-3 0 Sunrise 1 2 inm_fz_
+3 0 Sunrise 1 2 fz_inm_
 1 3 The_Delivery 1 3 fz_
 1 3 Fortune_Teller 1 2 fz_
-1 3 Former_Employer 1 2 inm_fz_
+1 3 Former_Employer 1 2 fz_inm_
 1 3 Hurried_Assistant 2 3 du_
-1 3 The_Innocent 1 3 fz_du_inm_
-1 3 Egyptian_Expert 2 2 du_fz_
+1 3 The_Innocent 1 3 inm_du_fz_
+1 3 Egyptian_Expert 2 2 fz_du_
 1 3 The_Ichthyologist 1 2 fz_
 2 2 Hypnotic_Gaze 1 2 inm_

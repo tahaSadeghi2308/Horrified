@@ -20,7 +20,7 @@ struct Item {
     int power;
     Color color;
     std::string name;
-    std::string place; // NOTE: maybe change base on place implementation
+    std::string place; 
     friend std::ostream& operator<< (std::ostream& output , Item&items)
     {  
         output<< "Name-> " << items.name << '\t' << "Color-> ";

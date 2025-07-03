@@ -55,8 +55,8 @@ int Tui::monsterPhasePage(shared_ptr<HeroBase>& hero){
 
     for (auto monst : sys->getAllMonsters()){
         if (monst != nullptr) {
-            monst->doEvent(currentCard.name , hero);
             monst->putItem(currentCard.itemCount);
+            monst->doEvent(currentCard.name , hero);
             break;
         }
     }
@@ -93,7 +93,7 @@ int Tui::monsterPhasePage(shared_ptr<HeroBase>& hero){
     for (auto [stPhase , m] : strikeMap){
         if ( isEnd != -1 ) break;
         if (continuePhase){
-            fmt::println("Im {} which gonna fuck u !!!!" , m->getMonsterName());
+            fmt::println("Im {} which gonna do my job !!!!" , m->getMonsterName());
             m->move(currentCard.move , stPhase);
             vector<char> dices;
             for (int i{}; i < currentCard.dice; i++) dices.push_back(sys->rollDice());
@@ -128,7 +128,7 @@ int Tui::monsterPhasePage(shared_ptr<HeroBase>& hero){
                         }
                     }
                     clearScreen();
-                    fmt::println("shit situation is so bad your hero is hurted :)");
+                    fmt::println("situation is so bad your hero is hurted :)");
                     fmt::println("Dont worry u can pay an item to be safe");
                     int n;
                     while (true) {
@@ -166,11 +166,12 @@ int Tui::monsterPhasePage(shared_ptr<HeroBase>& hero){
                             while(true) {   
                                 for (int i {}; i < attacedHero->getHeroItems().size(); i++) {
                                     fmt::println(
-                                        "{}. {} {} ({})",
+                                        "{}. {} {} ({}) -> {}" ,
                                         i + 1,
                                         (attacedHero->getHeroItems())[i].name,
                                         colorToString((attacedHero->getHeroItems())[i].color),
-                                        (attacedHero->getHeroItems())[i].power
+                                        (attacedHero->getHeroItems())[i].power,
+                                        (attacedHero->getHeroItems())[i].place
                                     );
                                 }
                                 j = getCommand("Enter item number");
@@ -311,11 +312,11 @@ void Tui::displayActions() const {
     cout << "[2] Guide Local  ";
     cout << "[3] Pick Up Item  ";
     cout << "[4] Advanced Action  ";
-    cout << "[6] Defeat Action\n";
-    cout << "[7] Special Action  ";
-    cout << "[8] Play perk  ";
-    cout << "[9] Exit Game\n";
-    cout << "[10] Help Page\n\n";
+    cout << "[5] Defeat Action\n";
+    cout << "[6] Special Action  ";
+    cout << "[7] Play perk  ";
+    cout << "[8] Help Page  ";
+    cout << "[9] Exit Game\n\n";
 }
 
 void Tui::welcomePage() {
@@ -328,7 +329,7 @@ void Tui::welcomePage() {
     int player2Days = getCommand("How many days has it been since you last ate garlic player2");
     if (player2Days == -1) { this->pageNumber = PageNumbers::EXIT_PAGE; return; }
     cout << player1Days << " " << player2Days << '\n';
-    int playerNumber = (player1Days > player2Days) ? 1 : 2;
+    int playerNumber = (player1Days <= player2Days) ? 1 : 2;
     while(true) {
         fmt::println("Ok , player {} . Now choose your character: " , playerNumber);
         fmt::println("1. Archaeologist");
@@ -732,9 +733,9 @@ void Tui::advancedPage(shared_ptr<HeroBase>& hero , int &actions){
 
             while(true)//if choice was invalid it didnt get out of the advance it will get another value
             {
+                cout << "the Items that you can choose as evidence\n";
                 for(int i = 0;i < validItems.size();i++)
                 {
-                    cout << "the Items that you can choose as evidence\n";
                     cout << i+1 << " - " << validItems[i] << '\n';
                 }
 
@@ -1175,7 +1176,7 @@ void Tui::helpPage() {
     clearScreen();
     int n;
     while (true) {
-        fmt::println("first choose with page u want to see its manual ??");
+        fmt::println("first choose whith page u want to see its manual ??");
         fmt::println("1. Move page");
         fmt::println("2. Guide page");
         fmt::println("3. Pick up page");
@@ -1227,6 +1228,7 @@ void Tui::helpPage() {
         break;
     case 8:
         cout << "When you do back you will go back to the previous page\n";
+        break;
     case 9:
         cout << "It doesnt matter where you are the game will immediately ends\n";
         break;
@@ -1251,7 +1253,7 @@ void Tui::runGame() {
     this->welcomePage();
     int round {0};
     int playerCount = playerPriority.size();
-    int isEnd {-1};
+    int isEnd {-1};       
     while (this->pageNumber != PageNumbers::EXIT_PAGE && isEnd == -1) {
         bool doNextPhase {true};
         string currentHeroName = playerPriority[round % playerCount];

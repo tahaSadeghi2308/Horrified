@@ -51,7 +51,7 @@ std::vector<shared_ptr<Villager>> Place::getVillagers()
 
 std::shared_ptr<HeroBase> Place::getHeros(const std::string &_heroName)
 {
-    for (auto hero : heroes) { // NOTE: delete &hero -> hero
+    for (auto hero : heroes) { 
         if (hero->getHeroName() == _heroName) {
             return hero;
         }

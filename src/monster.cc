@@ -310,20 +310,9 @@ int MonsterBase::attack(
 }
 
 int MonsterBase::runMonsterPhase(MonsterCard currentCard , char dice , shared_ptr<HeroBase> cHero) {
-    // get a random monster card 
-    //MonsterCard currentCard { sys->getRandomMonstCard() }; doing it in monsterPage
-    // currentCard.name = "Fortune_Teller";
-    // put items 
-
-    //this->putItem(currentCard.itemCount); doing it in monsterPage
-
-    // run an event
-    //this->doEvent(currentCard.name);  doing it in monsterPage
-
-    // moving 
+    
     for (auto st : currentCard.strikePriorities)
     {
-        // this->move(currentCard.move , st);
         if (st == "du") {
             for (auto m : sys->getAllMonsters()) {
                 if (m->getMonsterName() == "dracula"){

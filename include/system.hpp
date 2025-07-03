@@ -43,8 +43,6 @@ class System {
     
 public:
     System();
-    // TODO: we should create a function for saving game with destructor !!!
-    // ~System();
     std::vector<std::shared_ptr<Place>> findShortestPath(
         std::shared_ptr<Place> _place,
         SearchingType type
@@ -53,10 +51,7 @@ public:
         std::shared_ptr<Place> source,
         std::shared_ptr<Place> destination
     );
-    void showLocs();
     void changeFrenzy();
-    // void runHeroPhase();
-    void runGame();
     char rollDice();
     void addItem(Item i);
     int getTerrorLevel() const;
