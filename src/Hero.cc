@@ -88,13 +88,14 @@ void HeroBase::Help()
     switch (choice)
     {
     case 1:
-        cout << "with Move action you can move to a neighbor location and if any villager was on your location the program will ask you if you want to move it as well with you or not\n";
+        cout << "with Move action you can move to a neighbor location and if any villager was on your location the program will ask you if you want to move it as well with yourself or not\n";
         break;
     case 2:
-        cout << "with Guide action you if a villager is in your neighborhood you can bring it to your location and if its currently in your location you can move it to a neighbor location\n";
+        cout << "with Guide action if a villager is in your neighborhood you can bring it to your location\n";
+        cout << "and if its currently in your location you can move it to a neighbor location\n";
         break;
     case 3:
-        cout << "you can simply pick up a item from you current location and add it to your items in your bag\n";
+        cout << "you can simply pick up a item from your current location and add it to your item bag\n";
         break;
     case 4:
         cout << "for defeating monsters as you may know you need to break dracula's coffins and collect evidence for invisible man you must do this works with Advanced action\n";

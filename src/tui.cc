@@ -281,6 +281,24 @@ void Tui::heroInfo(shared_ptr<HeroBase>& hero){
     cout << "\n\n";
 }
 
+void Tui::VillagersInfo() {
+    cout << "╔═════════════════════════╗\n";
+    cout << "║     Villagers Status    ║\n";
+    cout << "╚═════════════════════════╝\n";
+    tabulate::Table vill;
+    vill.add_row({"Villagers", "Location" , "Safe Zone"});
+
+        for(auto place : sys -> getAllLocations()) {
+            if(!place -> getVillagers().empty()){
+            for(auto villager : place ->getVillagers())
+                vill.add_row({villager->getName() , villager->getVillagerLoc()->getName() , villager->getSafeZone()->getName()});
+            }
+        }
+    vill.format().border_top("═").border_bottom("═").border_left("║").border_right("║").corner("╬");
+    vill[0].format().font_style({tabulate::FontStyle::bold}).font_color(tabulate::Color::red);
+    cout << vill << "\n\n";
+}
+
 void Tui::quitPage() const {
     // page number = 9
     // clearScreen();
@@ -346,6 +364,7 @@ void Tui::heroPhasePage(shared_ptr<HeroBase>& hero , int actions){
     fmt::println("Remaining actions : {}" , actions);
     this->showNeighborsInfo(hero);
     this->monstersInfo();
+    this -> VillagersInfo();
     this->terrorLevel(sys->getTerrorLevel());
     fmt::println("The last MonsterCard that has been played is -> {}\n",playedMonsterCard);   
     this->displayActions();
@@ -1166,25 +1185,66 @@ void Tui::helpPage() {
         fmt::println("7. Play perk page");
         fmt::println("8. Back");
         fmt::println("9. Exit");
+        fmt::println("10. real Back");
+        fmt::println("11. real Exit");
         n = getCommand("Enter ur choice");
+        if(n == 10) {
+            this->pageNumber = PageNumbers::HERO_PHASE_PAGE; return;
+        }
+        if(n == 11) {
+            this->pageNumber = PageNumbers::EXIT_PAGE; return;
+        }
+
         if (n < 0 || n > 9) fmt::println("wrong input !!!");
         else break;
     }
-    if (n == 1){
-        clearScreen();
-        fmt::println("In this page u can move ur hero one step to another place");
-        fmt::println("Also u can move villagers from current place to another place");
-        while (true){
-            fmt::println("1. Back");
-            fmt::println("2. Exit");
-            int x = getCommand("Enter a number");
-            if (x == 1) return;
-            else if (x == 2){
-                this->pageNumber = PageNumbers::EXIT_PAGE; return;
-            }
-            else fmt::println("Invaild choise");
-        }
+    clearScreen();
+    switch (n)
+    {
+    case 1:
+        cout << "With Move action you can move to a neighbor location and if any villager was on your location the program will ask you if you want to move it as well with yourself or not\n";
+        break;
+    case 2:
+        cout << "With Guide action if a villager is in your neighborhood you can bring it to your location\n";
+        cout << "and if its currently in your location you can move it to a neighbor location\n";
+        break;
+    case 3:
+        cout << "You can simply pick up a item from your current location and add it to your item bag\n";
+        break;
+    case 4:
+        cout << "For defeating monsters as you may know you need to break dracula's coffins and collect evidence for invisible man you must do this works with Advanced action\n";
+        cout << "Use Advanced to break coffins in (crypt,cave,graveyard,dungeon)\n";
+        cout << "Pickup evidence(items) in(inn,barn,mansion,laboratory,institute) with pickup and collect them in precinct with advanced action to defeat invisible man\n";
+        break;
+    case 5:
+        cout << "Defeat a monster with this action when you breaked all the coffins or collected all the evidence of invisible mans persent\n";
+        break;
+    case 6:
+        cout << "With speciall action you can pick an item of neighbor locations\n";
+        break;
+    case 7:
+        cout << "You can use one of perk cards that you already have in your bag\n";
+        break;
+    case 8:
+        cout << "When you do back you will go back to the previous page\n";
+    case 9:
+        cout << "It doesnt matter where you are the game will immediately ends\n";
+        break;
     }
+    while (true)
+    {
+        cout << "1-Back\n2-End\n";
+        int choose;
+        choose = getCommand();
+        if(choose == 1)
+        return;
+        else if(choose == 2){
+        this->pageNumber = PageNumbers::EXIT_PAGE; return;
+        }
+        else
+        cout << "Invalid choice try again\n";
+    }
+    
 }
 
 void Tui::runGame() {
@@ -1211,6 +1271,7 @@ void Tui::runGame() {
             else if (this->pageNumber == PageNumbers::ADVANCED_PAGE) this->advancedPage(currentHero , actions);
             else if (this->pageNumber == PageNumbers::DEFEAT_PAGE) this->defeatPage(currentHero , actions);
             else if (this->pageNumber == PageNumbers::PLAYPERK_PAGE) this->playPerkPage(currentHero , actions , doNextPhase);
+            else if (this->pageNumber == PageNumbers::HELP_PAGE) this->helpPage();
         }
         isEnd = sys->isEndGame();
         if (this->pageNumber != PageNumbers::EXIT_PAGE && doNextPhase == true && isEnd == -1) {

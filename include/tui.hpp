@@ -36,6 +36,7 @@ public:
     void heroInfo(std::shared_ptr<HeroBase>& hero);
     void showNeighborsInfo(std::shared_ptr<HeroBase>& hero);
     void monstersInfo();
+    void VillagersInfo();
     void welcomePage();
     void quitPage() const;
     void displayActions() const;
