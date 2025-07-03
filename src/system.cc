@@ -80,10 +80,16 @@ System::System(){
         if (place->getName() == "docks"){
             place->addHero(arch);
             arch->setCurrentPlace(place);
+            dracula->setCurrentLocation(place);
+            place->addMonster(dracula);
         }
         else if (place->getName() == "theatre"){
             place->addHero(mayor);
             mayor->setCurrentPlace(place);
+        }
+        else if(place->getName() == "hospital") {
+            invisibleMan->setCurrentLocation(place);
+            place->addMonster(invisibleMan);
         }
     }
 
@@ -110,17 +116,11 @@ System::System(){
         throw FileOpenningExecption("couldn't open villager.txt");
     } 
 
-    // add location to our monsters
-    for (auto loc : allLocations){
-        if(loc->getName() == "docks"){
-            dracula->setCurrentLocation(loc);
-            loc->addMonster(dracula);
-        }
-        else if(loc->getName() == "hospital"){
-            invisibleMan->setCurrentLocation(loc);
-            loc->addMonster(invisibleMan);
-        }
+    for(int i{} ; i < 12 ; i++) {
+        Item selectedItem = getRandomItem();
+        putItemInPlace(selectedItem.place , selectedItem);
     }
+
 }
 
 int System::getTerrorLevel() const { return this->terrorLevel; }
@@ -150,6 +150,8 @@ bool System::destroyClue(string type , string_view clueNamePlace){
         }
         return false;
     }
+    //this should never run
+    return false;
 }
 
 void System::placeWithMaxItem() {
@@ -349,7 +351,9 @@ vector<shared_ptr<Place>> System::findShortestPath(
 
 Perk System::getRandomPerk() {
     if (perkDeck->size() > 0) 
-        return perkDeck->pickOneRandomly(); 
+        return perkDeck->pickOneRandomly();
+        //this should never run
+        return Perk(); 
 }
 
 MonsterCard System::getRandomMonstCard() {

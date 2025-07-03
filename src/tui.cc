@@ -324,11 +324,10 @@ void Tui::welcomePage() {
     fmt::println("Be careful there are lot of monsters overthere !!!");
     fmt::println("But monsters hate Garlics");
     fmt::println("You can enter q instead of each input to quit the game !!!");
-    int player1Days = getCommand("How many days has it been since you last ate garlic player1");
+    int player1Days = getCommand("How many days has it been since you last ate garlic player1 (if equalize player1 will win)");
     if (player1Days == -1) { this->pageNumber = PageNumbers::EXIT_PAGE; return; }
-    int player2Days = getCommand("How many days has it been since you last ate garlic player2");
+    int player2Days = getCommand("How many days has it been since you last ate garlic player2 (if equalize player1 will win)");
     if (player2Days == -1) { this->pageNumber = PageNumbers::EXIT_PAGE; return; }
-    cout << player1Days << " " << player2Days << '\n';
     int playerNumber = (player1Days <= player2Days) ? 1 : 2;
     while(true) {
         fmt::println("Ok , player {} . Now choose your character: " , playerNumber);
