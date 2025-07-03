@@ -178,6 +178,7 @@ void System::killMonster(shared_ptr<MonsterBase> monst){
     }
     if (monst->getMonsterName() == "dracula") this->dracula = nullptr;
     else if (monst->getMonsterName() == "invisibleMan") this->invisibleMan = nullptr;
+    this->changeFrenzy();
 }
 
 void System::killVillager(shared_ptr<Villager> vill){
