@@ -49,7 +49,12 @@ public:
         std::shared_ptr<Place> _place,
         SearchingType type
     );
+    std::vector<std::shared_ptr<Place>> findShortestPath(
+        std::shared_ptr<Place> source,
+        std::shared_ptr<Place> destination
+    );
     void showLocs();
+    void changeFrenzy();
     // void runHeroPhase();
     void runGame();
     char rollDice();

@@ -3,8 +3,8 @@
 - [X] Test that ur changes in one place effects in all of them !!
 - [X] Indicate which hero is current hero
 - [ ] implement monster's power with pure virtual
-- [ ] add a parameter to FSP function for finding based on situation
+- [x] add a parameter to FSP function for finding based on situation
 - [X] dices should be implemented for each strike !!!
 - [ ] Test all hero phase actions
 - [ ] Checking validation range for smaller than 1 not 0 !!
-- [ ] Validation in invisibleMan power for is villager in game ??
+- [x] Validation in invisibleMan power for is villager in game ??

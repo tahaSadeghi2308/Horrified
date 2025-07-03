@@ -284,6 +284,68 @@ vector<shared_ptr<Place>> System::findShortestPath(
     return path;
 }
 
+void System::changeFrenzy() {
+    vector<shared_ptr<MonsterBase>> aliveMonsters;
+    for(auto m : this->getAllMonsters()) {
+        if (m != nullptr) aliveMonsters.push_back(m);
+    }
+    if (aliveMonsters.size() > 1) {
+        sort (
+            aliveMonsters.begin(),
+            aliveMonsters.end(),
+            [] (shared_ptr<MonsterBase> A , shared_ptr<MonsterBase> B) -> bool {
+                return A->getFrenzyOrder() < B->getFrenzyOrder();
+            }
+        );
+        for (int i{}; i < aliveMonsters.size(); i++){
+            if (i != aliveMonsters.size() - 1){
+                if (aliveMonsters[i]->getIsFrenzed()){
+                    aliveMonsters[i + 1]->changeFrenzedState(true);
+                    aliveMonsters[i]->changeFrenzedState(false);
+                    break;
+                }
+            }
+        }
+    }
+}
+
+vector<shared_ptr<Place>> System::findShortestPath(
+    shared_ptr<Place> source ,
+    shared_ptr<Place> destination
+){
+    unordered_map<shared_ptr<Place>, bool> visited;
+    unordered_map<shared_ptr<Place>, shared_ptr<Place>> parent;
+    for (auto x : allLocations) visited[x] = false;
+
+    queue<shared_ptr<Place>> q;
+    visited[source] = true;
+    q.push(source);
+    shared_ptr<Place> target {nullptr};
+    while(!q.empty() && !target){
+        shared_ptr<Place> currentPlace {q.front()};
+        for (auto nei : currentPlace->getNeighbors()){
+            if (!visited[nei]) {
+                visited[nei] = true;
+                parent[nei] = currentPlace;
+                if (nei->getName() == destination->getName()){
+                    target = nei;
+                    break;
+                }
+                q.push(nei);
+            }
+        }
+        q.pop();
+    }
+    vector<shared_ptr<Place>> path;
+    if (target) {
+        for (shared_ptr<Place> current = target; current != nullptr; current = parent[current]) {
+            path.push_back(current);
+        }
+        reverse(path.begin(), path.end());
+    }
+    return path;
+}
+
 Perk System::getRandomPerk() {
     if (perkDeck->size() > 0) 
         return perkDeck->pickOneRandomly(); 

@@ -4,7 +4,11 @@
 using namespace std;
 
 MonsterBase::MonsterBase(const string &_name , bool _isFrenzed , System *s) 
-    : name(_name) , isFrenzed(_isFrenzed) , sys(s) {}
+    : name(_name) , isFrenzed(_isFrenzed) , sys(s) 
+{
+    if (name == "dracula") this->setFrenzyOrder(1);
+    else if (name == "invisibleMan") this->setFrenzyOrder(6);
+}
 
 string MonsterBase::getMonsterName() { return this->name; }
 
@@ -61,6 +65,7 @@ void MonsterBase::power(shared_ptr<MonsterBase> monst , shared_ptr<HeroBase> cHe
 }
 
 void MonsterBase::doEvent(string_view eventName){
+    eventName = "On_The_Move";
     cout << "Playing monster card is " << eventName << '\n';
     if (eventName == "Sunrise"){
         for(auto monst : sys->getAllMonsters()){
@@ -72,9 +77,9 @@ void MonsterBase::doEvent(string_view eventName){
             }
         }
     }
-    // else if (eventName == "Thief"){
-    //     sys->placeWithMaxItem();
-    // }
+    else if (eventName == "Thief"){
+        sys->placeWithMaxItem();
+    }
     else if (eventName == "The_Delivery"){
         for(auto vill : sys->getAllVillagers()){
             if (vill->getName() == "wilbur&chick"){
@@ -150,6 +155,19 @@ void MonsterBase::doEvent(string_view eventName){
             if (monst->getMonsterName() == "dracula"){
                 this->move(1 , "du");
                 break;            
+            }
+        }
+    }
+
+    else if (eventName == "On_The_Move"){
+        // change frenzy state
+        sys->changeFrenzy();
+        
+        // move all villagers 
+        for (auto vill : sys->getAllVillagers()){
+            if (vill->getVillagerLoc() != nullptr){
+                vector<shared_ptr<Place>> path = sys->findShortestPath(vill->getVillagerLoc() , vill->getSafeZone());
+                if (!path.empty()) sys->moveVillager(vill , path[1]);
             }
         }
     }
