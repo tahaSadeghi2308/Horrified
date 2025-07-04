@@ -192,8 +192,6 @@ void System::killMonster(shared_ptr<MonsterBase> monst){
         }
     }
 
-    cout << "test\n";
-
     if (monst->getMonsterName() == "dracula") this->dracula = nullptr;
     else if (monst->getMonsterName() == "invisibleMan") this->invisibleMan = nullptr;
     this->changeFrenzy();
