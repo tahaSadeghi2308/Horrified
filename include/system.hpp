@@ -31,6 +31,8 @@ class System {
     // all locations
     std::vector<std::shared_ptr<Place>> allLocations;
 
+    std::vector<std::shared_ptr<MonsterBase>> allMonsters;
+
     // all villagers
     std::vector<std::shared_ptr<Villager>> allVillagers;
     //draculas coffins
@@ -69,7 +71,7 @@ public:
     void killMonster(std::shared_ptr<MonsterBase> monst);
     void killVillager(std::shared_ptr<Villager> vill);
     void placeWithMaxItem();
-    std::vector<std::shared_ptr<MonsterBase>> getAllMonsters() { return {dracula , invisibleMan}; }    
+    std::vector<std::shared_ptr<MonsterBase>> getAllMonsters() { return allMonsters; }    
     std::vector<std::shared_ptr<HeroBase>> getAllHeros() { return {arch , mayor}; }
     std::vector<std::shared_ptr<Place>> getAllLocations() { return this->allLocations; } 
     std::vector<std::shared_ptr<Villager>> getAllVillagers () { return this->allVillagers; } 

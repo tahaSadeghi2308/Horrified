@@ -121,6 +121,9 @@ System::System(){
         putItemInPlace(selectedItem.place , selectedItem);
     }
 
+    allMonsters.push_back(dracula);
+    allMonsters.push_back(invisibleMan);
+
 }
 
 int System::getTerrorLevel() const { return this->terrorLevel; }
@@ -178,6 +181,19 @@ void System::killMonster(shared_ptr<MonsterBase> monst){
     for (auto& loc : this->allLocations) {
         loc->deleteMonster(monst->getMonsterName());
     }
+    
+
+    for(auto it = allMonsters.begin() ; it !=allMonsters.end() ; it++)
+    {
+        if((*it)->getMonsterName() == monst->getMonsterName())
+        {
+            allMonsters.erase(it);
+            break;
+        }
+    }
+
+    cout << "test\n";
+
     if (monst->getMonsterName() == "dracula") this->dracula = nullptr;
     else if (monst->getMonsterName() == "invisibleMan") this->invisibleMan = nullptr;
     this->changeFrenzy();

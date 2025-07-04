@@ -27,7 +27,6 @@ public:
     void move(int n , std::string strike);
     void power(std::shared_ptr<MonsterBase> monst , std::shared_ptr<HeroBase> cHero);
     int attack(char dice , std::shared_ptr<MonsterBase> monst , std::shared_ptr<HeroBase> cHero);
-    int runMonsterPhase(MonsterCard currentCard , char dice , std::shared_ptr<HeroBase> cHero);
 };
 
 class Dracula final : public MonsterBase {

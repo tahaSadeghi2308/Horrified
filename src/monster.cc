@@ -308,39 +308,3 @@ int MonsterBase::attack(
     }
     return -1; // for no attack or power
 }
-
-int MonsterBase::runMonsterPhase(MonsterCard currentCard , char dice , shared_ptr<HeroBase> cHero) {
-    
-    for (auto st : currentCard.strikePriorities)
-    {
-        if (st == "du") {
-            for (auto m : sys->getAllMonsters()) {
-                if (m->getMonsterName() == "dracula"){
-                    int status = this->attack(dice , m , cHero);
-                    if (status != -1 && status != 4) return status;
-                    break;   
-                }
-            }
-        }
-        else if (st == "inm") {
-            for (auto m : sys->getAllMonsters()) {
-                if (m->getMonsterName() == "invisibleMan"){
-                    int status = this->attack(dice , m , cHero);
-                    if (status != -1 && status != 4) return status;
-                    break;   
-                }
-            }
-        }
-        else {
-            for (auto m : sys->getAllMonsters()){
-                if (m->getIsFrenzed() == true) {
-                    int status = this->attack(dice , m , cHero);
-                    if (status != -1 && status != 4) return status;
-                    break;
-                }
-            }
-        }
-    }
-    return -1;
-}
-
