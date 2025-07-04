@@ -914,7 +914,7 @@ void Tui::playPerkPage(shared_ptr<HeroBase>& hero , int &actions , bool &doMonst
     else if (perkName == "Overstock") {
         for (auto her : sys->getAllHeros()){
             Item temp = sys->getRandomItem();
-            sys->putItemInPlace(temp.place , temp);
+            sys->putItemInPlace(her->getCurrentPlace()->getName() , temp);
         }
     }
     else if (perkName == "Late_into_the_Night") {
