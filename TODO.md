@@ -5,6 +5,6 @@
 - [ ] implement monster's power with pure virtual
 - [x] add a parameter to FSP function for finding based on situation
 - [X] dices should be implemented for each strike !!!
-- [ ] Test all hero phase actions
+- [X] Test all hero phase actions
 - [x] Checking validation range for smaller than 1 not 0 !!
 - [x] Validation in invisibleMan power for is villager in game ??
