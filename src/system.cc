@@ -41,11 +41,18 @@ System::System(){
     // add neighbors to locations
     ifstream file2("../data/before_game/locations.txt");
     if (file2.is_open()) {
-        string line , placeName , neighbors;
+        string line , placeName , neighbors , pos;
         while(getline(file2 , line)){
             stringstream stream(line);
-            stream >> placeName >> neighbors;
+            stream >> placeName >> neighbors >> pos;
 
+            float px = 0, py = 0;
+            size_t p = pos.find('_');
+        if (p != string::npos)
+        {
+            px = stof(pos.substr(0, p));
+            py = stof(pos.substr(p + 1));
+        }
             // seprate neighbors here
             stringstream ss(neighbors);
             vector<string> temp; string x;
@@ -64,6 +71,7 @@ System::System(){
             for(auto loc : allLocations){
                 if(loc->getName() == placeName){
                     loc->setNeighbors(neigList);
+                    loc->setPosition(px,py);
                     break;
                 }
             }

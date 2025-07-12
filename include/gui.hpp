@@ -6,6 +6,8 @@
 #include <vector>
 #include <memory>
 #include "raylib.h" 
+#include "system.hpp"
+
 
 class System;
 class HeroBase;
@@ -13,17 +15,28 @@ class MonsterBase;
 class Place;
 class Villager;
 
+
 class Gui final {
     System *sys {nullptr};
     std::vector<std::string> playerPriority;
     int pageNumber {0};
     std::string playedMonsterCard = "This is the first round";
+    Texture2D gameMap;
+    std::shared_ptr<Place> selectedPlace = nullptr;
+    const int SCREEN_WIDTH = 1600;
+    const int SCREEN_HEIGHT = 900;
+    const int RIGHT_PANEL_WIDTH = 400;
+    Font GameFont;
+
 public:
     explicit Gui(System *s);
     void run();
-    //void handleInput();
+    void handleInput();
     //void drawRightPanel();
-    //void drawMap();
+    void drawMap();
+    //void drawPlaceInfoPanel(std::shared_ptr<Place>);
+    void PlaceInfo(std::shared_ptr<Place> );
+    ~Gui();
 
     // void header() const;
     // void heroInfo(std::shared_ptr<HeroBase>& hero);
