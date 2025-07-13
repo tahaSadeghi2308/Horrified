@@ -104,11 +104,13 @@ System::System(){
     // TODO : here we should make a villiagers list ..
     ifstream villFile("../data/before_game/villagers.txt");
     if(villFile.is_open()){
-        string line , name , safeZone;
+        string line , name , safeZone, picture;
         while(getline(villFile , line)){
             stringstream stream(line);
-            stream >> name >> safeZone;
+            stream >> name >> safeZone >> picture;
             shared_ptr<Villager> temp {make_shared<Villager>(name)};
+
+            temp->setAddress(picture);
 
             for(auto _place : allLocations){
                 if (_place->getName() == safeZone){

@@ -23,14 +23,14 @@ class Gui final {
     std::string playedMonsterCard = "This is the first round";
     Texture2D gameMap;
     std::shared_ptr<Place> selectedPlace = nullptr;
-    const int SCREEN_WIDTH = 1600;
-    const int SCREEN_HEIGHT = 900;
+    const int SCREEN_WIDTH;
+    const int SCREEN_HEIGHT;
     const int RIGHT_PANEL_WIDTH = 400;
     Font GameFont;
     float scroll;
 
 public:
-    explicit Gui(System *s);
+    explicit Gui(System *s, const int ,const int);
     void run();
     void handleInput();
     //void drawRightPanel();

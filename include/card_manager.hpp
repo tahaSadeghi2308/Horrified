@@ -21,7 +21,7 @@ struct Item {
     card::Color color;
     std::string name;
     std::string place; 
-    std::string address;
+    Texture2D address;
     friend std::ostream& operator<< (std::ostream& output , Item&items)
     {  
         output<< "Name-> " << items.name << '\t' << "Color-> ";
@@ -64,9 +64,11 @@ public:
 
 template <class T>
 class ItemBag : public CardManagerBase<T> {
+    std::vector<T> allItem;
 public:
     ItemBag<T>();
     void addItem(const T &item);
+    std::vector<T> getallItem() { return allItem;}
 };
 
 template <class T>
@@ -165,7 +167,8 @@ ItemBag<T>::ItemBag() {
                 if (color == "red") temp.color = card::Color::R;
                 if (color == "blue") temp.color = card::Color::B;
                 if (color == "yellow") temp.color = card::Color::Y; 
-                temp.address = png;
+                temp.address = LoadTexture(png.c_str());
+                allItem.push_back(temp);
                 this->push(temp);
             }
         }

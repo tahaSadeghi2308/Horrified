@@ -14,6 +14,7 @@ class MonsterBase {
     System *sys {nullptr};
     int frenzy_order_;
     void setFrenzyOrder(int order) { this->frenzy_order_ = order; }
+    Texture2D address;
 public:
     MonsterBase(const std::string &_name , bool _isFrenzed , System *s);
     std::string getMonsterName();
@@ -27,6 +28,12 @@ public:
     void move(int n , std::string strike);
     void power(std::shared_ptr<MonsterBase> monst , std::shared_ptr<HeroBase> cHero);
     int attack(char dice , std::shared_ptr<MonsterBase> monst , std::shared_ptr<HeroBase> cHero);
+    Texture2D getAddress() { return address;}
+    void setAddress(std::string ad) {address = LoadTexture(ad.c_str());}
+    virtual ~MonsterBase()
+    {
+        UnloadTexture(address);
+    }
 };
 
 class Dracula final : public MonsterBase {

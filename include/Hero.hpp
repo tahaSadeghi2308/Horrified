@@ -19,6 +19,7 @@ class HeroBase {
     std::vector<Perk> heroPerks;
     std::shared_ptr<Place> currentPlace {nullptr};
     std::string last_played_perk_;
+    Texture2D address;
 
 public:
     HeroBase() = default;
@@ -36,7 +37,12 @@ public:
     void addHeroItems(Item);
     std::vector<Perk> getHeroPerks()const { return heroPerks; }
     void deletePerk(std::string_view perkName);
-    virtual ~HeroBase() = default;
+    Texture2D getAddress() { return address;}
+    void setAddress(std::string ad) {address = LoadTexture(ad.c_str());}
+    virtual ~HeroBase()
+    {
+        UnloadTexture(address);
+    }
 };
 
 class Archaeologist final : public HeroBase {

@@ -25,9 +25,15 @@ shared_ptr<Place> MonsterBase::getCurrentLocation(){
     return this->currentPlace;
 }
 
-Dracula::Dracula(const string &_name , bool _isFrenzed , System *s) : MonsterBase(_name , _isFrenzed , s){}
+Dracula::Dracula(const string &_name , bool _isFrenzed , System *s) : MonsterBase(_name , _isFrenzed , s)
+{
+    setAddress("../../Horrified_Assets/Monsters/Dracula.png");
+}
 
-InvisibleMan::InvisibleMan(const string &_name , bool _isFrenzed , System *s) : MonsterBase(_name , _isFrenzed , s){}
+InvisibleMan::InvisibleMan(const string &_name , bool _isFrenzed , System *s) : MonsterBase(_name , _isFrenzed , s)
+{
+    setAddress("../../Horrified_Assets/Monsters/InvisibleMan.png");
+}
 
 void MonsterBase::putItem(const int count){
     for (int i {}; i < count; i++){

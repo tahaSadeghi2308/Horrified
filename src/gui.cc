@@ -1,17 +1,14 @@
 #include "gui.hpp"
 using namespace std;
 
-Gui::Gui(System *s):sys(s),scroll(0.0f)
+Gui::Gui(System *s,const int width,const int height):sys(s),scroll(0.0f),SCREEN_WIDTH(width),SCREEN_HEIGHT(height)
 {
+    
 }
 
 
 void Gui::run() {
    
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Horrified");
-    SetTargetFPS(60);
-
-    
     gameMap = LoadTexture("../../Horrified_Assets/map.png");
     GameFont = LoadFont("../../Horrified_Assets/Melted.ttf");
 
@@ -68,14 +65,12 @@ void Gui::handleInput()
     if (selectedPlace) 
     {
         PlaceInfo(selectedPlace);
+        if(GetKeyPressed() == KEY_BACKSPACE)
+        {
+            selectedPlace = nullptr;
+            scroll = 0;
+        }
     }
-
-    if(GetKeyPressed() == KEY_BACKSPACE)
-    {
-        selectedPlace = nullptr;
-        scroll = 0;
-    }
-
 }
 
 
@@ -84,25 +79,33 @@ void Gui::PlaceInfo(shared_ptr<Place> selected)
 
     vector<Texture2D> temp;
 
+    for(auto& hero : selected->getAllHeroes())
+    {
+        temp.push_back(hero->getAddress());
+    }  
+    for(auto& mon:selected->getMonsters())
+    {
+        temp.push_back(mon->getAddress());
+    }
+    for(auto& vill : selected->getVillagers())
+    {
+        temp.push_back(vill->getAddress());
+    }  
     for(auto& item:selected->getItems())
     {
-        Texture2D Items;
-
-        Items = LoadTexture(item.address.c_str());
-
-        temp.push_back(Items);
+       temp.push_back(item.address);
     }  
     // creating panel
-    float panelWidth = 400;
-    float panelHeight = 300;
+    float panelWidth = 800;
+    float panelHeight = 600;
     Rectangle panel = { (SCREEN_WIDTH - panelWidth) / 2.0f, (SCREEN_HEIGHT - panelHeight) / 2.0f, panelWidth, panelHeight };
     DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, Color{ 0, 0, 0, 100 }); // could change
     DrawRectangleRec(panel, DARKGRAY);
 
     // all sizes that we need
-    float Size = 110.0f;
+    float Size = 170.0f;
     float padding = 20.0f;
-    float rowHeight = Size + padding;
+    float rowHeight = Size + 2 * padding;
     int itemsNum = (panelWidth - 2 * padding) / rowHeight; // two padding for left and right 
     int Rows = (temp.size() + itemsNum - 1) / itemsNum; // ceil doesnt work so i used manual ceil(if we go to next line we need the next line)
     float ContentHeight = Rows * rowHeight;
@@ -135,7 +138,7 @@ void Gui::PlaceInfo(shared_ptr<Place> selected)
             saveY += rowHeight;
         }
         Vector2 pos = { saveX, saveY };
-        DrawTextureEx(temp[i], pos, 0.0f, Size / (float)temp[i].width, WHITE);
+        DrawTextureEx(temp[i], pos, 0.0f, Size / (float)(temp[i]).width, WHITE);
         saveX += Size + padding;
     }
     EndScissorMode();
@@ -145,6 +148,6 @@ Gui::~Gui()
 {
     UnloadTexture(gameMap);
     UnloadFont(GameFont);
-    
+
     CloseWindow();
 }

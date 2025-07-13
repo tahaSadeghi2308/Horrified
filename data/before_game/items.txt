@@ -26,7 +26,7 @@
 2 blue research tower ../../Horrified_Assets/Items/Blue/Research.png   
 2 blue telescope mansion ../../Horrified_Assets/Items/Blue/Telescope.png
 2 blue searchlight precinct ../../Horrified_Assets/Items/Blue/Searchlight.png
-2 blue experiment laboratory ../../Horrified_Assets/Items/Blue/Experiment.png
+2 blue experiment laboratory ../../Horrified_Assets/Items/Blue/Experiments.png
 2 blue analysis institute ../../Horrified_Assets/Items/Blue/Analysis.png
 3 blue rotenone institute ../../Horrified_Assets/Items/Blue/Rotenone.png
 3 blue cosmic_ray_diffuser tower ../../Horrified_Assets/Items/Blue/CosmicRayDiffuser.png
