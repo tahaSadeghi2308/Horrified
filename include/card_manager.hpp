@@ -21,6 +21,7 @@ struct Item {
     card::Color color;
     std::string name;
     std::string place; 
+    std::string address;
     friend std::ostream& operator<< (std::ostream& output , Item&items)
     {  
         output<< "Name-> " << items.name << '\t' << "Color-> ";
@@ -152,10 +153,10 @@ template <class T>
 ItemBag<T>::ItemBag() {
     std::ifstream file("../data/before_game/items.txt");
     if(file.is_open()) {
-        std::string line, power, color, name, place;
+        std::string line, power, color, name, place , png;
         while(getline(file, line)) {
             std::stringstream stream(line);
-            stream >> power >> color >> name >> place;
+            stream >> power >> color >> name >> place >> png;
             T temp;
             for (int i {}; i < ITEM_COUNT; i++) {
                 temp.power = std::stoi(power);
@@ -163,7 +164,8 @@ ItemBag<T>::ItemBag() {
                 temp.place = place;
                 if (color == "red") temp.color = card::Color::R;
                 if (color == "blue") temp.color = card::Color::B;
-                if (color == "yellow") temp.color = card::Color::Y;
+                if (color == "yellow") temp.color = card::Color::Y; 
+                temp.address = png;
                 this->push(temp);
             }
         }

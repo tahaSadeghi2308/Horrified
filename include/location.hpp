@@ -20,7 +20,7 @@ class Place {
     std::vector<Item> currentItems;
     std::vector<std::shared_ptr<MonsterBase>> monsters;
     Vector2 position;
-    float radius = 20;
+    float radius = 40;
 
 public:
     explicit Place(const std::string &_name);

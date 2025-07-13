@@ -7,7 +7,7 @@
 #include <memory>
 #include "raylib.h" 
 #include "system.hpp"
-
+#include <unordered_map>
 
 class System;
 class HeroBase;
@@ -27,6 +27,7 @@ class Gui final {
     const int SCREEN_HEIGHT = 900;
     const int RIGHT_PANEL_WIDTH = 400;
     Font GameFont;
+    float scroll;
 
 public:
     explicit Gui(System *s);
@@ -61,4 +62,4 @@ public:
     // void helpPage();
 };
 
-#endif //gui class
+#endif 

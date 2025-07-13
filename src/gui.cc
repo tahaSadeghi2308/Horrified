@@ -1,9 +1,8 @@
 #include "gui.hpp"
 using namespace std;
 
-Gui::Gui(System *s):sys(s)
+Gui::Gui(System *s):sys(s),scroll(0.0f)
 {
-    
 }
 
 
@@ -38,10 +37,7 @@ void Gui::run() {
         EndDrawing();
     }
 
-    UnloadTexture(gameMap);
-    UnloadFont(GameFont);
-
-    CloseWindow();
+    
 }
 
 void Gui::drawMap() {
@@ -67,59 +63,88 @@ void Gui::handleInput()
                 break;
             }
         }
-    }
+    }    
 
-    if (selectedPlace) {
+    if (selectedPlace) 
+    {
         PlaceInfo(selectedPlace);
     }
 
+    if(GetKeyPressed() == KEY_BACKSPACE)
+    {
+        selectedPlace = nullptr;
+        scroll = 0;
+    }
 
 }
 
+
 void Gui::PlaceInfo(shared_ptr<Place> selected)
 {
-    vector<string> temp;
-    for(auto& hero:selected->getAllHeroes())
-    {
-        temp.push_back(hero->getHeroName());
-    }
-    for(auto& mon:selected->getMonsters())
-    {
-        temp.push_back(mon->getMonsterName());
-    }
-    for(auto& vill:selected->getVillagers())
-    {
-        temp.push_back(vill->getName());
-    }
+
+    vector<Texture2D> temp;
+
     for(auto& item:selected->getItems())
     {
-        temp.push_back(item.name);
+        Texture2D Items;
+
+        Items = LoadTexture(item.address.c_str());
+
+        temp.push_back(Items);
     }  
+    // creating panel
     float panelWidth = 400;
     float panelHeight = 300;
+    Rectangle panel = { (SCREEN_WIDTH - panelWidth) / 2.0f, (SCREEN_HEIGHT - panelHeight) / 2.0f, panelWidth, panelHeight };
+    DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, Color{ 0, 0, 0, 100 }); // could change
+    DrawRectangleRec(panel, DARKGRAY);
 
-        Rectangle panel = {(SCREEN_WIDTH - panelWidth) / 2.0f,(SCREEN_HEIGHT - panelHeight) / 2.0f,panelWidth,panelHeight};
+    // all sizes that we need
+    float Size = 110.0f;
+    float padding = 20.0f;
+    float rowHeight = Size + padding;
+    int itemsNum = (panelWidth - 2 * padding) / rowHeight; // two padding for left and right 
+    int Rows = (temp.size() + itemsNum - 1) / itemsNum; // ceil doesnt work so i used manual ceil(if we go to next line we need the next line)
+    float ContentHeight = Rows * rowHeight;
+    float showingHeight = panel.height - 60.0f; 
+    //add scrolling
+    float scrollSpeed = 20.0f;
+    scroll += GetMouseWheelMove() * scrollSpeed;
+    float maxScroll = 0.0f;
+    float minScroll = 0.0f;
+    if (ContentHeight > showingHeight)
+        minScroll = showingHeight - ContentHeight; 
 
-        Rectangle shadow = panel;
-        shadow.x += 4;
-        shadow.y += 4;
-        DrawRectangleRec(shadow, Color{ 0, 0, 0, 100 }); 
-        DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, Color{ 0, 0, 0, 100 });
+    if (scroll > maxScroll) 
+    scroll = maxScroll;
+    if (scroll < minScroll) 
+    scroll = minScroll;
 
+    float startX = panel.x + 20.0f;
+    float startY = panel.y + 40.0f + scroll; 
+    float saveX = startX;
+    float saveY = startY;
 
+    BeginScissorMode(panel.x, panel.y, panel.width, panel.height); 
 
-
-    int startY = panel.y + 40;
-        int lineHeight = 20;
-        for (size_t i = 0; i < temp.size(); ++i) 
+    for (size_t i = 0; i < temp.size(); ++i)
+    {
+        if (saveX + Size > panel.x + panel.width)
         {
-            std::string line = std::to_string(i + 1) + ". " + temp[i];
-            Vector2 textPos = { panel.x + 20, startY + i * lineHeight };
-            DrawTextEx(GameFont, line.c_str(), textPos, 18.0f, 2.0f, WHITE);
+            saveX = startX;
+            saveY += rowHeight;
         }
+        Vector2 pos = { saveX, saveY };
+        DrawTextureEx(temp[i], pos, 0.0f, Size / (float)temp[i].width, WHITE);
+        saveX += Size + padding;
+    }
+    EndScissorMode();
 }
 
 Gui::~Gui()
 {
+    UnloadTexture(gameMap);
+    UnloadFont(GameFont);
     
+    CloseWindow();
 }

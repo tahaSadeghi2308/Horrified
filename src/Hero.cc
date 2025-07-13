@@ -24,10 +24,12 @@ void HeroBase::setActionCount(const int &num) {
 std::string HeroBase::getHeroName() { return this->heroName; }
 
 Archaeologist::Archaeologist(const int &_num , std::string_view _name , const Perk &perk) :
-    HeroBase(_num , _name , perk) {}
+    HeroBase(_num , _name , perk) 
+    {}
 
 Mayor::Mayor(const int &_num , std::string_view _name , const Perk &perk) :
-    HeroBase(_num , _name , perk) {}
+    HeroBase(_num , _name , perk) 
+    {}
 
 void HeroBase::setCurrentPlace(shared_ptr<Place> _place) {
     this->currentPlace = _place;
