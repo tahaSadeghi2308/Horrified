@@ -121,7 +121,7 @@ void Place::draw(Vector2 mouse) const
 {
     bool hover = CheckCollisionPointCircle(mouse, position, radius);
     Color t ={0,0,0,0};
-    DrawCircleV(position, radius, hover ? YELLOW : t);
+    DrawCircleLines(position.x,position.y, radius, hover ? RED : t);
 }
 
 bool Place::isClicked(Vector2 mouse) const

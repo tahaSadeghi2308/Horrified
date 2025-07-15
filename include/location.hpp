@@ -45,6 +45,7 @@ public:
     void setPosition(float ,float);
     bool isClicked(Vector2 mouse) const;
     void draw(Vector2 mouse) const;
+    Vector2 getPosition() { return position; }
 };
 
 #endif

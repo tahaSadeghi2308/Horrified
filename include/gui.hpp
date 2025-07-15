@@ -8,13 +8,14 @@
 #include "raylib.h" 
 #include "system.hpp"
 #include <unordered_map>
+#include <fmt/core.h>
+#include "pageNumber.hpp"
 
 class System;
 class HeroBase;
 class MonsterBase;
 class Place;
 class Villager;
-
 
 class Gui final {
     System *sys {nullptr};
@@ -28,6 +29,11 @@ class Gui final {
     const int RIGHT_PANEL_WIDTH = 400;
     Font GameFont;
     float scroll;
+    int isEnd;
+    int round;
+    int actions;
+    bool doNextPhase;
+    std::shared_ptr<HeroBase> currentHero = nullptr;
 
 public:
     explicit Gui(System *s, const int ,const int);
@@ -37,6 +43,7 @@ public:
     void drawMap();
     //void drawPlaceInfoPanel(std::shared_ptr<Place>);
     void PlaceInfo(std::shared_ptr<Place> );
+    void MovePhase(std::shared_ptr<HeroBase>& hero , int &actions);
     ~Gui();
 
     // void header() const;

@@ -160,6 +160,7 @@ ItemBag<T>::ItemBag() {
             std::stringstream stream(line);
             stream >> power >> color >> name >> place >> png;
             T temp;
+            temp.address = LoadTexture(png.c_str());
             for (int i {}; i < ITEM_COUNT; i++) {
                 temp.power = std::stoi(power);
                 temp.name = name;
@@ -167,7 +168,6 @@ ItemBag<T>::ItemBag() {
                 if (color == "red") temp.color = card::Color::R;
                 if (color == "blue") temp.color = card::Color::B;
                 if (color == "yellow") temp.color = card::Color::Y; 
-                temp.address = LoadTexture(png.c_str());
                 allItem.push_back(temp);
                 this->push(temp);
             }
