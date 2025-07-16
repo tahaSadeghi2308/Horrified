@@ -47,7 +47,7 @@ void Gui::run() {
             {
                 if (this->pageNumber == PageNumbers::MOVE_PAGE) this->MovePhase(currentHero , actions);
                 // else if (this->pageNumber == PageNumbers::GUIDE_PAGE) this->guidePage(currentHero , actions);
-                // else if (this->pageNumber == PageNumbers::PICKUP_PAGE) this->pickUpPage(currentHero , actions);
+                else if (this->pageNumber == PageNumbers::PICKUP_PAGE) this->pickUpPhase(currentHero , actions);
                 // else if (this->pageNumber == PageNumbers::SPECIALACTION_PAGE) this->specialActionPage(currentHero , actions);
                 // else if (this->pageNumber == PageNumbers::ADVANCED_PAGE) this->advancedPage(currentHero , actions);
                 // else if (this->pageNumber == PageNumbers::DEFEAT_PAGE) this->defeatPage(currentHero , actions);
@@ -107,7 +107,11 @@ void Gui::handleInput()
     {
         pageNumber = PageNumbers::MOVE_PAGE;
     }
-
+    if (IsKeyPressed(KEY_P))
+    {
+        pageNumber = PageNumbers::PICKUP_PAGE;
+    }
+      
 
 }
 
@@ -282,6 +286,68 @@ void Gui::MovePhase(std::shared_ptr<HeroBase>& hero, int &actions)
     {
         pageNumber = PageNumbers::HERO_PHASE_PAGE;
     }
+}
+
+void Gui::pickUpPhase(shared_ptr<HeroBase>& hero ,int &actions)
+{
+    static vector<Item> selectedItems;
+    Vector2 mouse = GetMousePosition();
+
+    float panelW = 800, panelH = 600, pad = 20, Size = 170;
+    Rectangle panel = {(SCREEN_WIDTH - panelW) / 2.0f,(SCREEN_HEIGHT - panelH) / 2.0f,panelW, panelH};
+    DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, {0,0,0,100});
+    DrawRectangleRec(panel, DARKGRAY);
+
+    float x = panel.x + pad;
+    float y = panel.y + pad;
+
+    auto current = hero->getCurrentPlace();
+
+    for(auto item : current ->getItems())
+    {
+        Texture2D itemTex = item.address;
+        Vector2 pos = { x,y};
+        DrawTextureEx(itemTex,pos,0.0,Size/panel.width,WHITE);
+
+        Rectangle itemRec = {x,y,itemTex.width * (Size/itemTex.width), itemTex.height * (Size/itemTex.width) }; 
+        
+        if (CheckCollisionPointRec(mouse, itemRec) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+        {
+                auto it = find(selectedItems.begin(),selectedItems.end(),item);
+                if (it == selectedItems.end())
+                    selectedItems.push_back(item);
+                else
+                    selectedItems.erase(it);
+        }
+
+        if (find(selectedItems.begin(),selectedItems.end(),item) != selectedItems.end())
+        {
+            DrawRectangleLinesEx(itemRec, 3, YELLOW);
+        }
+
+        x += Size + pad;
+        if (x + Size > panel.x + panel.width)
+        {
+            x = panel.x + pad;
+            y += Size + pad;
+        }
+    }
+
+
+    if(IsKeyPressed(KEY_BACKSPACE))
+        {
+            pageNumber = PageNumbers::HERO_PHASE_PAGE;
+            if(!selectedItems.empty())
+            {
+                actions--;
+                for(auto& rmItem : selectedItems)
+                {
+                    hero->addHeroItems(rmItem);
+                    current->removeItem(rmItem);
+                }
+                selectedItems.clear();
+            }
+        }
 }
 
 

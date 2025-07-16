@@ -20,7 +20,7 @@
 6 red pistol precinct ../../Horrified_Assets/Items/Red/Pistol.png
 4 red rear_trap shop ../../Horrified_Assets/Items/Red/BearTrap.png
 4 red speargun institute ../../Horrified_Assets/Items/Red/Speargun.png
-1 blue anatomy_text institute ../../Horrified_Assets/Items/Blue/AnatmoyText.png
+1 blue anatomy_text institute ../../Horrified_Assets/Items/Blue/AnatomyText.png
 1 blue cenirifuge laboratory ../../Horrified_Assets/Items/Blue/Centrifuge.png
 1 blue kite tower ../../Horrified_Assets/Items/Blue/Kite.png
 2 blue research tower ../../Horrified_Assets/Items/Blue/Research.png   

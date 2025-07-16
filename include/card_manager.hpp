@@ -34,6 +34,13 @@ struct Item {
         output<< "Power-> " << items.power  << '\t' << "Place-> " << items.place ;
         return output;
     }
+    friend bool operator==(Item a ,Item b)
+    {
+        if(a.name == b.name)
+        return true;
+        else
+        return false;
+    }
 };
 
 struct Perk {

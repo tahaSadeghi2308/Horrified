@@ -44,6 +44,7 @@ public:
     //void drawPlaceInfoPanel(std::shared_ptr<Place>);
     void PlaceInfo(std::shared_ptr<Place> );
     void MovePhase(std::shared_ptr<HeroBase>& hero , int &actions);
+    void pickUpPhase(std::shared_ptr<HeroBase>& hero ,int &actions);
     ~Gui();
 
     // void header() const;
@@ -61,7 +62,6 @@ public:
     // void terrorLevel(int level);
     // void movePage(std::shared_ptr<HeroBase>& hero , int &actions);
     // void guidePage(std::shared_ptr<HeroBase>& hero ,int &actions);
-    // void pickUpPage(std::shared_ptr<HeroBase>& hero ,int &actions);
     // void advancedPage(std::shared_ptr<HeroBase>& hero,int &actions);
     // void specialActionPage(std::shared_ptr<HeroBase>& hero,int &actions);
     // void playPerkPage(std::shared_ptr<HeroBase>& hero , int &actions , bool &doMonsterPhase );
