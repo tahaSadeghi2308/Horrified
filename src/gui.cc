@@ -181,50 +181,109 @@ void Gui::PlaceInfo(shared_ptr<Place> selected)
     }
     EndScissorMode();
 }
-
-void Gui::MovePhase(shared_ptr<HeroBase>& hero , int &actions)
+    
+void Gui::MovePhase(std::shared_ptr<HeroBase>& hero, int &actions)
 {
+    static bool isThereVillager = false;
+    static std::shared_ptr<Place> targetPlace;
+    static std::vector<std::shared_ptr<Villager>> selectedVillagers;
     Vector2 mouse = GetMousePosition();
-    vector<shared_ptr<Place>> neis;
-    bool isMoving{false};
 
-    if (!isMoving) {
-        neis = hero->getCurrentPlace()->getNeighbors();
-        isMoving = true;
-    }
+    auto neis = hero->getCurrentPlace()->getNeighbors();
 
-    for (auto& place : neis) 
+    for (auto& place : neis)
     {
         Vector2 pos = place->getPosition();
-        float radius = 25.0f;
+        float radius = 25.0f; // now just for test 
         DrawCircleV(pos, radius, BLUE);
-
-        if (CheckCollisionPointCircle(mouse, pos, radius)) {
+        if (CheckCollisionPointCircle(mouse, pos, radius))
             DrawCircleLines(pos.x, pos.y, radius + 4.0f, YELLOW);
-        }
     }
-    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) 
+
+    if (!isThereVillager && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
     {
-        for (auto& place : neis) 
+        for (auto& place : neis)
         {
             if (place->isClicked(mouse))
             {
-                sys->moveHero(hero, place);
-                actions--;
-                neis.clear();
-                isMoving = false;
-                pageNumber = PageNumbers::HERO_PHASE_PAGE;
-                return;
+                targetPlace = place;
+                auto villagers = hero->getCurrentPlace()->getVillagers();
+                if (!villagers.empty())
+                {
+                    isThereVillager = true;
+                    selectedVillagers.clear();
+                }
+                else
+                {
+                    sys->moveHero(hero, targetPlace);
+                    actions--;
+                    pageNumber = PageNumbers::HERO_PHASE_PAGE;
+                    return;
+                }   
             }
         }
     }
 
-    if (IsKeyPressed(KEY_BACKSPACE)) {
-        neis.clear();
-        isMoving = false;
+    if (isThereVillager)
+    {
+        float panelW = 800, panelH = 600, pad = 20, Size = 170;
+        Rectangle panel = {(SCREEN_WIDTH - panelW) / 2.0f,(SCREEN_HEIGHT - panelH) / 2.0f,panelW, panelH};
+        DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, {0,0,0,100});
+        DrawRectangleRec(panel, DARKGRAY);
+
+        float x = panel.x + pad;
+        float y = panel.y + pad;
+        
+        for (auto& vill : hero->getCurrentPlace()->getVillagers())
+        {
+            Texture2D villTex = vill->getAddress();
+            Vector2 pos = { x,y }; 
+            DrawTextureEx(villTex, pos , 0, Size/villTex.width, WHITE);
+
+            Rectangle villRec = {x, y,villTex.width * (Size/villTex.width),villTex.height * (Size/villTex.width)};
+
+            if (CheckCollisionPointRec(mouse, villRec) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+            {
+                auto it = find(selectedVillagers.begin(),selectedVillagers.end(),vill);
+                if (it == selectedVillagers.end())
+                    selectedVillagers.push_back(vill);
+                else
+                    selectedVillagers.erase(it);
+            }
+            if (find(selectedVillagers.begin(),selectedVillagers.end(),vill) != selectedVillagers.end())
+            {
+                DrawRectangleLinesEx(villRec, 3, YELLOW);
+            }
+
+            x += Size + pad;
+            if (x + Size > panel.x + panel.width)
+            {
+                x = panel.x + pad;
+                y += Size + pad;
+            }
+        }
+
+        if (IsKeyPressed(KEY_BACKSPACE))
+        {
+            sys->moveHero(hero, targetPlace);
+            for (auto& v : selectedVillagers)
+                sys->moveVillager(v, targetPlace);
+
+            selectedVillagers.clear();
+            isThereVillager = false;
+            actions--;
+            pageNumber = PageNumbers::HERO_PHASE_PAGE;
+        }
+
+        return; 
+    }
+
+    if (IsKeyPressed(KEY_BACKSPACE))
+    {
         pageNumber = PageNumbers::HERO_PHASE_PAGE;
     }
 }
+
 
 Gui::~Gui()
 {
