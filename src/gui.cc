@@ -29,7 +29,7 @@ void Gui::run() {
 
         DrawTexturePro(gameMap, Src, Dest, origin, 0.0f, WHITE);
 
-        DrawRectangle(SCREEN_WIDTH - RIGHT_PANEL_WIDTH, 0, RIGHT_PANEL_WIDTH, SCREEN_HEIGHT, DARKGRAY);
+        DrawRectangle(SCREEN_WIDTH - RIGHT_PANEL_WIDTH, 0, RIGHT_PANEL_WIDTH, SCREEN_HEIGHT, WHITE);
         DrawLine(SCREEN_WIDTH - RIGHT_PANEL_WIDTH, 0, SCREEN_WIDTH - RIGHT_PANEL_WIDTH, SCREEN_HEIGHT, GRAY);
 
         handleInput();
@@ -46,7 +46,7 @@ void Gui::run() {
             if (this->pageNumber != PageNumbers::HERO_PHASE_PAGE)
             {
                 if (this->pageNumber == PageNumbers::MOVE_PAGE) this->MovePhase(currentHero , actions);
-                // else if (this->pageNumber == PageNumbers::GUIDE_PAGE) this->guidePage(currentHero , actions);
+                else if (this->pageNumber == PageNumbers::GUIDE_PAGE) this->guidePhase(currentHero , actions);
                 else if (this->pageNumber == PageNumbers::PICKUP_PAGE) this->pickUpPhase(currentHero , actions);
                 // else if (this->pageNumber == PageNumbers::SPECIALACTION_PAGE) this->specialActionPage(currentHero , actions);
                 // else if (this->pageNumber == PageNumbers::ADVANCED_PAGE) this->advancedPage(currentHero , actions);
@@ -110,6 +110,10 @@ void Gui::handleInput()
     if (IsKeyPressed(KEY_P))
     {
         pageNumber = PageNumbers::PICKUP_PAGE;
+    }
+    if(IsKeyPressed(KEY_G))
+    {
+        pageNumber = PageNumbers::GUIDE_PAGE;
     }
       
 
@@ -348,6 +352,67 @@ void Gui::pickUpPhase(shared_ptr<HeroBase>& hero ,int &actions)
                 selectedItems.clear();
             }
         }
+}
+
+void Gui::guidePhase(shared_ptr<HeroBase>& hero ,int &actions)
+{
+    Vector2 mouse =GetMousePosition();
+
+    static int option = -1;
+    static vector<shared_ptr<Villager>> allVill; 
+
+    if(option == 1)
+    {
+        float panelW = 800, panelH = 600, pad = 20, Size = 170;
+        Rectangle panel = {(SCREEN_WIDTH - panelW) / 2.0f,(SCREEN_HEIGHT - panelH) / 2.0f,panelW, panelH};
+        DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, {0,0,0,100});
+        DrawRectangleRec(panel, DARKGRAY);
+    
+        float x = panel.x + pad;
+        float y = panel.y + pad;
+    
+        
+
+    }
+    else if(option ==2)
+    {
+
+    }
+    else
+    {
+        float panelW = 840 , panelH = 100  , padding = 10;
+        float fontSize = 35 ;
+        Rectangle panel = {(SCREEN_WIDTH - panelW) / 2 ,(SCREEN_HEIGHT - panelH) / 2 , panelW , panelH};
+        string bring = "You can bring a villager to your location.";
+        string put = "You can put a villager from your place to a neighbor location.";
+        DrawRectangleRec(panel,DARKGRAY);
+        Color bringHover = BLACK;
+        Color putHover = BLACK;
+        Vector2 bringPos = {panel.x + padding,panel.y + padding };
+        Vector2 putPos = {panel.x + padding,panel.y + fontSize + 20};
+        
+        Rectangle bringRect = { bringPos.x, bringPos.y, panelW - 20, fontSize };
+        Rectangle putRect = { putPos.x , putPos.y , panelW  , fontSize };
+        if(CheckCollisionPointRec(mouse , bringRect))
+        {
+            bringHover = YELLOW;
+            if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+            {
+                option = 1;
+            }
+        }
+        else if(CheckCollisionPointRec(mouse , putRect))
+        {
+            putHover = YELLOW;
+            if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+            {
+                option = 2;
+            }
+        }
+
+        DrawTextEx(GameFont, bring.c_str(), bringPos , fontSize , 0.0 ,bringHover);
+        DrawTextEx(GameFont, put.c_str(), putPos , fontSize , 0.0 ,putHover);
+    }
 }
 
 

@@ -19,21 +19,23 @@ class Villager;
 
 class Gui final {
     System *sys {nullptr};
-    std::vector<std::string> playerPriority;
-    int pageNumber {0};
-    std::string playedMonsterCard = "This is the first round";
+    //about game
     Texture2D gameMap;
-    std::shared_ptr<Place> selectedPlace = nullptr;
     const int SCREEN_WIDTH;
     const int SCREEN_HEIGHT;
     const int RIGHT_PANEL_WIDTH = 400;
     Font GameFont;
-    float scroll;
+    //about game loop
+    std::vector<std::string> playerPriority;
+    int pageNumber {0};
     int isEnd;
     int round;
     int actions;
     bool doNextPhase;
     std::shared_ptr<HeroBase> currentHero = nullptr;
+    //about place info (could be static)
+    float scroll;
+    std::shared_ptr<Place> selectedPlace = nullptr;
 
 public:
     explicit Gui(System *s, const int ,const int);
@@ -41,10 +43,10 @@ public:
     void handleInput();
     //void drawRightPanel();
     void drawMap();
-    //void drawPlaceInfoPanel(std::shared_ptr<Place>);
     void PlaceInfo(std::shared_ptr<Place> );
     void MovePhase(std::shared_ptr<HeroBase>& hero , int &actions);
     void pickUpPhase(std::shared_ptr<HeroBase>& hero ,int &actions);
+    void guidePhase(std::shared_ptr<HeroBase>& hero ,int &actions);
     ~Gui();
 
     // void header() const;
@@ -61,7 +63,6 @@ public:
     // void heroPhasePage(std::shared_ptr<HeroBase>& hero , int actions);
     // void terrorLevel(int level);
     // void movePage(std::shared_ptr<HeroBase>& hero , int &actions);
-    // void guidePage(std::shared_ptr<HeroBase>& hero ,int &actions);
     // void advancedPage(std::shared_ptr<HeroBase>& hero,int &actions);
     // void specialActionPage(std::shared_ptr<HeroBase>& hero,int &actions);
     // void playPerkPage(std::shared_ptr<HeroBase>& hero , int &actions , bool &doMonsterPhase );
