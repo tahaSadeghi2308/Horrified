@@ -363,7 +363,6 @@ void Gui::guidePhase(shared_ptr<HeroBase>& hero ,int &actions)
 
     if(option == 1)
     {
-        
         vector<shared_ptr<Place>> possiblePlace = hero ->getCurrentPlace()-> getNeighbors();   
         
         for (auto& place : possiblePlace)
@@ -426,6 +425,7 @@ void Gui::guidePhase(shared_ptr<HeroBase>& hero ,int &actions)
                 selectedVill = nullptr;
                 pageNumber = PageNumbers::HERO_PHASE_PAGE;
                 actions--;
+                option = -1;
             }
             else
             {
@@ -436,7 +436,81 @@ void Gui::guidePhase(shared_ptr<HeroBase>& hero ,int &actions)
     }
     else if(option == 2)
     {
+        static bool selected = false;
+        vector<shared_ptr<Place>> possiblePlace = hero ->getCurrentPlace()-> getNeighbors();
+        if(selectedVill && selected)
+        {
+            for (auto& place : possiblePlace )
+            {
+                Vector2 pos = place->getPosition();
+                float radius = 25.0f; // now just for test 
+                DrawCircleV(pos, radius, BLUE);
+                if (CheckCollisionPointCircle(mouse, pos, radius))
+                DrawCircleLines(pos.x, pos.y, radius + 4.0f, YELLOW);
+            }
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+            {
+                for (auto& place : possiblePlace)
+                {
+                    if (place->isClicked(mouse))
+                    {
+                        sys->moveVillager(selectedVill,place);
+                        pageNumber = PageNumbers::HERO_PHASE_PAGE;
+                        actions--;
+                        selectedVill = nullptr;
+                        selected = false;
+                        option = -1;
+                    }
+                }
+            }
+        }
+        else
+        {
+            float panelW = 800, panelH = 600, pad = 20, Size = 170;
+            Rectangle panel = {(SCREEN_WIDTH - panelW) / 2.0f,(SCREEN_HEIGHT - panelH) / 2.0f,panelW, panelH};
+            DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, {0,0,0,100});
+            DrawRectangleRec(panel, DARKGRAY);
+            
+            float x = panel.x + pad;
+            float y = panel.y + pad;
 
+            auto villInPlace = hero->getCurrentPlace()->getVillagers();
+
+            for(auto& vill : villInPlace)
+            {
+                Texture2D villTex = vill->getAddress();
+                Vector2 pos = { x,y }; 
+                DrawTextureEx(villTex, pos , 0, Size/villTex.width, WHITE);
+
+                Rectangle villRec = {x, y,villTex.width * (Size/villTex.width),villTex.height * (Size/villTex.width)};
+
+                if(CheckCollisionPointRec(mouse , villRec) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+                {
+                    selectedVill = vill;
+                }
+
+                if(vill == selectedVill)
+                DrawRectangleLinesEx(villRec, 3, YELLOW);
+
+                x += Size + pad;
+                if (x + Size > panel.x + panel.width)
+                {
+                    x = panel.x + pad;
+                    y += Size + pad;
+                }
+            }
+                if(IsKeyPressed(KEY_BACKSPACE))
+                {
+                    if(hero->getCurrentPlace()->getVillagers().empty() || !selectedVill)
+                    {
+                        pageNumber = PageNumbers::HERO_PHASE_PAGE;
+                        option = -1;
+                    }
+                    else
+                        selected = true;
+                }
+            
+        }
     }
     else
     {
