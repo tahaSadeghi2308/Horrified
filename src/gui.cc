@@ -357,24 +357,84 @@ void Gui::pickUpPhase(shared_ptr<HeroBase>& hero ,int &actions)
 void Gui::guidePhase(shared_ptr<HeroBase>& hero ,int &actions)
 {
     Vector2 mouse =GetMousePosition();
-
     static int option = -1;
-    static vector<shared_ptr<Villager>> allVill; 
+    static shared_ptr<Villager> selectedVill; 
+    static shared_ptr<Place> choosenPlace;
 
     if(option == 1)
     {
-        float panelW = 800, panelH = 600, pad = 20, Size = 170;
-        Rectangle panel = {(SCREEN_WIDTH - panelW) / 2.0f,(SCREEN_HEIGHT - panelH) / 2.0f,panelW, panelH};
-        DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, {0,0,0,100});
-        DrawRectangleRec(panel, DARKGRAY);
-    
-        float x = panel.x + pad;
-        float y = panel.y + pad;
-    
         
+        vector<shared_ptr<Place>> possiblePlace = hero ->getCurrentPlace()-> getNeighbors();   
+        
+        for (auto& place : possiblePlace)
+        {
+            Vector2 pos = place->getPosition();
+            float radius = 25.0f; // now just for test 
+            DrawCircleV(pos, radius, BLUE);
+            if (CheckCollisionPointCircle(mouse, pos, radius))
+            DrawCircleLines(pos.x, pos.y, radius + 4.0f, YELLOW);
+        }
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+        {
+            for (auto& place : possiblePlace)
+            {
+                if (place->isClicked(mouse))
+                {
+                    choosenPlace = place;
+                }
+            }
+        }
+        if(choosenPlace)
+        {
+            float panelW = 800, panelH = 600, pad = 20, Size = 170;
+            Rectangle panel = {(SCREEN_WIDTH - panelW) / 2.0f,(SCREEN_HEIGHT - panelH) / 2.0f,panelW, panelH};
+            DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, {0,0,0,100});
+            DrawRectangleRec(panel, DARKGRAY);
+        
+            float x = panel.x + pad;
+            float y = panel.y + pad;
 
+            for(auto& vill : choosenPlace->getVillagers())
+            {
+                Texture2D villTex = vill->getAddress();
+                Vector2 pos = { x,y }; 
+                DrawTextureEx(villTex, pos , 0, Size/villTex.width, WHITE);
+
+                Rectangle villRec = {x, y,villTex.width * (Size/villTex.width),villTex.height * (Size/villTex.width)};
+
+                if(CheckCollisionPointRec(mouse , villRec) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+                {
+                    selectedVill = vill;
+                }
+
+                if(vill == selectedVill)
+                DrawRectangleLinesEx(villRec, 3, YELLOW);
+
+                x += Size + pad;
+                if (x + Size > panel.x + panel.width)
+                {
+                    x = panel.x + pad;
+                    y += Size + pad;
+                }
+            }
+        }
+        if(IsKeyPressed(KEY_BACKSPACE))
+        {
+            if(selectedVill)
+            {
+                sys->moveVillager(selectedVill , hero->getCurrentPlace());
+                selectedVill = nullptr;
+                pageNumber = PageNumbers::HERO_PHASE_PAGE;
+                actions--;
+            }
+            else
+            {
+                choosenPlace = nullptr;
+                option = -1;
+            }
+        }
     }
-    else if(option ==2)
+    else if(option == 2)
     {
 
     }
@@ -412,6 +472,11 @@ void Gui::guidePhase(shared_ptr<HeroBase>& hero ,int &actions)
 
         DrawTextEx(GameFont, bring.c_str(), bringPos , fontSize , 0.0 ,bringHover);
         DrawTextEx(GameFont, put.c_str(), putPos , fontSize , 0.0 ,putHover);
+
+        if(IsKeyPressed(KEY_BACKSPACE))
+        {
+            pageNumber = PageNumbers::HERO_PHASE_PAGE;
+        }
     }
 }
 
