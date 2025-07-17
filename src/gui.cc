@@ -274,9 +274,16 @@ void Gui::MovePhase(std::shared_ptr<HeroBase>& hero, int &actions)
         if (IsKeyPressed(KEY_BACKSPACE))
         {
             sys->moveHero(hero, targetPlace);
-            for (auto& v : selectedVillagers)
-                sys->moveVillager(v, targetPlace);
+            for (auto& vill : selectedVillagers)
+            {
+                sys->moveVillager(vill, targetPlace);
 
+                if(vill->getSafeZone() == vill->getVillagerLoc())
+                {
+                    sys->killVillager(vill);
+                    hero->addPerkCard(sys->getRandomPerk());
+                }
+            }
             selectedVillagers.clear();
             isThereVillager = false;
             actions--;
@@ -422,7 +429,12 @@ void Gui::guidePhase(shared_ptr<HeroBase>& hero ,int &actions)
             if(selectedVill)
             {
                 sys->moveVillager(selectedVill , hero->getCurrentPlace());
-                selectedVill = nullptr;
+                if(selectedVill->getSafeZone() == selectedVill->getVillagerLoc())
+                {
+                    sys->killVillager(selectedVill);
+                    hero->addPerkCard(sys->getRandomPerk());
+                }
+                selectedVill = nullptr; 
                 pageNumber = PageNumbers::HERO_PHASE_PAGE;
                 actions--;
                 option = -1;
@@ -455,6 +467,11 @@ void Gui::guidePhase(shared_ptr<HeroBase>& hero ,int &actions)
                     if (place->isClicked(mouse))
                     {
                         sys->moveVillager(selectedVill,place);
+                        if(selectedVill->getSafeZone() == selectedVill->getVillagerLoc())
+                        {
+                            sys->killVillager(selectedVill);
+                            hero->addPerkCard(sys->getRandomPerk());
+                        }
                         pageNumber = PageNumbers::HERO_PHASE_PAGE;
                         actions--;
                         selectedVill = nullptr;
