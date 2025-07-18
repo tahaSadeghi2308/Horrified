@@ -305,11 +305,11 @@ void Gui::MovePhase(std::shared_ptr<HeroBase>& hero, int &actions)
 
 void Gui::pickUpPhase(shared_ptr<HeroBase>& hero ,int &actions)
 {
-    static vector<Item> selectedItems;
+    static bool isPicked = false;
     Vector2 mouse = GetMousePosition();
 
     float panelW = 800, panelH = 600, pad = 20, Size = 170;
-    Rectangle panel = {(SCREEN_WIDTH - panelW) / 2.0f,(SCREEN_HEIGHT - panelH) / 2.0f,panelW, panelH};
+    Rectangle panel = {(SCREEN_WIDTH - panelW) / 2,(SCREEN_HEIGHT - panelH) / 2 ,panelW, panelH};
     DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, {0,0,0,100});
     DrawRectangleRec(panel, DARKGRAY);
 
@@ -318,7 +318,7 @@ void Gui::pickUpPhase(shared_ptr<HeroBase>& hero ,int &actions)
 
     auto current = hero->getCurrentPlace();
 
-    for(auto item : current ->getItems())
+    for(auto item : current -> getItems())
     {
         Texture2D itemTex = item.address;
         Vector2 pos = { x,y};
@@ -326,18 +326,15 @@ void Gui::pickUpPhase(shared_ptr<HeroBase>& hero ,int &actions)
 
         Rectangle itemRec = {x,y,itemTex.width * (Size/itemTex.width), itemTex.height * (Size/itemTex.width) }; 
         
-        if (CheckCollisionPointRec(mouse, itemRec) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+        if (CheckCollisionPointRec(mouse, itemRec))
         {
-                auto it = find(selectedItems.begin(),selectedItems.end(),item);
-                if (it == selectedItems.end())
-                    selectedItems.push_back(item);
-                else
-                    selectedItems.erase(it);
-        }
-
-        if (find(selectedItems.begin(),selectedItems.end(),item) != selectedItems.end())
-        {
-            DrawRectangleLinesEx(itemRec, 3, YELLOW);
+            DrawRectangleLinesEx(itemRec, 2, YELLOW);
+            if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+            {
+                hero->addHeroItems(item);
+                hero->getCurrentPlace()->removeItem(item);
+                isPicked = true;
+            }
         }
 
         x += Size + pad;
@@ -352,15 +349,10 @@ void Gui::pickUpPhase(shared_ptr<HeroBase>& hero ,int &actions)
     if(IsKeyPressed(KEY_BACKSPACE))
         {
             pageNumber = PageNumbers::HERO_PHASE_PAGE;
-            if(!selectedItems.empty())
+            if(isPicked)
             {
                 actions--;
-                for(auto& rmItem : selectedItems)
-                {
-                    hero->addHeroItems(rmItem);
-                    current->removeItem(rmItem);
-                }
-                selectedItems.clear();
+                isPicked = false;
             }
         }
 }
@@ -592,7 +584,7 @@ void Gui::advancedPhase(std::shared_ptr<HeroBase>& hero,int &actions)
             if(!isCoffin)
             {
                 showErr = true;
-                time =GetTime();
+                time = GetTime();
                 errText = "There is no coffin in your current place"; 
                 option = -1;
             }
@@ -619,39 +611,42 @@ void Gui::advancedPhase(std::shared_ptr<HeroBase>& hero,int &actions)
                 else 
                 {
                     float panelW = 800, panelH = 600, pad = 20, Size = 170;
-                    Rectangle panel = {(SCREEN_WIDTH - panelW) / 2.0f,(SCREEN_HEIGHT - panelH) / 2.0f,panelW, panelH};
-                    DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, {0,0,0,100});
+                    Rectangle panel = {(SCREEN_WIDTH - panelW) / 2,(SCREEN_HEIGHT - panelH) / 2,panelW, panelH};
+                    DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, { 0, 0, 0, 100 });
                     DrawRectangleRec(panel, DARKGRAY);
-
                     float x = panel.x + pad;
                     float y = panel.y + pad;
 
-                    auto current = hero->getHeroItems();
-
-                    for(auto item : current)
+                    static int redPower = 0;
+                      
+                    for (auto& item : hero->getHeroItems())
                     {
-                        if(item.color == card::Color::R)
-                        {
-                        Texture2D itemTex = item.address;
-                        Vector2 pos = { x,y};
-                        DrawTextureEx(itemTex,pos,0.0,Size/panel.width,WHITE);
+                        if (item.color != card::Color::R) continue;
 
-                        Rectangle itemRec = {x,y,itemTex.width * (Size/itemTex.width), itemTex.height * (Size/itemTex.width) }; 
-                        
-                        if (CheckCollisionPointRec(mouse, itemRec) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+                        Texture2D itemTexure = item.address;
+                        float scale = Size / itemTexure.width;
+                        Rectangle rec = { x, y, itemTexure.width * scale, itemTexure.height * scale };
+                        DrawTextureEx(itemTexure, { x, y }, 0, scale, WHITE);
+            
+                        if (CheckCollisionPointRec(mouse, rec))
                         {
-                                auto it = find(choosenItem.begin(),choosenItem.end(),item);
-                                if (it == choosenItem.end())
-                                    choosenItem.push_back(item);
-                                else
-                                    choosenItem.erase(it);
+                            DrawRectangleLinesEx(rec, 2, YELLOW);
+                            if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+                            {
+                                redPower += item.power;
+                                hero->deleteItem(item.name);
+                                sys->addItem(item);
+                                actions--;              
+                                if (redPower >= 6)
+                                {
+                                    option = -1;
+                                    pageNumber = PageNumbers::HERO_PHASE_PAGE;
+                                    sys->destroyClue("coffin", hero->getCurrentPlace()->getName());
+                                    redPower = 0;
+                                }
+                                break;
+                            }                     
                         }
-
-                        if (find(choosenItem.begin(),choosenItem.end(),item) != choosenItem.end())
-                        {
-                            DrawRectangleLinesEx(itemRec, 3, YELLOW);
-                        }
-
                         x += Size + pad;
                         if (x + Size > panel.x + panel.width)
                         {
@@ -660,31 +655,82 @@ void Gui::advancedPhase(std::shared_ptr<HeroBase>& hero,int &actions)
                         }
                     }
                 }
-                    int totall = 0;
-                    for(auto& it: choosenItem)
-                    {
-                        totall += it.power;
-                    }
-                    if(IsKeyPressed(KEY_BACKSPACE) && totall >= 6)
-                    {
-                        pageNumber = PageNumbers::HERO_PHASE_PAGE;
-                        actions--;
-                        for(auto& rm : choosenItem)
-                        {
-                            hero->deleteItem(rm.name);
-                            sys->addItem(rm);
-                        }
-                        choosenItem.clear();
-                        option = -1;
-                        sys->destroyClue("coffin",hero->getCurrentPlace()->getName());
-                    }
-                }
-            }   
+}
     }
     else if(option == 2)
     {
-
+        if(hero->getCurrentPlace()->getName() == "precinct")
+        {
+            bool check{true};
+            vector<Item> validItems;
+            for(auto& evi:sys->getEvidence())
+            {
+                for(auto& item:hero->getHeroItems())
+                {
+                    if(item.place == evi)
+                    {
+                        check=false;
+                        validItems.push_back(item);
+                    }
+                }
+            }
+        
+            if(check)
+            {
+                showErr = true;
+                time = GetTime();
+                errText = "You dont have a item that came from"; 
+                option = -1;
+            }
+            else
+            {
+                float panelW = 800, panelH = 600, pad = 20, Size = 170;
+                    Rectangle panel = {(SCREEN_WIDTH - panelW) / 2,(SCREEN_HEIGHT - panelH) / 2,panelW, panelH};
+                    DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, { 0, 0, 0, 100 });
+                    DrawRectangleRec(panel, DARKGRAY);
+                    float x = panel.x + pad;
+                    float y = panel.y + pad;
+                      
+                    for (auto& item : validItems)
+                    {
+                        Texture2D itemTexture = item.address;
+                        float scale = Size / itemTexture.width;
+                        Rectangle rec = { x, y, itemTexture.width * scale, itemTexture.height * scale };
+                        DrawTextureEx(itemTexture, { x, y }, 0, scale, WHITE);
+            
+                        if (CheckCollisionPointRec(mouse, rec))
+                        {
+                            DrawRectangleLinesEx(rec, 2, YELLOW);
+                            if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+                            {
+                                hero->deleteItem(item.name);
+                                sys->addItem(item);
+                                sys->destroyClue("evidence", item.place );
+                                actions--;              
+                                option = -1;
+                                pageNumber = PageNumbers::HERO_PHASE_PAGE;
+                                break;
+                            }                     
+                        }
+                        x += Size + pad;
+                        if (x + Size > panel.x + panel.width)
+                        {
+                            x = panel.x + pad;
+                            y += Size + pad;
+                        }
+                    }
+                }    
+            }
+        else
+        {
+            showErr = true;
+            time = GetTime();
+            errText = "Your Not in precinct";
+            option = -1;
+        }
+    
     }
+
     else
     {
         float panelW = 800, panelH = 600, pad = 20, Size = 250;
