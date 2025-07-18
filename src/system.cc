@@ -131,8 +131,6 @@ System::System(){
         putItemInPlace(selectedItem.place , selectedItem);
     }
 
-    putVillagerInPlace("docks","maria");
-
     allMonsters.push_back(dracula);
     allMonsters.push_back(invisibleMan);
 

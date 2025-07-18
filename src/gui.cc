@@ -49,7 +49,7 @@ void Gui::run() {
                 else if (this->pageNumber == PageNumbers::GUIDE_PAGE) this->guidePhase(currentHero , actions);
                 else if (this->pageNumber == PageNumbers::PICKUP_PAGE) this->pickUpPhase(currentHero , actions);
                 // else if (this->pageNumber == PageNumbers::SPECIALACTION_PAGE) this->specialActionPage(currentHero , actions);
-                // else if (this->pageNumber == PageNumbers::ADVANCED_PAGE) this->advancedPage(currentHero , actions);
+                else if (this->pageNumber == PageNumbers::ADVANCED_PAGE) this->advancedPhase(currentHero , actions);
                 // else if (this->pageNumber == PageNumbers::DEFEAT_PAGE) this->defeatPage(currentHero , actions);
                 // else if (this->pageNumber == PageNumbers::PLAYPERK_PAGE) this->playPerkPage(currentHero , actions , doNextPhase);
                 // else if (this->pageNumber == PageNumbers::HELP_PAGE) this->helpPage();
@@ -114,6 +114,10 @@ void Gui::handleInput()
     if(IsKeyPressed(KEY_G))
     {
         pageNumber = PageNumbers::GUIDE_PAGE;
+    }
+    if(IsKeyPressed(KEY_A))
+    {
+        pageNumber = PageNumbers::ADVANCED_PAGE;
     }
       
 
@@ -567,6 +571,171 @@ void Gui::guidePhase(shared_ptr<HeroBase>& hero ,int &actions)
         if(IsKeyPressed(KEY_BACKSPACE))
         {
             pageNumber = PageNumbers::HERO_PHASE_PAGE;
+        }
+    }
+}
+
+void Gui::advancedPhase(std::shared_ptr<HeroBase>& hero,int &actions)
+{
+    Vector2 mouse = GetMousePosition();
+    static int option = -1;
+    static bool showErr = false;
+    static float time = 0.0;
+    static string errText;
+    static vector<Item> choosenItem; 
+    if(option == 1)
+    {
+        bool isCoffin {false};
+
+        for(auto coffin : sys ->getCoffins())
+            if (hero->getCurrentPlace()->getName() == coffin) isCoffin = true;
+            if(!isCoffin)
+            {
+                showErr = true;
+                time =GetTime();
+                errText = "There is no coffin in your current place"; 
+                option = -1;
+            }
+
+            else 
+            {
+                vector<Item> redItems;
+                int itemsPowerSum = 0;
+                for(auto i : hero->getHeroItems()) 
+                {
+                    if (i.color == card::Color::R) 
+                    { 
+                        redItems.push_back(i); 
+                        itemsPowerSum += i.power;  
+                    }
+                }
+                if ( itemsPowerSum < 6 ) 
+                {
+                    showErr = true;
+                    time =GetTime();
+                    errText = "You dont have enough item to advance dracula"; 
+                    option = -1;
+                }
+                else 
+                {
+                    float panelW = 800, panelH = 600, pad = 20, Size = 170;
+                    Rectangle panel = {(SCREEN_WIDTH - panelW) / 2.0f,(SCREEN_HEIGHT - panelH) / 2.0f,panelW, panelH};
+                    DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, {0,0,0,100});
+                    DrawRectangleRec(panel, DARKGRAY);
+
+                    float x = panel.x + pad;
+                    float y = panel.y + pad;
+
+                    auto current = hero->getHeroItems();
+
+                    for(auto item : current)
+                    {
+                        if(item.color == card::Color::R)
+                        {
+                        Texture2D itemTex = item.address;
+                        Vector2 pos = { x,y};
+                        DrawTextureEx(itemTex,pos,0.0,Size/panel.width,WHITE);
+
+                        Rectangle itemRec = {x,y,itemTex.width * (Size/itemTex.width), itemTex.height * (Size/itemTex.width) }; 
+                        
+                        if (CheckCollisionPointRec(mouse, itemRec) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+                        {
+                                auto it = find(choosenItem.begin(),choosenItem.end(),item);
+                                if (it == choosenItem.end())
+                                    choosenItem.push_back(item);
+                                else
+                                    choosenItem.erase(it);
+                        }
+
+                        if (find(choosenItem.begin(),choosenItem.end(),item) != choosenItem.end())
+                        {
+                            DrawRectangleLinesEx(itemRec, 3, YELLOW);
+                        }
+
+                        x += Size + pad;
+                        if (x + Size > panel.x + panel.width)
+                        {
+                            x = panel.x + pad;
+                            y += Size + pad;
+                        }
+                    }
+                }
+                    int totall = 0;
+                    for(auto& it: choosenItem)
+                    {
+                        totall += it.power;
+                    }
+                    if(IsKeyPressed(KEY_BACKSPACE) && totall >= 6)
+                    {
+                        pageNumber = PageNumbers::HERO_PHASE_PAGE;
+                        actions--;
+                        for(auto& rm : choosenItem)
+                        {
+                            hero->deleteItem(rm.name);
+                            sys->addItem(rm);
+                        }
+                        choosenItem.clear();
+                        option = -1;
+                        sys->destroyClue("coffin",hero->getCurrentPlace()->getName());
+                    }
+                }
+            }   
+    }
+    else if(option == 2)
+    {
+
+    }
+    else
+    {
+        float panelW = 800, panelH = 600, pad = 20, Size = 250;
+        Rectangle panel = {(SCREEN_WIDTH - panelW) / 2.0f,(SCREEN_HEIGHT - panelH) / 2.0f,panelW, panelH};
+        DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, {0,0,0,100});
+        DrawRectangleRec(panel, DARKGRAY);
+        Vector2 textSize = MeasureTextEx(GameFont,"Which one you want to advance" , 25, 0.0);
+        DrawTextEx(GameFont,"Which one you want to advance" , { panel.x + ((panel.width - textSize.x )/ 2)  , panel.y + pad} , 25 , 0.0 , BLACK );
+
+        float x = panel.x + (pad * 4);
+        float y = panel.y + (pad * 4);
+
+        float scale = Size/panel.width;
+
+        Rectangle checkInvisible;
+        Rectangle checkDracula;
+
+        int smallingRec = 50;
+
+        for(auto& mon:sys->getAllMonsters())
+        {
+            Texture2D png = mon->getAddress();
+            DrawTextureEx(png , { x , y } , 0.0 , Size / panel.width , WHITE);
+            if(mon->getMonsterName() == "dracula")  { checkDracula = {x,y, png.width*scale - 50 , png.height*scale - smallingRec}; x += Size + (pad*5) ;}
+            else { checkInvisible = {x,y, (png.width*scale) - smallingRec  , (png.height*scale) - smallingRec }; x += Size + (pad*5) ;}
+        }
+
+        if (CheckCollisionPointRec(mouse, checkDracula ) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+            option = 1;
+        else if (CheckCollisionPointRec(mouse, checkInvisible ) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+           option = 2;
+        if(IsKeyPressed(KEY_BACKSPACE))
+        {
+            pageNumber = PageNumbers::HERO_PHASE_PAGE;
+        }
+    }
+    if(showErr)
+    {
+        if (GetTime() - time < 2.0)
+        {
+            float panelW = 500 , panelH = 75, pad = 20, Size = 250;
+            Rectangle err = {0 , 20 , (float)SCREEN_WIDTH , panelH };
+            DrawRectangleRec(err, RED);
+            Vector2 textSize = MeasureTextEx(GameFont,errText.c_str() , 25, 0 );
+            DrawTextEx(GameFont,errText.c_str() , {(SCREEN_WIDTH - textSize.x) / 2 + pad , err.y + pad} , 25, 0.0 , WHITE);
+        }
+        else
+        {
+            time = 0;
+            showErr = false;
+            errText = "";
         }
     }
 }
