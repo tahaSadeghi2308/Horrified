@@ -45,6 +45,7 @@ public:
     //void drawRightPanel();
     void advancedPhase(std::shared_ptr<HeroBase>& hero,int &actions);
     void drawMap();
+    void defeatPhase(std::shared_ptr<HeroBase>& hero , int &actions);
     void PlaceInfo(std::shared_ptr<Place> );
     void MovePhase(std::shared_ptr<HeroBase>& hero , int &actions);
     void pickUpPhase(std::shared_ptr<HeroBase>& hero ,int &actions);
@@ -67,7 +68,7 @@ public:
     // void movePage(std::shared_ptr<HeroBase>& hero , int &actions);
     // void specialActionPage(std::shared_ptr<HeroBase>& hero,int &actions);
     // void playPerkPage(std::shared_ptr<HeroBase>& hero , int &actions , bool &doMonsterPhase );
-    // void defeatPage(std::shared_ptr<HeroBase>& hero , int &actions);
+    
     // void helpPage();
 };
 
