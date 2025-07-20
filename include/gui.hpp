@@ -10,7 +10,7 @@
 #include <unordered_map>
 #include <fmt/core.h>
 #include "pageNumber.hpp"
-#include <thread>
+#include <unordered_set>
 
 class System;
 class HeroBase;
@@ -43,7 +43,6 @@ public:
     void run();
     void handleInput();
     //void drawRightPanel();
-    void speciallActionPhase(std::shared_ptr<HeroBase>& hero , int& actions);
     void advancedPhase(std::shared_ptr<HeroBase>& hero,int &actions);
     void drawMap();
     void defeatPhase(std::shared_ptr<HeroBase>& hero , int &actions);
@@ -51,6 +50,7 @@ public:
     void MovePhase(std::shared_ptr<HeroBase>& hero , int &actions);
     void pickUpPhase(std::shared_ptr<HeroBase>& hero ,int &actions);
     void guidePhase(std::shared_ptr<HeroBase>& hero ,int &actions);
+    void playPerkPhase(std::shared_ptr<HeroBase>& hero , int &actions , bool &doMonsterPhase );
     ~Gui();
 
     // void header() const;
@@ -68,7 +68,7 @@ public:
     // void terrorLevel(int level);
     // void movePage(std::shared_ptr<HeroBase>& hero , int &actions);
     // void specialActionPage(std::shared_ptr<HeroBase>& hero,int &actions);
-    // void playPerkPage(std::shared_ptr<HeroBase>& hero , int &actions , bool &doMonsterPhase );
+    
     
     // void helpPage();
 };

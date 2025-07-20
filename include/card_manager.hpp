@@ -46,6 +46,7 @@ struct Item {
 struct Perk {
     std::string name;
     std::string description;
+    Texture2D address;
 };
 
 struct MonsterCard {
@@ -54,12 +55,14 @@ struct MonsterCard {
     int move;
     int itemCount;
     std::vector<std::string> strikePriorities;
+    Texture2D address;
 };
 
 template <class T>
 class CardManagerBase {
     void shuffleCards();
     std::vector<T> cards;
+    std::vector<T> all;
 public:
     CardManagerBase<T>() = default;
     T pickOneRandomly();
@@ -67,15 +70,15 @@ public:
     void pop(const int index);
     std::vector<T> getCards();
     int size() const;
+    std::vector<T> getAll() { return all; }
+    void setInAll(T temp) { all.push_back(temp);}
 };
 
 template <class T>
 class ItemBag : public CardManagerBase<T> {
-    std::vector<T> allItem;
 public:
     ItemBag<T>();
     void addItem(const T &item);
-    std::vector<T> getallItem() { return allItem;}
 };
 
 template <class T>
@@ -133,11 +136,12 @@ template <class T>
 MonsterCardDeck<T>::MonsterCardDeck() {
     std::ifstream file("../data/before_game/monster_cards.txt");
     if(file.is_open()) {
-        std::string line, count, itemCount, name, move, dice, pri;
+        std::string line, count, itemCount, name, move, dice, pri , png;
         while(getline(file, line)) {
             std::stringstream stream(line);
-            stream >> count >> itemCount >> name >> move >> dice >> pri;
+            stream >> count >> itemCount >> name >> move >> dice >> pri >> png;
             T temp;
+            temp.address = LoadTexture(png.c_str());
             for (int i {}; i < std::stoi(count); i++) {
                 temp.name = name; 
                 temp.dice = std::stoi(dice); 
@@ -148,6 +152,7 @@ MonsterCardDeck<T>::MonsterCardDeck() {
                 while(getline(ss, tmp, '_')) {
                     temp.strikePriorities.push_back(tmp);
                 }
+                this->setInAll(temp);
                 this->push(temp);
             }
         }
@@ -175,7 +180,7 @@ ItemBag<T>::ItemBag() {
                 if (color == "red") temp.color = card::Color::R;
                 if (color == "blue") temp.color = card::Color::B;
                 if (color == "yellow") temp.color = card::Color::Y; 
-                allItem.push_back(temp);
+                this->setInAll(temp);
                 this->push(temp);
             }
         }
@@ -190,14 +195,16 @@ template <class T>
 PerkDeck<T>::PerkDeck() {
     std::ifstream file("../data/before_game/perks.txt");
     if(file.is_open()) {
-        std::string line, count, name, desc;
+        std::string line, count, name, desc , png;
         while(getline(file, line)) {
             std::stringstream stream(line);
-            stream >> count >> name >> desc;
+            stream >> count >> name >> desc >> png;
             T temp;
+            temp.address = LoadTexture(png.c_str());
             for (int i {}; i < std::stoi(count); i++) {
                 temp.name = name; 
                 temp.description = desc;
+                this->setInAll(temp);
                 this->push(temp);
             }
         }

@@ -50,7 +50,7 @@ void Gui::run() {
                 else if (this->pageNumber == PageNumbers::SPECIALACTION_PAGE) currentHero -> speciallAction(sys,pageNumber,actions,SCREEN_WIDTH,SCREEN_HEIGHT);
                 else if (this->pageNumber == PageNumbers::ADVANCED_PAGE) this->advancedPhase(currentHero , actions);
                 else if (this->pageNumber == PageNumbers::DEFEAT_PAGE) this->defeatPhase(currentHero , actions);
-                // else if (this->pageNumber == PageNumbers::PLAYPERK_PAGE) this->playPerkPage(currentHero , actions , doNextPhase);
+                else if (this->pageNumber == PageNumbers::PLAYPERK_PAGE) this->playPerkPhase(currentHero , actions , doNextPhase);
                 // else if (this->pageNumber == PageNumbers::HELP_PAGE) this->helpPage();
             }
         if (actions <= 0 && doNextPhase && isEnd == -1) {
@@ -1052,6 +1052,19 @@ void Gui::defeatPhase(std::shared_ptr<HeroBase>& hero , int &actions)
             showErr = false;
             errText = "";
         }
+    }
+}
+
+void Gui::playPerkPhase( std::shared_ptr<HeroBase>& hero , int &actions , bool &doMonsterPhase)
+{
+    static bool found = false;
+    if(found)
+    {
+
+    }
+    else
+    {
+        
     }
 }
 

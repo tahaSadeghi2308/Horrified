@@ -83,9 +83,17 @@ public:
     Font getFont() { return font; }
     ~System()
     {
-        for(auto& remove : itemBag->getallItem())
+        for(auto& remove : itemBag->getAll())
         {
             UnloadTexture(remove.address);
+        }
+        for(auto& rm : perkDeck->getAll())
+        {
+            UnloadTexture(rm.address);
+        }
+        for(auto& rm : monsterDeck->getAll())
+        {
+            UnloadTexture(rm.address);
         }
     }
 };
