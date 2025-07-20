@@ -67,7 +67,34 @@ void HeroBase::deletePerk(string_view perkName) {
     }
 }
 
-void HeroBase::speciallAction(System* sys,int& pageNumber, int &actions,const int SCREEN_WIDTH,const int SCREEN_HEIGHT)
+void HeroBase::speciallAction(System* sys, int& pageNumber, int &actions, const int SCREEN_WIDTH, const int SCREEN_HEIGHT)
+{
+    static double time = 0.0;
+    static bool showErr = false;
+
+    if (!showErr)
+    {
+        time = GetTime();  
+        showErr = true;
+    }
+
+    if (GetTime() - time < 2.0)
+    {
+        float panelW = 500 , panelH = 75, pad = 20, Size = 250;
+        Rectangle err = {0 , 20 , (float)SCREEN_WIDTH , panelH };
+        DrawRectangleRec(err, RED);
+        int textSize = MeasureText("Your hero doesn't have special action", 25);
+        DrawText("Your hero doesn't have special action", (SCREEN_WIDTH - textSize) / 2 + pad , err.y + pad , 25 , WHITE);
+    }
+    else
+    {
+        pageNumber = PageNumbers::HERO_PHASE_PAGE;
+        showErr = false; 
+    }
+}
+
+
+void Archaeologist::speciallAction(System* sys,int& pageNumber, int &actions,const int SCREEN_WIDTH,const int SCREEN_HEIGHT)
 {
     Vector2 mouse =GetMousePosition(); 
     static shared_ptr<Place> choosenPlace;
@@ -128,7 +155,7 @@ void HeroBase::speciallAction(System* sys,int& pageNumber, int &actions,const in
         }
     else
     {
-        vector<shared_ptr<Place>> possiblePlace = currentPlace -> getNeighbors();   
+        vector<shared_ptr<Place>> possiblePlace = getCurrentPlace() -> getNeighbors();   
         
         for (auto& place : possiblePlace)
         {

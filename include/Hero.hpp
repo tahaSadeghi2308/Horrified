@@ -11,6 +11,7 @@
 #include "monster.hpp"
 #include "pageNumber.hpp"
 
+class System;
 class Mayor;
 class Archaeologist;
 class HeroBase {
@@ -50,6 +51,7 @@ public:
 class Archaeologist final : public HeroBase {
 public:
     Archaeologist(const int &_num , std::string_view _name, const Perk &perk);
+    void speciallAction(System *sys,int &pageNumber,int& actions,const int SCREEN_WIDTH,const int SCREEN_HEIGHT) override;
 };
 
 class Mayor final : public HeroBase {

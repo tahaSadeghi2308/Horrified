@@ -6,16 +6,15 @@ Gui::Gui(System *s,const int width,const int height):sys(s),scroll(0.0f),SCREEN_
     pageNumber = PageNumbers::HERO_PHASE_PAGE;
     isEnd = -1;
     round = 0;
+    gameMap = LoadTexture("../../Horrified_Assets/map.png");
+    GameFont = LoadFont("../../Horrified_Assets/Melted.ttf");
+    sys->setFont(GameFont);
     this->playerPriority.push_back("archaeologist"); //for test needs welcom page
     this->playerPriority.push_back("mayor");
 }
 
 
 void Gui::run() {
-   
-    gameMap = LoadTexture("../../Horrified_Assets/map.png");
-    GameFont = LoadFont("../../Horrified_Assets/Melted.ttf");
-
     Rectangle Src = { 0, 0, (float)gameMap.width, (float)gameMap.height };
     Rectangle Dest = {0, 0,(float)(SCREEN_WIDTH - RIGHT_PANEL_WIDTH), (float)SCREEN_HEIGHT };
     Vector2 origin = { 0, 0 };
