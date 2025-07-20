@@ -48,7 +48,7 @@ void Gui::run() {
                 if (this->pageNumber == PageNumbers::MOVE_PAGE) this->MovePhase(currentHero , actions);
                 else if (this->pageNumber == PageNumbers::GUIDE_PAGE) this->guidePhase(currentHero , actions);
                 else if (this->pageNumber == PageNumbers::PICKUP_PAGE) this->pickUpPhase(currentHero , actions);
-                // else if (this->pageNumber == PageNumbers::SPECIALACTION_PAGE) this->specialActionPage(currentHero , actions);
+                else if (this->pageNumber == PageNumbers::SPECIALACTION_PAGE) currentHero -> speciallAction(sys,pageNumber,actions,SCREEN_WIDTH,SCREEN_HEIGHT);
                 else if (this->pageNumber == PageNumbers::ADVANCED_PAGE) this->advancedPhase(currentHero , actions);
                 else if (this->pageNumber == PageNumbers::DEFEAT_PAGE) this->defeatPhase(currentHero , actions);
                 // else if (this->pageNumber == PageNumbers::PLAYPERK_PAGE) this->playPerkPage(currentHero , actions , doNextPhase);
@@ -122,6 +122,10 @@ void Gui::handleInput()
     if(IsKeyPressed(KEY_D))
     {
         pageNumber = PageNumbers::DEFEAT_PAGE;
+    }
+    if(IsKeyPressed(KEY_S))
+    {
+        pageNumber = PageNumbers::SPECIALACTION_PAGE;
     }
 
 }
@@ -1031,6 +1035,23 @@ void Gui::defeatPhase(std::shared_ptr<HeroBase>& hero , int &actions)
         if(IsKeyPressed(KEY_BACKSPACE))
         {
             pageNumber = PageNumbers::HERO_PHASE_PAGE;
+        }
+    }
+    if(showErr)
+    {
+        if (GetTime() - time < 2.0)
+        {
+            float panelW = 500 , panelH = 75, pad = 20, Size = 250;
+            Rectangle err = {0 , 20 , (float)SCREEN_WIDTH , panelH };
+            DrawRectangleRec(err, RED);
+            Vector2 textSize = MeasureTextEx(GameFont,errText.c_str() , 25, 0 );
+            DrawTextEx(GameFont,errText.c_str() , {(SCREEN_WIDTH - textSize.x) / 2 + pad , err.y + pad} , 25, 0.0 , WHITE);
+        }
+        else
+        {
+            time = 0;
+            showErr = false;
+            errText = "";
         }
     }
 }

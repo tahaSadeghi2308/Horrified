@@ -130,7 +130,7 @@ System::System(){
         Item selectedItem = getRandomItem();
         putItemInPlace(selectedItem.place , selectedItem);
     }
-
+    
     allMonsters.push_back(dracula);
     allMonsters.push_back(invisibleMan);
 

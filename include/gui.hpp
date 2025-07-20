@@ -43,6 +43,7 @@ public:
     void run();
     void handleInput();
     //void drawRightPanel();
+    void speciallActionPhase(std::shared_ptr<HeroBase>& hero , int& actions);
     void advancedPhase(std::shared_ptr<HeroBase>& hero,int &actions);
     void drawMap();
     void defeatPhase(std::shared_ptr<HeroBase>& hero , int &actions);

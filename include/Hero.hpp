@@ -9,6 +9,7 @@
 #include <memory>
 #include "villager.hpp"
 #include "monster.hpp"
+#include "pageNumber.hpp"
 
 class Mayor;
 class Archaeologist;
@@ -38,6 +39,7 @@ public:
     std::vector<Perk> getHeroPerks()const { return heroPerks; }
     void deletePerk(std::string_view perkName);
     Texture2D getAddress() { return address;}
+    virtual void speciallAction(System *sys,int &pageNumber,int& actions,const int SCREEN_WIDTH,const int SCREEN_HEIGHT);
     void setAddress(std::string ad) {address = LoadTexture(ad.c_str());}
     virtual ~HeroBase()
     {
