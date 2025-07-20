@@ -126,6 +126,10 @@ void Gui::handleInput()
     {
         pageNumber = PageNumbers::SPECIALACTION_PAGE;
     }
+    if(IsKeyPressed(KEY_C))
+    {
+        pageNumber = PageNumbers::PLAYPERK_PAGE;
+    }
 
 }
 
@@ -1058,13 +1062,80 @@ void Gui::defeatPhase(std::shared_ptr<HeroBase>& hero , int &actions)
 void Gui::playPerkPhase( std::shared_ptr<HeroBase>& hero , int &actions , bool &doMonsterPhase)
 {
     static bool found = false;
+    static string selectedPerk;
+    Vector2 mouse = GetMousePosition();
     if(found)
     {
-
+        if (selectedPerk == "Visit_from_the_Detective")
+        {
+           
+        }
+        else if (selectedPerk == "Break_of_Dawn")
+        {
+            doMonsterPhase = false;
+            for(int i {} ; i < 2; i++){
+                Item temp = sys->getRandomItem();
+                hero->getCurrentPlace()->addItem(temp);
+            }
+            this->pageNumber = PageNumbers::HERO_PHASE_PAGE; return;
+        }
+        else if (selectedPerk == "Overstock") {
+            for (auto her : sys->getAllHeros()){
+                Item temp = sys->getRandomItem();
+                sys->putItemInPlace(her->getCurrentPlace()->getName() , temp);
+            }
+        }
+        else if (selectedPerk == "Late_into_the_Night") {
+            actions += 2;
+            this->pageNumber = PageNumbers::HERO_PHASE_PAGE; 
+            return;
+        }
+        else if (selectedPerk == "Repel") 
+        {
+           
+        }
+        else if (selectedPerk == "Hurry") {
+            
+        }
     }
     else
     {
+        float panelW = 900, panelH = 800, pad = 20, Size = 120;
+        Rectangle panel = {(SCREEN_WIDTH - panelW) / 2.0f,(SCREEN_HEIGHT - panelH) / 2.0f,panelW, panelH};
+        DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, {0,0,0,100});
+        DrawRectangleRec(panel, DARKGRAY);
         
+        float x = panel.x + pad;
+        float y = panel.y + pad;
+
+        for(auto& perk : hero->getHeroPerks())
+        {
+            Texture2D png = perk.address;
+            Vector2 pos {x,y};
+            float scale = Size/panel.width;
+            DrawTextureEx(png , pos,0,scale,WHITE);
+            Rectangle pickPerk = {x,y,scale*panelW,scale*panelH};
+
+            if(CheckCollisionPointRec(mouse,pickPerk))
+            {
+                DrawRectangleLinesEx(pickPerk,3,YELLOW);
+                if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+                {
+                    found = true;
+                    selectedPerk = perk.name;
+                }
+            }
+            x += Size + pad;
+            if(x + Size > panel.x + panel.width)
+            {
+                x = panel.x + pad;
+                y += Size + pad;
+            }
+        }
+        if(IsKeyPressed(KEY_BACKSPACE))
+        {
+            pageNumber = PageNumbers::HERO_PHASE_PAGE;
+        }
     }
 }
 
