@@ -1068,7 +1068,30 @@ void Gui::playPerkPhase( std::shared_ptr<HeroBase>& hero , int &actions , bool &
     {
         if (selectedPerk == "Visit_from_the_Detective")
         {
-           
+           for(auto& loc : sys->getAllLocations())
+           {
+                Vector2 pos = loc->getPosition();
+                float radius = 25.0f; 
+                DrawCircleV(pos, radius, BLUE);
+                if (CheckCollisionPointCircle(mouse, pos, radius))
+                {
+                    DrawCircleLines(pos.x, pos.y, radius + 4.0f, YELLOW);
+                    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+                    {
+                        for(auto& mon : sys->getAllMonsters())
+                        {
+                            if(mon->getMonsterName() == "invisibleMan")
+                            {
+                                sys->moveMonster(mon,loc);
+                                found = true;
+                                selectedPerk = "" ;
+                                pageNumber = PageNumbers::HERO_PHASE_PAGE;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
         }
         else if (selectedPerk == "Break_of_Dawn")
         {
@@ -1077,25 +1100,41 @@ void Gui::playPerkPhase( std::shared_ptr<HeroBase>& hero , int &actions , bool &
                 Item temp = sys->getRandomItem();
                 hero->getCurrentPlace()->addItem(temp);
             }
-            this->pageNumber = PageNumbers::HERO_PHASE_PAGE; return;
+            found = true;
+            selectedPerk = "" ;
+            pageNumber = PageNumbers::HERO_PHASE_PAGE;
         }
         else if (selectedPerk == "Overstock") {
-            for (auto her : sys->getAllHeros()){
+            for (auto her : sys->getAllHeros()) {
                 Item temp = sys->getRandomItem();
                 sys->putItemInPlace(her->getCurrentPlace()->getName() , temp);
             }
+            found = true;
+            selectedPerk = "" ;
+            pageNumber = PageNumbers::HERO_PHASE_PAGE;
         }
         else if (selectedPerk == "Late_into_the_Night") {
             actions += 2;
+            found = true;
+            selectedPerk = "" ;
             this->pageNumber = PageNumbers::HERO_PHASE_PAGE; 
-            return;
         }
         else if (selectedPerk == "Repel") 
         {
            
         }
-        else if (selectedPerk == "Hurry") {
-            
+        else if (selectedPerk == "Hurry") 
+        {
+            // for(auto& _hero : sys->getAllHeros())
+            // {
+            //     float x = 0, y = 20 , pad = 20;
+            //     float panelH = 75;
+            //     Rectangle rec = {x,y,(float)SCREEN_WIDTH,panelH};
+            //     DrawRectangleRec(rec , BLACK);
+            //     string name = _hero->getHeroName();
+            //     Vector2 size = MeasureTextEx(GameFont,name.c_str(),25,0);
+            //     DrawTextEx(GameFont,name.c_str(),{(SCREEN_WIDTH-size.x/2)+pad , y + pad },25,0,WHITE);
+            // }
         }
     }
     else
@@ -1114,7 +1153,7 @@ void Gui::playPerkPhase( std::shared_ptr<HeroBase>& hero , int &actions , bool &
             Vector2 pos {x,y};
             float scale = Size/panel.width;
             DrawTextureEx(png , pos,0,scale,WHITE);
-            Rectangle pickPerk = {x,y,scale*panelW,scale*panelH};
+            Rectangle pickPerk = {x,y,scale*png.width,scale*png.height};
 
             if(CheckCollisionPointRec(mouse,pickPerk))
             {
