@@ -53,8 +53,11 @@ void Gui::run() {
                 else if (this->pageNumber == PageNumbers::PLAYPERK_PAGE) this->playPerkPhase(currentHero , actions , doNextPhase);
                 // else if (this->pageNumber == PageNumbers::HELP_PAGE) this->helpPage();
             }
-        if (actions <= 0 && doNextPhase && isEnd == -1) {
+        if (actions <= 0 && isEnd == -1) {
+            if(doNextPhase)
+            {
             //monsterPhasePage(currentHero);
+            }
             currentHero = nullptr;
             round++;
         }
@@ -1061,6 +1064,7 @@ void Gui::defeatPhase(std::shared_ptr<HeroBase>& hero , int &actions)
 
 void Gui::playPerkPhase( std::shared_ptr<HeroBase>& hero , int &actions , bool &doMonsterPhase)
 {
+    static int count = 0;
     static bool found = false;
     static string selectedPerk;
     Vector2 mouse = GetMousePosition();
@@ -1083,8 +1087,9 @@ void Gui::playPerkPhase( std::shared_ptr<HeroBase>& hero , int &actions , bool &
                             if(mon->getMonsterName() == "invisibleMan")
                             {
                                 sys->moveMonster(mon,loc);
-                                found = true;
+                                found = false;
                                 selectedPerk = "" ;
+                                hero->deletePerk("Visit_from_the_Detective");
                                 pageNumber = PageNumbers::HERO_PHASE_PAGE;
                                 break;
                             }
@@ -1100,8 +1105,9 @@ void Gui::playPerkPhase( std::shared_ptr<HeroBase>& hero , int &actions , bool &
                 Item temp = sys->getRandomItem();
                 hero->getCurrentPlace()->addItem(temp);
             }
-            found = true;
+            found = false;
             selectedPerk = "" ;
+            hero->deletePerk("Break_of_Dawn");
             pageNumber = PageNumbers::HERO_PHASE_PAGE;
         }
         else if (selectedPerk == "Overstock") {
@@ -1109,34 +1115,337 @@ void Gui::playPerkPhase( std::shared_ptr<HeroBase>& hero , int &actions , bool &
                 Item temp = sys->getRandomItem();
                 sys->putItemInPlace(her->getCurrentPlace()->getName() , temp);
             }
-            found = true;
+            found = false;
             selectedPerk = "" ;
+            hero->deletePerk("Overstock");
             pageNumber = PageNumbers::HERO_PHASE_PAGE;
         }
         else if (selectedPerk == "Late_into_the_Night") {
             actions += 2;
-            found = true;
+            found = false;
             selectedPerk = "" ;
+            hero->deletePerk("Late_into_the_Night");
             this->pageNumber = PageNumbers::HERO_PHASE_PAGE; 
         }
         else if (selectedPerk == "Repel") 
         {
-           
+            static string nameMon = sys->getAllMonsters()[0] ->getMonsterName();
+
+           if(count < 2)
+            {
+                for(auto& mon : sys->getAllMonsters())
+                {    
+                    if(nameMon == mon->getMonsterName()) {
+                        float x = 0, y = 20 , pad = 20;
+                        float panelH = 75;
+                        Rectangle rec = {x,y,(float)SCREEN_WIDTH,panelH};
+                        DrawRectangleRec(rec , BLACK);
+                        string name = mon->getMonsterName();
+                        Vector2 size = MeasureTextEx(GameFont,name.c_str(),25,0);
+                        DrawTextEx(GameFont,name.c_str(),{((SCREEN_WIDTH-size.x)/2)+pad , y + pad },25,0,WHITE);
+                        auto neis = mon->getCurrentLocation()->getNeighbors();
+                        for (auto& place : neis)
+                        {
+                            Vector2 pos = place->getPosition();
+                            float radius = 25.0f; // now just for test 
+                            DrawCircleV(pos, radius, BLUE);
+                            if (CheckCollisionPointCircle(mouse, pos, radius))
+                                DrawCircleLines(pos.x, pos.y, radius + 4.0f, YELLOW);
+                        }
+
+                        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+                        {
+                            for (auto& place : neis)
+                            {
+                                if (place->isClicked(mouse))
+                                {
+                                    sys->moveMonster(mon, place);
+                                    count++;   
+                                }
+                            }
+                        }
+                    }
+                }        
+            } 
+            else
+            {
+                if(count >= 4)
+                {
+                    pageNumber = PageNumbers::HERO_PHASE_PAGE;
+                    hero->deletePerk("Repel");
+                    found = false;
+                    selectedPerk = "" ;
+                    count = 0;
+                    return;
+                }
+                for(auto& mon : sys->getAllMonsters()) {
+                    if(mon->getMonsterName() != nameMon) {
+                        float x = 0, y = 20 , pad = 20;
+                        float panelH = 75;
+                        Rectangle rec = {x,y,(float)SCREEN_WIDTH,panelH};
+                        DrawRectangleRec(rec , BLACK);
+                        string name = mon->getMonsterName();
+                        Vector2 size = MeasureTextEx(GameFont,name.c_str(),25,0);
+                        DrawTextEx(GameFont,name.c_str(),{((SCREEN_WIDTH-size.x)/2)+pad , y + pad },25,0,WHITE);
+                        auto neis = mon->getCurrentLocation()->getNeighbors();
+
+                        for (auto& place : neis)
+                        {
+                            Vector2 pos = place->getPosition();
+                            float radius = 25.0f; // now just for test 
+                            DrawCircleV(pos, radius, BLUE);
+                            if (CheckCollisionPointCircle(mouse, pos, radius))
+                                DrawCircleLines(pos.x, pos.y, radius + 4.0f, YELLOW);
+                        }
+
+                        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+                        {
+                            for (auto& place : neis)
+                            {
+                                if (place->isClicked(mouse))
+                                {
+                                    sys->moveMonster(mon, place);
+                                    count++;   
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
         else if (selectedPerk == "Hurry") 
         {
-            // for(auto& _hero : sys->getAllHeros())
-            // {
-            //     float x = 0, y = 20 , pad = 20;
-            //     float panelH = 75;
-            //     Rectangle rec = {x,y,(float)SCREEN_WIDTH,panelH};
-            //     DrawRectangleRec(rec , BLACK);
-            //     string name = _hero->getHeroName();
-            //     Vector2 size = MeasureTextEx(GameFont,name.c_str(),25,0);
-            //     DrawTextEx(GameFont,name.c_str(),{(SCREEN_WIDTH-size.x/2)+pad , y + pad },25,0,WHITE);
-            // }
+            static bool isThereVillager = false;
+            static shared_ptr<Place> targetPlace;
+            static vector<shared_ptr<Villager>> selectedVillagers;
+
+            if(count < 2)
+            {
+                float x = 0, y = 20 , pad = 20;
+                float panelH = 75;
+                Rectangle rec = {x,y,(float)SCREEN_WIDTH,panelH};
+                DrawRectangleRec(rec , BLACK);
+                string name = hero->getHeroName();
+                Vector2 size = MeasureTextEx(GameFont,name.c_str(),25,0);
+                DrawTextEx(GameFont,name.c_str(),{((SCREEN_WIDTH-size.x)/2)+pad , y + pad },25,0,WHITE);
+                
+                
+                auto neis = hero->getCurrentPlace()->getNeighbors();
+
+                for (auto& place : neis)
+                {
+                    Vector2 pos = place->getPosition();
+                    float radius = 25.0f; // now just for test 
+                    DrawCircleV(pos, radius, BLUE);
+                    if (CheckCollisionPointCircle(mouse, pos, radius))
+                        DrawCircleLines(pos.x, pos.y, radius + 4.0f, YELLOW);
+                }
+
+                if (!isThereVillager && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+                {
+                    for (auto& place : neis)
+                    {
+                        if (place->isClicked(mouse))
+                        {
+                            targetPlace = place;
+                            auto villagers = hero->getCurrentPlace()->getVillagers();
+                            if (!villagers.empty())
+                            {
+                                isThereVillager = true;
+                                selectedVillagers.clear();
+                            }
+                            else
+                            {
+                                sys->moveHero(hero, targetPlace);
+                                count++;
+                                //pageNumber = PageNumbers::HERO_PHASE_PAGE;
+                            }   
+                        }
+                    }
+                }
+
+                if (isThereVillager)
+                {
+                    float panelW = 800, panelH = 600, pad = 20, Size = 170;
+                    Rectangle panel = {(SCREEN_WIDTH - panelW) / 2.0f,(SCREEN_HEIGHT - panelH) / 2.0f,panelW, panelH};
+                    DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, {0,0,0,100});
+                    DrawRectangleRec(panel, DARKGRAY);
+
+                    float x = panel.x + pad;
+                    float y = panel.y + pad;
+                    
+                    for (auto& vill : hero->getCurrentPlace()->getVillagers())
+                    {
+                        Texture2D villTex = vill->getAddress();
+                        Vector2 pos = { x,y }; 
+                        DrawTextureEx(villTex, pos , 0, Size/villTex.width, WHITE);
+
+                        Rectangle villRec = {x, y,villTex.width * (Size/villTex.width),villTex.height * (Size/villTex.width)};
+
+                        if (CheckCollisionPointRec(mouse, villRec) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+                        {
+                            auto it = find(selectedVillagers.begin(),selectedVillagers.end(),vill);
+                            if (it == selectedVillagers.end())
+                                selectedVillagers.push_back(vill);
+                            else
+                                selectedVillagers.erase(it);
+                        }
+                        if (find(selectedVillagers.begin(),selectedVillagers.end(),vill) != selectedVillagers.end())
+                        {
+                            DrawRectangleLinesEx(villRec, 3, YELLOW);
+                        }
+
+                        x += Size + pad;
+                        if (x + Size > panel.x + panel.width)
+                        {
+                            x = panel.x + pad;
+                            y += Size + pad;
+                        }
+                    }
+
+                    if (IsKeyPressed(KEY_BACKSPACE))
+                    {
+                        sys->moveHero(hero, targetPlace);
+                        count++;
+                        for (auto& vill : selectedVillagers)
+                        {
+                            sys->moveVillager(vill, targetPlace);
+
+                            if(vill->getSafeZone() == vill->getVillagerLoc())
+                            {
+                                sys->killVillager(vill);
+                                hero->addPerkCard(sys->getRandomPerk());
+                            }
+                        }
+                        selectedVillagers.clear();
+                        isThereVillager = false;
+                        //pageNumber = PageNumbers::HERO_PHASE_PAGE;
+                    } 
+                }
+            }
+            else
+            {
+                if(count >= 4)
+                {
+                    pageNumber = PageNumbers::HERO_PHASE_PAGE;
+                    hero->deletePerk("Hurry");
+                    found = false;
+                    selectedPerk = "" ;
+                    count = 0;
+                    return;
+                }
+                
+                for(auto& second : sys->getAllHeros())
+                {
+                
+                    if(second->getHeroName() != hero->getHeroName())
+                    {
+                    float x = 0, y = 20 , pad = 20;
+                    float panelH = 75;
+                    Rectangle rec = {x,y,(float)SCREEN_WIDTH,panelH};
+                    DrawRectangleRec(rec , BLACK);
+                    string name = second->getHeroName();
+                    Vector2 size = MeasureTextEx(GameFont,name.c_str(),25,0);
+                    DrawTextEx(GameFont,name.c_str(),{((SCREEN_WIDTH-size.x)/2)+pad , y + pad },25,0,WHITE);
+                    
+
+                    auto neis = second->getCurrentPlace()->getNeighbors();
+
+                    for (auto& place : neis)
+                    {
+                        Vector2 pos = place->getPosition();
+                        float radius = 25.0f; // now just for test 
+                        DrawCircleV(pos, radius, BLUE);
+                        if (CheckCollisionPointCircle(mouse, pos, radius))
+                            DrawCircleLines(pos.x, pos.y, radius + 4.0f, YELLOW);
+                    }
+
+                    if (!isThereVillager && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+                    {
+                        for (auto& place : neis)
+                        {
+                            if (place->isClicked(mouse))
+                            {
+                                targetPlace = place;
+                                auto villagers = second->getCurrentPlace()->getVillagers();
+                                if (!villagers.empty())
+                                {
+                                    isThereVillager = true;
+                                    selectedVillagers.clear();
+                                }
+                                else
+                                {
+                                    sys->moveHero(second, targetPlace);
+                                    count++;
+                                    //pageNumber = PageNumbers::HERO_PHASE_PAGE;
+                                }   
+                            }
+                        }
+                    }
+
+                    if (isThereVillager)
+                    {
+                        float panelW = 800, panelH = 600, pad = 20, Size = 170;
+                        Rectangle panel = {(SCREEN_WIDTH - panelW) / 2.0f,(SCREEN_HEIGHT - panelH) / 2.0f,panelW, panelH};
+                        DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, {0,0,0,100});
+                        DrawRectangleRec(panel, DARKGRAY);
+
+                        float x = panel.x + pad;
+                        float y = panel.y + pad;
+                        
+                        for (auto& vill : second->getCurrentPlace()->getVillagers())
+                        {
+                            Texture2D villTex = vill->getAddress();
+                            Vector2 pos = { x,y }; 
+                            DrawTextureEx(villTex, pos , 0, Size/villTex.width, WHITE);
+
+                            Rectangle villRec = {x, y,villTex.width * (Size/villTex.width),villTex.height * (Size/villTex.width)};
+
+                            if (CheckCollisionPointRec(mouse, villRec) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+                            {
+                                auto it = find(selectedVillagers.begin(),selectedVillagers.end(),vill);
+                                if (it == selectedVillagers.end())
+                                    selectedVillagers.push_back(vill);
+                                else
+                                    selectedVillagers.erase(it);
+                            }
+                            if (find(selectedVillagers.begin(),selectedVillagers.end(),vill) != selectedVillagers.end())
+                            {
+                                DrawRectangleLinesEx(villRec, 3, YELLOW);
+                            }
+
+                            x += Size + pad;
+                            if (x + Size > panel.x + panel.width)
+                            {
+                                x = panel.x + pad;
+                                y += Size + pad;
+                            }
+                        }
+
+                        if (IsKeyPressed(KEY_BACKSPACE))
+                        {
+                            sys->moveHero(second, targetPlace);
+                            count++;
+                            for (auto& vill : selectedVillagers)
+                            {
+                                sys->moveVillager(vill, targetPlace);
+
+                                if(vill->getSafeZone() == vill->getVillagerLoc())
+                                {
+                                    sys->killVillager(vill);
+                                    second->addPerkCard(sys->getRandomPerk());
+                                }
+                            }
+                            selectedVillagers.clear();
+                            isThereVillager = false;
+                            //pageNumber = PageNumbers::HERO_PHASE_PAGE;
+                        } 
+                    } 
+                }   
+            }
         }
     }
+}
     else
     {
         float panelW = 900, panelH = 800, pad = 20, Size = 120;
