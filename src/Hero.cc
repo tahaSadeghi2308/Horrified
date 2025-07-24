@@ -159,11 +159,17 @@ void Archaeologist::speciallAction(System* sys,int& pageNumber, int &actions,con
         
         for (auto& place : possiblePlace)
         {
-            Vector2 pos = place->getPosition();
-            float radius = 25.0f; // now just for test 
-            DrawCircleV(pos, radius, BLUE);
-            if (CheckCollisionPointCircle(mouse, pos, radius))
-            DrawCircleLines(pos.x, pos.y, radius + 4.0f, YELLOW);
+            Vector2 pos = place -> getPosition();
+            float w = 120, h = 120;
+            Rectangle rect = {pos.x - w/2, pos.y - h/2, w, h}; // we should go back and up for 1/2 of the squere
+            float pulse = (sinf(GetTime() * 4 ) + 1) / 2; // get it with testing diffrent options 
+            float expand = pulse * 15; 
+
+            Rectangle fadingRec = {rect.x - expand , rect.y - expand , rect.width + 2 * expand , rect.height + 2 * expand};
+
+            DrawRectangleLinesEx(fadingRec, 3, Fade(YELLOW, 0.4f));
+            DrawRectangleLinesEx(rect, 2, YELLOW);
+            
         }
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
         {

@@ -3,6 +3,7 @@ using namespace std;
 
 Gui::Gui(System *s,const int width,const int height):sys(s),scroll(0.0f),SCREEN_WIDTH(width),SCREEN_HEIGHT(height)
 {
+    UP_PANEL_WIDTH = SCREEN_WIDTH - LEFT_PANEL_WIDTH - RIGHT_PANEL_WIDTH;
     pageNumber = PageNumbers::HERO_PHASE_PAGE;
     isEnd = -1;
     round = 0;
@@ -11,27 +12,37 @@ Gui::Gui(System *s,const int width,const int height):sys(s),scroll(0.0f),SCREEN_
     sys->setFont(GameFont);
     this->playerPriority.push_back("archaeologist"); //for test needs welcom page
     this->playerPriority.push_back("mayor");
+    float pad = 20;
+    float panelH = 75 , panelW = LEFT_PANEL_WIDTH - (2*pad);
+    moveRec = { pad , pad , panelW , panelH };
+    PickRec = { pad , moveRec.y + pad + panelH , panelW , panelH};
+    GuidRec  = { pad , PickRec.y + pad + panelH , panelW , panelH};
+    speciallRec = {pad , GuidRec.y + pad + panelH , panelW , panelH};
+    AdvanceRec = {pad , speciallRec.y + pad + panelH , panelW , panelH };
+    DefeatRec = {pad , AdvanceRec.y + pad + panelH , panelW , panelH };
+    PerkRec = { pad , DefeatRec.y + pad + panelH , panelW ,panelH };
+    exitANDsave = { pad , PerkRec.y + pad + panelH , panelW , panelH};
+    Help = {pad , exitANDsave.y + pad + panelH , panelW , panelH };
+
 }
 
 
 void Gui::run() {
     Rectangle Src = { 0, 0, (float)gameMap.width, (float)gameMap.height };
-    Rectangle Dest = {0, 0,(float)(SCREEN_WIDTH - RIGHT_PANEL_WIDTH), (float)SCREEN_HEIGHT };
+    Rectangle Dest = {(float)LEFT_PANEL_WIDTH , (float)UP_PANEL_HEIGHT , (float)(UP_PANEL_WIDTH) ,(float)(SCREEN_HEIGHT - UP_PANEL_HEIGHT)};
     Vector2 origin = { 0, 0 };
-
-
 
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(BLACK);
 
 
-        DrawTexturePro(gameMap, Src, Dest, origin, 0.0f, WHITE);
+        DrawTexturePro(gameMap, Src, Dest, origin, 0 , WHITE);
 
-        DrawRectangle(SCREEN_WIDTH - RIGHT_PANEL_WIDTH, 0, RIGHT_PANEL_WIDTH, SCREEN_HEIGHT, WHITE);
-        DrawLine(SCREEN_WIDTH - RIGHT_PANEL_WIDTH, 0, SCREEN_WIDTH - RIGHT_PANEL_WIDTH, SCREEN_HEIGHT, GRAY);
+
 
         handleInput();
+
         if (currentHero == nullptr) {
             string name = playerPriority[round % playerPriority.size()];
             for (auto& h : sys->getAllHeros()) {
@@ -41,6 +52,7 @@ void Gui::run() {
             doNextPhase = true;
             pageNumber = PageNumbers::HERO_PHASE_PAGE;
         }
+        drawUpPanel(currentHero,actions);
         isEnd = sys->isEndGame();
             if (this->pageNumber != PageNumbers::HERO_PHASE_PAGE)
             {
@@ -62,11 +74,77 @@ void Gui::run() {
             round++;
         }
 
+        drawLeftPanel();
+
         EndDrawing();
     }
-
-    
 }
+
+void Gui::drawLeftPanel()
+{
+    Rectangle rec {0 , 0 , (float)LEFT_PANEL_WIDTH , (float)SCREEN_HEIGHT};
+    DrawRectangleRec(rec , DARKGRAY);
+
+    vector<pair<string, Rectangle>> buttons = { {"MOVE", moveRec},{"PICK", PickRec},{"GUIDE", GuidRec},{"SPECIALL", speciallRec},
+        {"ADVANCE", AdvanceRec},
+        {"DEFEAT", DefeatRec},
+        {"PERK", PerkRec},
+        {"SAVE & EXIT", exitANDsave},
+        {"HELP" , Help}
+    };
+
+    float fontSize = 50;
+    for (auto& button : buttons)
+    {
+        string text = button.first;
+        Rectangle targetRec = button.second;
+
+        DrawRectangleRec(targetRec, buttonColor);
+        Vector2 textSize = MeasureTextEx(GameFont, text.c_str(), fontSize, 0);
+        float centerX = (targetRec.width - textSize.x) / 2;
+        float centerY = (targetRec.height - textSize.y) / 2;
+        DrawTextEx(GameFont, text.c_str(), {targetRec.x + centerX, targetRec.y + centerY}, fontSize, 0, BLACK);
+    }
+}
+
+
+void Gui::drawUpPanel(std::shared_ptr<HeroBase>& heroInfo, int actions)
+{
+    const int fontSize = 40;
+    const int pad = 10;  
+    string terror = to_string(sys->getTerrorLevel());
+    string act = to_string(actions);
+    string heroTurn = heroInfo->getHeroName();// this part is totally by testing diffrent parts
+
+    Rectangle rec = {(float)LEFT_PANEL_WIDTH,0,(float)UP_PANEL_WIDTH,(float)UP_PANEL_HEIGHT};
+    DrawRectangleRec(rec, GameColor);
+
+    Vector2 basePos = { rec.x + 30, rec.y + (UP_PANEL_HEIGHT - fontSize) / 2 };
+    DrawTextEx(GameFont, "Terror level:", basePos, fontSize, 0, BLACK);
+
+    Vector2 Terror = {basePos.x + MeasureTextEx(GameFont, "Terror level:", fontSize, 0).x + pad , basePos.y};
+    DrawTextEx(GameFont, terror.c_str(), Terror, fontSize, 0, BLACK);
+
+    Vector2 firstStart = { Terror.x + fontSize, Terror.y + fontSize + 5 };
+    Vector2 firstEnd   = { Terror.x + fontSize, Terror.y - pad };
+    DrawLineEx(firstStart, firstEnd, 4, WHITE);
+
+    Vector2 action = {Terror.x + fontSize + (2*pad),basePos.y};
+    DrawTextEx(GameFont, "Actions:", action, fontSize, 0, BLACK);
+
+    Vector2 actionPos = {action.x + MeasureTextEx(GameFont, "Actions:", fontSize, 0).x + pad,action.y};
+    DrawTextEx(GameFont, act.c_str(), actionPos, fontSize, 0, BLACK);
+
+    Vector2 secondStart = { actionPos.x + fontSize, actionPos.y + fontSize + 5 };
+    Vector2 secondEnd   = { actionPos.x + fontSize, actionPos.y - pad };
+    DrawLineEx(secondStart, secondEnd, 4, WHITE);
+
+    Vector2 turn = {action.x + fontSize + (16*pad) , basePos.y};
+    DrawTextEx(GameFont, "Hero Turn:", turn , fontSize, 0, BLACK);
+    Vector2 turnPos = {turn.x + MeasureTextEx(GameFont, "Hero turn :", fontSize, 0).x , turn.y};
+    DrawTextEx(GameFont, heroTurn.c_str(),turnPos, fontSize, 0, BLACK);
+}
+
 
 void Gui::drawMap() {
     Vector2 mouse = GetMousePosition();
@@ -136,6 +214,18 @@ void Gui::handleInput()
 
 }
 
+void Gui::movingAsset(shared_ptr<Place>& destination)
+{
+    Vector2 pos = destination -> getPosition();
+    float w = 120, h = 120;
+    Rectangle rect = {pos.x - w/2, pos.y - h/2, w, h}; // we should go back and up for 1/2 of the squere
+    float expand = 7 * (sinf(GetTime() * 4 ) + 1); // get it with testing diffrent options 
+
+    Rectangle fadingRec = {rect.x - expand , rect.y - expand , rect.width + 2 * expand , rect.height + 2 * expand};
+
+    DrawRectangleLinesEx(fadingRec, 3, Fade(YELLOW, 0.4f));
+    DrawRectangleLinesEx(rect, 2, YELLOW);
+}
 
 void Gui::PlaceInfo(shared_ptr<Place> selected)
 {
@@ -218,11 +308,7 @@ void Gui::MovePhase(std::shared_ptr<HeroBase>& hero, int &actions)
 
     for (auto& place : neis)
     {
-        Vector2 pos = place->getPosition();
-        float radius = 25.0f; // now just for test 
-        DrawCircleV(pos, radius, BLUE);
-        if (CheckCollisionPointCircle(mouse, pos, radius))
-            DrawCircleLines(pos.x, pos.y, radius + 4.0f, YELLOW);
+        movingAsset(place);
     }
 
     if (!isThereVillager && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
@@ -383,11 +469,7 @@ void Gui::guidePhase(shared_ptr<HeroBase>& hero ,int &actions)
         
         for (auto& place : possiblePlace)
         {
-            Vector2 pos = place->getPosition();
-            float radius = 25.0f; // now just for test 
-            DrawCircleV(pos, radius, BLUE);
-            if (CheckCollisionPointCircle(mouse, pos, radius))
-            DrawCircleLines(pos.x, pos.y, radius + 4.0f, YELLOW);
+            movingAsset(place);
         }
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
         {
@@ -463,11 +545,7 @@ void Gui::guidePhase(shared_ptr<HeroBase>& hero ,int &actions)
         {
             for (auto& place : possiblePlace )
             {
-                Vector2 pos = place->getPosition();
-                float radius = 25.0f; // now just for test 
-                DrawCircleV(pos, radius, BLUE);
-                if (CheckCollisionPointCircle(mouse, pos, radius))
-                DrawCircleLines(pos.x, pos.y, radius + 4.0f, YELLOW);
+               movingAsset(place);
             }
             if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
             {
@@ -1076,7 +1154,7 @@ void Gui::playPerkPhase( std::shared_ptr<HeroBase>& hero , int &actions , bool &
            {
                 Vector2 pos = loc->getPosition();
                 float radius = 25.0f; 
-                DrawCircleV(pos, radius, BLUE);
+                movingAsset(loc);
                 if (CheckCollisionPointCircle(mouse, pos, radius))
                 {
                     DrawCircleLines(pos.x, pos.y, radius + 4.0f, YELLOW);
@@ -1146,11 +1224,7 @@ void Gui::playPerkPhase( std::shared_ptr<HeroBase>& hero , int &actions , bool &
                         auto neis = mon->getCurrentLocation()->getNeighbors();
                         for (auto& place : neis)
                         {
-                            Vector2 pos = place->getPosition();
-                            float radius = 25.0f; // now just for test 
-                            DrawCircleV(pos, radius, BLUE);
-                            if (CheckCollisionPointCircle(mouse, pos, radius))
-                                DrawCircleLines(pos.x, pos.y, radius + 4.0f, YELLOW);
+                            movingAsset(place);
                         }
 
                         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
@@ -1191,11 +1265,7 @@ void Gui::playPerkPhase( std::shared_ptr<HeroBase>& hero , int &actions , bool &
 
                         for (auto& place : neis)
                         {
-                            Vector2 pos = place->getPosition();
-                            float radius = 25.0f; // now just for test 
-                            DrawCircleV(pos, radius, BLUE);
-                            if (CheckCollisionPointCircle(mouse, pos, radius))
-                                DrawCircleLines(pos.x, pos.y, radius + 4.0f, YELLOW);
+                            movingAsset(place);
                         }
 
                         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
@@ -1234,11 +1304,7 @@ void Gui::playPerkPhase( std::shared_ptr<HeroBase>& hero , int &actions , bool &
 
                 for (auto& place : neis)
                 {
-                    Vector2 pos = place->getPosition();
-                    float radius = 25.0f; // now just for test 
-                    DrawCircleV(pos, radius, BLUE);
-                    if (CheckCollisionPointCircle(mouse, pos, radius))
-                        DrawCircleLines(pos.x, pos.y, radius + 4.0f, YELLOW);
+                    movingAsset(place);
                 }
 
                 if (!isThereVillager && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
@@ -1353,11 +1419,7 @@ void Gui::playPerkPhase( std::shared_ptr<HeroBase>& hero , int &actions , bool &
 
                     for (auto& place : neis)
                     {
-                        Vector2 pos = place->getPosition();
-                        float radius = 25.0f; // now just for test 
-                        DrawCircleV(pos, radius, BLUE);
-                        if (CheckCollisionPointCircle(mouse, pos, radius))
-                            DrawCircleLines(pos.x, pos.y, radius + 4.0f, YELLOW);
+                        movingAsset(place);
                     }
 
                     if (!isThereVillager && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
