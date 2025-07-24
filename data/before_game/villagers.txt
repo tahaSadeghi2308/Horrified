@@ -1,7 +1,7 @@
-dr.cranley precinct
-dr.reed camp
-prof.pearson museum
-maleva shop
-fritz institute
-wilbur&chick dungeon
-maria camp
+dr.cranley precinct ../../Horrified_Assets/Villager/DrCranly.png
+dr.reed camp ../../Horrified_Assets/Villager/DrReed.png
+prof.pearson museum ../../Horrified_Assets/Villager/ProfPearson.png
+maleva shop ../../Horrified_Assets/Villager/Maleva.png
+fritz institute ../../Horrified_Assets/Villager/Fritz.png
+wilbur&chick dungeon ../../Horrified_Assets/Villager/WilburAndChick.png
+maria camp ../../Horrified_Assets/Villager/Maria.png

@@ -43,6 +43,8 @@ class System {
     void putVillagerInPlace(const std::string &_place , const std::string &_villName);
     int terrorLevel {0};
     
+    Font font;
+    
 public:
     System();
     std::vector<std::shared_ptr<Place>> findShortestPath(
@@ -77,6 +79,23 @@ public:
     std::vector<std::shared_ptr<Villager>> getAllVillagers () { return this->allVillagers; } 
     std::vector<std::string> getCoffins() {return this->coffins; }
     std::vector<std::string> getEvidence() { return this->evidence;}
+    void setFont(Font gameFont) { font = gameFont ;}
+    Font getFont() { return font; }
+    ~System()
+    {
+        for(auto& remove : itemBag->getAll())
+        {
+            UnloadTexture(remove.address);
+        }
+        for(auto& rm : perkDeck->getAll())
+        {
+            UnloadTexture(rm.address);
+        }
+        for(auto& rm : monsterDeck->getAll())
+        {
+            UnloadTexture(rm.address);
+        }
+    }
 };
 
 #endif //SYSTEM_HPP

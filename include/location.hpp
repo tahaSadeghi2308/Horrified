@@ -5,6 +5,7 @@
 #include <vector>
 #include <memory>
 #include <string>
+#include "raylib.h"
 
 class HeroBase;
 class Villager;
@@ -18,6 +19,8 @@ class Place {
     std::vector<std::shared_ptr<Villager>> villagers;
     std::vector<Item> currentItems;
     std::vector<std::shared_ptr<MonsterBase>> monsters;
+    Vector2 position;
+    float radius = 40;
 
 public:
     explicit Place(const std::string &_name);
@@ -39,6 +42,10 @@ public:
     std::vector<std::shared_ptr<MonsterBase>> getMonsters();
     std::vector<std::shared_ptr<HeroBase>> getAllHeroes() const;
     std::shared_ptr<MonsterBase> getOneMonster(const std::string &_monsterName);
+    void setPosition(float ,float);
+    bool isClicked(Vector2 mouse) const;
+    void draw(Vector2 mouse) const;
+    Vector2 getPosition() { return position; }
 };
 
 #endif

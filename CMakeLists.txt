@@ -20,9 +20,13 @@ set(
   src/villager.cc
   src/monster.cc
   src/tui.cc
+  src/gui.cc
 )
 
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})
+
+link_directories(${RAYLIB_PATH}/build/raylib)
+target_link_libraries(${PROJECT_NAME} PRIVATE raylib GL m pthread dl rt X11)
 
 # parts for packages
 find_package(fmt REQUIRED)

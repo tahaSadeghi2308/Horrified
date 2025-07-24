@@ -41,11 +41,18 @@ System::System(){
     // add neighbors to locations
     ifstream file2("../data/before_game/locations.txt");
     if (file2.is_open()) {
-        string line , placeName , neighbors;
+        string line , placeName , neighbors , pos;
         while(getline(file2 , line)){
             stringstream stream(line);
-            stream >> placeName >> neighbors;
+            stream >> placeName >> neighbors >> pos;
 
+            float px = 0, py = 0;
+            size_t p = pos.find('_');
+        if (p != string::npos)
+        {
+            px = stof(pos.substr(0, p));
+            py = stof(pos.substr(p + 1));
+        }
             // seprate neighbors here
             stringstream ss(neighbors);
             vector<string> temp; string x;
@@ -64,6 +71,7 @@ System::System(){
             for(auto loc : allLocations){
                 if(loc->getName() == placeName){
                     loc->setNeighbors(neigList);
+                    loc->setPosition(px,py);
                     break;
                 }
             }
@@ -96,11 +104,13 @@ System::System(){
     // TODO : here we should make a villiagers list ..
     ifstream villFile("../data/before_game/villagers.txt");
     if(villFile.is_open()){
-        string line , name , safeZone;
+        string line , name , safeZone, picture;
         while(getline(villFile , line)){
             stringstream stream(line);
-            stream >> name >> safeZone;
+            stream >> name >> safeZone >> picture;
             shared_ptr<Villager> temp {make_shared<Villager>(name)};
+
+            temp->setAddress(picture);
 
             for(auto _place : allLocations){
                 if (_place->getName() == safeZone){
@@ -116,11 +126,11 @@ System::System(){
         throw FileOpenningExecption("couldn't open villager.txt");
     } 
 
-    for(int i{} ; i < 12 ; i++) {
+    for(int i{} ; i < 60 ; i++) {
         Item selectedItem = getRandomItem();
         putItemInPlace(selectedItem.place , selectedItem);
     }
-
+    
     allMonsters.push_back(dracula);
     allMonsters.push_back(invisibleMan);
 

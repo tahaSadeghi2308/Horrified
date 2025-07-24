@@ -9,7 +9,9 @@
 #include <memory>
 #include "villager.hpp"
 #include "monster.hpp"
+#include "pageNumber.hpp"
 
+class System;
 class Mayor;
 class Archaeologist;
 class HeroBase {
@@ -19,6 +21,7 @@ class HeroBase {
     std::vector<Perk> heroPerks;
     std::shared_ptr<Place> currentPlace {nullptr};
     std::string last_played_perk_;
+    Texture2D address;
 
 public:
     HeroBase() = default;
@@ -36,12 +39,19 @@ public:
     void addHeroItems(Item);
     std::vector<Perk> getHeroPerks()const { return heroPerks; }
     void deletePerk(std::string_view perkName);
-    virtual ~HeroBase() = default;
+    Texture2D getAddress() { return address;}
+    virtual void speciallAction(System *sys,int &pageNumber,int& actions,const int SCREEN_WIDTH,const int SCREEN_HEIGHT);
+    void setAddress(std::string ad) {address = LoadTexture(ad.c_str());}
+    virtual ~HeroBase()
+    {
+        UnloadTexture(address);
+    }
 };
 
 class Archaeologist final : public HeroBase {
 public:
     Archaeologist(const int &_num , std::string_view _name, const Perk &perk);
+    void speciallAction(System *sys,int &pageNumber,int& actions,const int SCREEN_WIDTH,const int SCREEN_HEIGHT) override;
 };
 
 class Mayor final : public HeroBase {

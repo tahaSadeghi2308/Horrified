@@ -1,35 +1,35 @@
-2 yellow flower docks
-3 yellow tarot_deck camp
-2 yellow garlic inn
-3 yellow mirrored_box mansion
-3 yellow stake abbey
-4 yellow scroll_of_thoth museum
-3 yellow violin camp
-3 yellow tablet museum
-4 yellow wolfsbane camp
-4 yellow charm camp
-2 red dart inn
-3 red fire_poker mansion
-5 red rapier theatre
-5 red shovel graveyard
-5 red torch barn
-4 red pitchfork barn
-6 red rifle barn
-6 red sliver_cane shop
-3 red knife docks
-6 red pistol precinct
-4 red rear_trap shop
-4 red speargun institute
-1 blue anatomy_text institute
-1 blue cenirifuge laboratory
-1 blue kite tower
-2 blue research tower
-2 blue telescope mansion
-2 blue searchlight precinct
-2 blue experiment laboratory
-2 blue analysis institute
-3 blue rotenone institute
-3 blue cosmic_ray_diffuser tower
-3 blue nebularium tower
-3 blue mobocane_mixture inn
-3 blue fossil camp
+2 yellow flower docks ../../Horrified_Assets/Items/Yellow/Flower.png
+3 yellow tarot_deck camp ../../Horrified_Assets/Items/Yellow/Tarot.png
+2 yellow garlic inn ../../Horrified_Assets/Items/Yellow/Garlic.png
+3 yellow mirrored_box mansion ../../Horrified_Assets/Items/Yellow/Mirrored_Box.png
+3 yellow stake abbey ../../Horrified_Assets/Items/Yellow/Stack.png
+4 yellow scroll_of_thoth museum ../../Horrified_Assets/Items/Yellow/Scroll.png
+3 yellow violin camp ../../Horrified_Assets/Items/Yellow/Violin.png
+3 yellow tablet museum ../../Horrified_Assets/Items/Yellow/Tablet.png
+4 yellow wolfsbane camp ../../Horrified_Assets/Items/Yellow/Wolfsbane.png
+4 yellow charm camp ../../Horrified_Assets/Items/Yellow/Charm.png
+2 red dart inn ../../Horrified_Assets/Items/Red/Dart.png
+3 red fire_poker mansion ../../Horrified_Assets/Items/Red/FirePoker.png
+5 red rapier theatre ../../Horrified_Assets/Items/Red/Rapier.png
+5 red shovel graveyard  ../../Horrified_Assets/Items/Red/Shovel.png
+5 red torch barn ../../Horrified_Assets/Items/Red/Torch.png
+4 red pitchfork barn ../../Horrified_Assets/Items/Red/Pitchfork.png
+6 red rifle barn ../../Horrified_Assets/Items/Red/Rifle.png
+6 red sliver_cane shop ../../Horrified_Assets/Items/Red/SilverCane.png
+3 red knife docks ../../Horrified_Assets/Items/Red/Knife.png
+6 red pistol precinct ../../Horrified_Assets/Items/Red/Pistol.png
+4 red rear_trap shop ../../Horrified_Assets/Items/Red/BearTrap.png
+4 red speargun institute ../../Horrified_Assets/Items/Red/Speargun.png
+1 blue anatomy_text institute ../../Horrified_Assets/Items/Blue/AnatomyText.png
+1 blue cenirifuge laboratory ../../Horrified_Assets/Items/Blue/Centrifuge.png
+1 blue kite tower ../../Horrified_Assets/Items/Blue/Kite.png
+2 blue research tower ../../Horrified_Assets/Items/Blue/Research.png   
+2 blue telescope mansion ../../Horrified_Assets/Items/Blue/Telescope.png
+2 blue searchlight precinct ../../Horrified_Assets/Items/Blue/Searchlight.png
+2 blue experiment laboratory ../../Horrified_Assets/Items/Blue/Experiments.png
+2 blue analysis institute ../../Horrified_Assets/Items/Blue/Analysis.png
+3 blue rotenone institute ../../Horrified_Assets/Items/Blue/Rotenone.png
+3 blue cosmic_ray_diffuser tower ../../Horrified_Assets/Items/Blue/CosmicRayDiffuser.png
+3 blue nebularium tower ../../Horrified_Assets/Items/Blue/Nebularium.png
+3 blue mobocane_mixture inn ../../Horrified_Assets/Items/Blue/MonocaneMixture.png
+3 blue fossil camp ../../Horrified_Assets/Items/Blue/Fossil.png

@@ -140,10 +140,10 @@ int Tui::monsterPhasePage(shared_ptr<HeroBase>& hero){
                         else break;
                     }
                     if (n == 1) {
-                        auto colorToString = [](Color c) -> string {
-                            if (c == Color::BLUE) return "blue";
-                            else if (c == Color::RED) return "red";
-                            else if (c == Color::YELLOW) return "yellow";
+                        auto colorToString = [](card::Color c) -> string {
+                            if (c == card::Color::B) return "blue";
+                            else if (c == card::Color::R) return "red";
+                            else if (c == card::Color::Y) return "yellow";
                             return "";
                         };
                         
@@ -271,11 +271,11 @@ void Tui::heroInfo(shared_ptr<HeroBase>& hero){
         tabulate::Table t;
         string text = item.name + "(" + to_string(item.power) + ")" + " -> " + item.place;
         t.add_row({text});
-        if (item.color == Color::RED)
+        if (item.color == card::Color::R)
             t[0][0].format().font_color(tabulate::Color::red).font_style({tabulate::FontStyle::bold});
-        else if (item.color == Color::YELLOW)
+        else if (item.color == card::Color::Y)
             t[0][0].format().font_color(tabulate::Color::yellow).font_style({tabulate::FontStyle::bold});
-        else if (item.color == Color::BLUE)
+        else if (item.color == card::Color::B)
             t[0][0].format().font_color(tabulate::Color::blue).font_style({tabulate::FontStyle::bold});
         cout << t << " ";
     }
@@ -563,10 +563,10 @@ void Tui::pickUpPage(std::shared_ptr<HeroBase>& hero ,int &actions){
     fmt::println("You can pick up here items");
     fmt::println("you can back from this page with chosing stop picking");
     shared_ptr<Place> current = hero->getCurrentPlace();
-    auto colorToString = [](Color c) -> string {
-        if (c == Color::BLUE) return "blue";
-        else if (c == Color::RED) return "red";
-        else if (c == Color::YELLOW) return "yellow";
+    auto colorToString = [](card::Color c) -> string {
+        if (c == card::Color::B) return "blue";
+        else if (c == card::Color::R) return "red";
+        else if (c == card::Color::Y) return "yellow";
         return "";
     };
 
@@ -647,7 +647,7 @@ void Tui::advancedPage(shared_ptr<HeroBase>& hero , int &actions){
                 vector<Item> redItems;
                 int itemsPowerSum = 0;
                 for(auto i : hero->getHeroItems()) {
-                    if (i.color == Color::RED) { 
+                    if (i.color == card::Color::R) { 
                         redItems.push_back(i); 
                         itemsPowerSum += i.power;  
                     }
@@ -803,10 +803,10 @@ void Tui::specialActionPage(shared_ptr<HeroBase>& hero , int &actions){
         }
         clearScreen();
         shared_ptr<Place> curr = neis[neiNum];
-        auto colorToString = [](Color c) -> string {
-            if (c == Color::BLUE) return "blue";
-            else if (c == Color::RED) return "red";
-            else if (c == Color::YELLOW) return "yellow";
+        auto colorToString = [](card::Color c) -> string {
+            if (c == card::Color::B) return "blue";
+            else if (c == card::Color::R) return "red";
+            else if (c == card::Color::Y) return "yellow";
             return "";
         };
         vector<Item> hereItems = curr->getItems();
@@ -1026,7 +1026,7 @@ void Tui::defeatPage(shared_ptr<HeroBase>& hero , int &actions){
             vector<Item> yellowItems;
             int itemsPowerSum = 0;
             for(auto i : hero->getHeroItems()){
-                if (i.color == Color::YELLOW) { 
+                if (i.color == card::Color::Y) { 
                     yellowItems.push_back(i); 
                     itemsPowerSum += i.power; 
                 }
@@ -1113,7 +1113,7 @@ void Tui::defeatPage(shared_ptr<HeroBase>& hero , int &actions){
             vector<Item> redItems;
             int itemsPowerSum = 0;
             for(auto i : hero->getHeroItems()){
-                if (i.color == Color::RED) { 
+                if (i.color == card::Color::R) { 
                     redItems.push_back(i); 
                     itemsPowerSum += i.power;
                 }

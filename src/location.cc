@@ -111,3 +111,20 @@ shared_ptr<MonsterBase> Place::getOneMonster(const string &_monsterName)
     }
     return nullptr;
 }
+
+void Place::setPosition(float x,float y)
+{
+    position = {x,y};
+}
+
+void Place::draw(Vector2 mouse) const
+{
+    bool hover = CheckCollisionPointCircle(mouse, position, radius);
+    Color t ={0,0,0,0};
+    DrawCircleLines(position.x,position.y, radius, hover ? RED : t);
+}
+
+bool Place::isClicked(Vector2 mouse) const
+{
+    return CheckCollisionPointCircle(mouse, position, radius);
+}

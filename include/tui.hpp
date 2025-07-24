@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <memory> 
+#include "pageNumber.hpp"
 
 class System;
 class HeroBase;
@@ -11,19 +12,6 @@ class MonsterBase;
 class Place;
 class Villager;
 
-enum PageNumbers {
-    EXIT_PAGE = 9,
-    HERO_PHASE_PAGE = 0,
-    MOVE_PAGE = 1,
-    GUIDE_PAGE = 2,
-    PICKUP_PAGE = 3,
-    ADVANCED_PAGE = 4,
-    DEFEAT_PAGE = 5,
-    SPECIALACTION_PAGE = 6,
-    PLAYPERK_PAGE = 7,
-    HELP_PAGE = 8,
-    MONSTERPHASE_PAGE = 10
-};
 
 class Tui final {
     System *sys {nullptr};
