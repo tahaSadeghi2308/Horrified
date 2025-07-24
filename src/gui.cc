@@ -39,7 +39,7 @@ void Gui::run() {
         DrawTexturePro(gameMap, Src, Dest, origin, 0 , WHITE);
 
         drawLeftPanel();
-        drawRightPanel();
+        //drawRightPanel();
 
         handleInput();
 
