@@ -52,6 +52,8 @@ class Gui final {
     Rectangle PerkRec;
     Rectangle exitANDsave;
     Rectangle Help;
+    Rectangle firstHero;
+    Rectangle secondHero;
 
 public:
     explicit Gui(System *s, const int ,const int);

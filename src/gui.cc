@@ -13,7 +13,7 @@ Gui::Gui(System *s,const int width,const int height):sys(s),scroll(0.0f),SCREEN_
     this->playerPriority.push_back("archaeologist"); //for test needs welcom page
     this->playerPriority.push_back("mayor");
     float pad = 20;
-    float panelH = 75 , panelW = LEFT_PANEL_WIDTH - (2*pad);
+    float panelH = (SCREEN_HEIGHT / 9) - 25 , panelW = LEFT_PANEL_WIDTH - (2*pad);
     moveRec = { pad , pad , panelW , panelH };
     PickRec = { pad , moveRec.y + pad + panelH , panelW , panelH};
     GuidRec  = { pad , PickRec.y + pad + panelH , panelW , panelH};
@@ -23,7 +23,6 @@ Gui::Gui(System *s,const int width,const int height):sys(s),scroll(0.0f),SCREEN_
     PerkRec = { pad , DefeatRec.y + pad + panelH , panelW ,panelH };
     exitANDsave = { pad , PerkRec.y + pad + panelH , panelW , panelH};
     Help = {pad , exitANDsave.y + pad + panelH , panelW , panelH };
-
 }
 
 
@@ -39,7 +38,8 @@ void Gui::run() {
 
         DrawTexturePro(gameMap, Src, Dest, origin, 0 , WHITE);
 
-
+        drawLeftPanel();
+        drawRightPanel();
 
         handleInput();
 
@@ -73,9 +73,6 @@ void Gui::run() {
             currentHero = nullptr;
             round++;
         }
-
-        drawLeftPanel();
-
         EndDrawing();
     }
 }
@@ -107,8 +104,30 @@ void Gui::drawLeftPanel()
     }
 }
 
+// void Gui::drawRightPanel()
+// {
+//     Vector2 mouse = GetMousePosition();
+//     float pad = 20;
+//     float y = pad;
 
-void Gui::drawUpPanel(std::shared_ptr<HeroBase>& heroInfo, int actions)
+//     float panelX = SCREEN_WIDTH - RIGHT_PANEL_WIDTH;
+//     Rectangle panel = { panelX, 0, (float)RIGHT_PANEL_WIDTH, (float)SCREEN_HEIGHT };
+//     DrawRectangleRec(panel, DARKGRAY);
+
+
+//     for (auto& Hero : sys->getAllHeros())
+//     {
+//         Rectangle heroRec = {panelX, y, (float)RIGHT_PANEL_WIDTH , (float)SCREEN_HEIGHT /3 };
+
+//         DrawTextureEx(Hero->getAddress(), {heroRec.x, heroRec.y}, 0, (float)RIGHT_PANEL_WIDTH / (float)Hero->getAddress().width, WHITE);
+
+//         y += SCREEN_HEIGHT / 3;
+//     }
+// }
+
+
+
+void Gui::drawUpPanel(std::shared_ptr<HeroBase>& heroInfo, int actions) // must override
 {
     const int fontSize = 40;
     const int pad = 10;  
@@ -159,6 +178,7 @@ void Gui::drawMap() {
 
 void Gui::handleInput()
 {
+    Vector2 mouse = GetMousePosition();
     if(pageNumber == PageNumbers::HERO_PHASE_PAGE)
     {
         drawMap();
@@ -183,32 +203,46 @@ void Gui::handleInput()
                 }
             }
     }
-    if(GetKeyPressed() == KEY_M)
+    if(CheckCollisionPointRec(mouse, moveRec))
     {
+        DrawRectangleLinesEx(moveRec, 8 ,DARKGREEN);
+        if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         pageNumber = PageNumbers::MOVE_PAGE;
     }
-    if (IsKeyPressed(KEY_P))
+    else if (CheckCollisionPointRec(mouse,PickRec))
     {
+        DrawRectangleLinesEx(PickRec, 8 ,DARKGREEN);
+        if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         pageNumber = PageNumbers::PICKUP_PAGE;
     }
-    if(IsKeyPressed(KEY_G))
+    else if(CheckCollisionPointRec(mouse , GuidRec))
     {
+        DrawRectangleLinesEx(GuidRec, 8 ,DARKGREEN);
+        if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         pageNumber = PageNumbers::GUIDE_PAGE;
     }
-    if(IsKeyPressed(KEY_A))
+    else if(CheckCollisionPointRec(mouse , AdvanceRec))
     {
+        DrawRectangleLinesEx(AdvanceRec, 8 ,DARKGREEN);
+        if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         pageNumber = PageNumbers::ADVANCED_PAGE;
     }
-    if(IsKeyPressed(KEY_D))
+    else if(CheckCollisionPointRec(mouse , DefeatRec))
     {
+         DrawRectangleLinesEx(DefeatRec, 8 ,DARKGREEN);
+        if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         pageNumber = PageNumbers::DEFEAT_PAGE;
     }
-    if(IsKeyPressed(KEY_S))
+    else if(CheckCollisionPointRec(mouse , speciallRec))
     {
+         DrawRectangleLinesEx(speciallRec, 8 ,DARKGREEN);
+        if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         pageNumber = PageNumbers::SPECIALACTION_PAGE;
     }
-    if(IsKeyPressed(KEY_C))
+    else if(CheckCollisionPointRec(mouse , PerkRec))
     {
+        DrawRectangleLinesEx(PerkRec, 8 ,DARKGREEN);
+        if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         pageNumber = PageNumbers::PLAYPERK_PAGE;
     }
 
