@@ -23,6 +23,8 @@ Gui::Gui(System *s,const int width,const int height):sys(s),scroll(0.0f),SCREEN_
     PerkRec = { pad , DefeatRec.y + pad + panelH , panelW ,panelH };
     exitANDsave = { pad , PerkRec.y + pad + panelH , panelW , panelH};
     Help = {pad , exitANDsave.y + pad + panelH , panelW , panelH };
+    coffins = LoadTexture("../../Horrified_Assets/Items/Coffins/Coffin.png");
+    smahsedCoffins = LoadTexture("../../Horrified_Assets/Items/Coffins/SmashedCoffin.png");
 }
 
 
@@ -30,6 +32,7 @@ void Gui::run() {
     Rectangle Src = { 0, 0, (float)gameMap.width, (float)gameMap.height };
     Rectangle Dest = {(float)LEFT_PANEL_WIDTH , (float)UP_PANEL_HEIGHT , (float)(UP_PANEL_WIDTH) ,(float)(SCREEN_HEIGHT - UP_PANEL_HEIGHT)};
     Vector2 origin = { 0, 0 };
+    
 
     while (!WindowShouldClose()) {
         BeginDrawing();
@@ -39,10 +42,11 @@ void Gui::run() {
         DrawTexturePro(gameMap, Src, Dest, origin, 0 , WHITE);
 
         drawLeftPanel();
-        //drawRightPanel();
-
+        drawEvindence();
+        drawCoffin();
+        
         handleInput();
-
+        
         if (currentHero == nullptr) {
             string name = playerPriority[round % playerPriority.size()];
             for (auto& h : sys->getAllHeros()) {
@@ -52,31 +56,32 @@ void Gui::run() {
             doNextPhase = true;
             pageNumber = PageNumbers::HERO_PHASE_PAGE;
         }
+        drawRightPanel(currentHero);
         drawUpPanel(currentHero,actions);
         isEnd = sys->isEndGame();
-            if (this->pageNumber != PageNumbers::HERO_PHASE_PAGE)
-            {
-                if (this->pageNumber == PageNumbers::MOVE_PAGE) this->MovePhase(currentHero , actions);
-                else if (this->pageNumber == PageNumbers::GUIDE_PAGE) this->guidePhase(currentHero , actions);
-                else if (this->pageNumber == PageNumbers::PICKUP_PAGE) this->pickUpPhase(currentHero , actions);
-                else if (this->pageNumber == PageNumbers::SPECIALACTION_PAGE) currentHero -> speciallAction(sys,pageNumber,actions,SCREEN_WIDTH,SCREEN_HEIGHT);
-                else if (this->pageNumber == PageNumbers::ADVANCED_PAGE) this->advancedPhase(currentHero , actions);
-                else if (this->pageNumber == PageNumbers::DEFEAT_PAGE) this->defeatPhase(currentHero , actions);
-                else if (this->pageNumber == PageNumbers::PLAYPERK_PAGE) this->playPerkPhase(currentHero , actions , doNextPhase);
+        if (this->pageNumber != PageNumbers::HERO_PHASE_PAGE)
+        {
+            if (this->pageNumber == PageNumbers::MOVE_PAGE) this->MovePhase(currentHero , actions);
+            else if (this->pageNumber == PageNumbers::GUIDE_PAGE) this->guidePhase(currentHero , actions);
+            else if (this->pageNumber == PageNumbers::PICKUP_PAGE) this->pickUpPhase(currentHero , actions);
+            else if (this->pageNumber == PageNumbers::SPECIALACTION_PAGE) currentHero -> speciallAction(sys,pageNumber,actions,SCREEN_WIDTH,SCREEN_HEIGHT);
+            else if (this->pageNumber == PageNumbers::ADVANCED_PAGE) this->advancedPhase(currentHero , actions);
+            else if (this->pageNumber == PageNumbers::DEFEAT_PAGE) this->defeatPhase(currentHero , actions);
+            else if (this->pageNumber == PageNumbers::PLAYPERK_PAGE) this->playPerkPhase(currentHero , actions , doNextPhase);
                 // else if (this->pageNumber == PageNumbers::HELP_PAGE) this->helpPage();
             }
-        if (actions <= 0 && isEnd == -1) {
-            if(doNextPhase)
-            {
-            //monsterPhasePage(currentHero);
+            if (actions <= 0 && isEnd == -1) {
+                if(doNextPhase)
+                {
+                    //monsterPhasePage(currentHero);
+                }
+                currentHero = nullptr;
+                round++;
             }
-            currentHero = nullptr;
-            round++;
+            EndDrawing();
         }
-        EndDrawing();
     }
-}
-
+    
 void Gui::drawLeftPanel()
 {
     Rectangle rec {0 , 0 , (float)LEFT_PANEL_WIDTH , (float)SCREEN_HEIGHT};
@@ -104,27 +109,76 @@ void Gui::drawLeftPanel()
     }
 }
 
-// void Gui::drawRightPanel()
-// {
-//     Vector2 mouse = GetMousePosition();
-//     float pad = 20;
-//     float y = pad;
+void Gui::drawRightPanel(shared_ptr<HeroBase>& hero)
+{
+    Vector2 mouse = GetMousePosition();
+    float pad = 5;
+    float padBetweenItems = 55;
 
-//     float panelX = SCREEN_WIDTH - RIGHT_PANEL_WIDTH;
-//     Rectangle panel = { panelX, 0, (float)RIGHT_PANEL_WIDTH, (float)SCREEN_HEIGHT };
-//     DrawRectangleRec(panel, DARKGRAY);
+    auto items = hero->getHeroItems();
+    Rectangle rightPanel {(float)SCREEN_WIDTH-RIGHT_PANEL_WIDTH , 0 , (float)RIGHT_PANEL_WIDTH , (float)SCREEN_HEIGHT};
+    DrawRectangleRec(rightPanel , DARKGRAY);
+ 
+    float Size = 50;
+    float x = rightPanel.x + pad ,y = rightPanel.y + pad;
+    for(auto& it : items)
+    {
+        Texture2D itemTex = it.address;
+        Vector2 pos = {x,y};
+        float scale = Size/rightPanel.width;
+        DrawTextureEx(itemTex,pos,0.0,scale,WHITE);
+
+        x += Size + padBetweenItems;
+        if (x + Size + padBetweenItems  > rightPanel.x + rightPanel.width)
+        {
+            x = rightPanel.x + pad;
+            y += Size + padBetweenItems ;
+        }
+    }    
+}
 
 
-//     for (auto& Hero : sys->getAllHeros())
-//     {
-//         Rectangle heroRec = {panelX, y, (float)RIGHT_PANEL_WIDTH , (float)SCREEN_HEIGHT /3 };
 
-//         DrawTextureEx(Hero->getAddress(), {heroRec.x, heroRec.y}, 0, (float)RIGHT_PANEL_WIDTH / (float)Hero->getAddress().width, WHITE);
+void Gui::drawCoffin()
+{
+    for(auto& cof : sys->getCoffins())
+    {
+        for(auto& loc : sys->getAllLocations())
+        {
+            if(cof == loc->getName())
+            {
+                Vector2 target = loc->getPosition();
+                DrawTextureEx(coffins,{target.x , target.y - 50},0,0.075,WHITE);
+            }
+        }
+    }
+    for(auto& smash : sys->getSmashed())
+    {
+        for(auto& loc : sys->getAllLocations())
+        {
+            if(smash == loc->getName())
+            {
+                Vector2 target = loc->getPosition();
+                DrawTextureEx(smahsedCoffins,{target.x , target.y - 50},0,0.075,WHITE);
+            }
+        }
+    }
+}
 
-//         y += SCREEN_HEIGHT / 3;
-//     }
-// }
-
+void Gui::drawEvindence()
+{
+    for(auto& evi : sys->getEvidence())
+    {
+        for(auto& loc : sys->getAllLocations())
+        {
+            if(evi == loc->getName())
+            {
+                Vector2 target = loc->getPosition();
+                DrawCircleLinesV(target,60,RED);
+            }
+        }
+    }
+}
 
 
 void Gui::drawUpPanel(std::shared_ptr<HeroBase>& heroInfo, int actions) // must override
@@ -699,6 +753,7 @@ void Gui::advancedPhase(std::shared_ptr<HeroBase>& hero,int &actions)
     static bool showErr = false;
     static float time = 0.0;
     static string errText;
+    static bool checkRedPower = true;
     if(option == 1)
     {
         bool isCoffin {false};
@@ -727,7 +782,7 @@ void Gui::advancedPhase(std::shared_ptr<HeroBase>& hero,int &actions)
                         itemsPowerSum += i.power;  
                     }
                 }
-                if ( itemsPowerSum < 6 ) 
+                if ( itemsPowerSum < 6 && checkRedPower) 
                 {
                     showErr = true;
                     time =GetTime();
@@ -736,6 +791,7 @@ void Gui::advancedPhase(std::shared_ptr<HeroBase>& hero,int &actions)
                 }
                 else 
                 {
+                    checkRedPower = false ;
                     float panelW = 800, panelH = 600, pad = 20, Size = 170;
                     Rectangle panel = {(SCREEN_WIDTH - panelW) / 2,(SCREEN_HEIGHT - panelH) / 2,panelW, panelH};
                     DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, { 0, 0, 0, 100 });
@@ -762,15 +818,17 @@ void Gui::advancedPhase(std::shared_ptr<HeroBase>& hero,int &actions)
                                 redPower += item.power;
                                 hero->deleteItem(item.name);
                                 sys->addItem(item);
-                                actions--;              
+                                              
                                 if (redPower >= 6)
                                 {
                                     option = -1;
                                     pageNumber = PageNumbers::HERO_PHASE_PAGE;
                                     sys->destroyClue("coffin", hero->getCurrentPlace()->getName());
                                     redPower = 0;
+                                    checkRedPower = true;
+                                    actions--;
+                                    return;
                                 }
-                                break;
                             }                     
                         }
                         x += Size + pad;
@@ -923,6 +981,7 @@ void Gui::defeatPhase(std::shared_ptr<HeroBase>& hero , int &actions)
     static bool showErr = false;
     static float time = 0.0;
     static string errText;
+    static bool PowerCheck = true;
     if(option == 1)
     {
         if (sys->foundCluesCount("coffin") != 4)
@@ -960,7 +1019,7 @@ void Gui::defeatPhase(std::shared_ptr<HeroBase>& hero , int &actions)
                         itemsPowerSum += i.power;  
                     }
                 }
-                if ( itemsPowerSum < 9 ) 
+                if ( itemsPowerSum < 9 && PowerCheck ) 
                 {
                     showErr = true;
                     time =GetTime();
@@ -969,6 +1028,7 @@ void Gui::defeatPhase(std::shared_ptr<HeroBase>& hero , int &actions)
                 }
                 else 
                 {
+                    PowerCheck = false;
                     float panelW = 800, panelH = 600, pad = 20, Size = 170;
                     Rectangle panel = {(SCREEN_WIDTH - panelW) / 2,(SCREEN_HEIGHT - panelH) / 2,panelW, panelH};
                     DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, { 0, 0, 0, 100 });
@@ -995,7 +1055,7 @@ void Gui::defeatPhase(std::shared_ptr<HeroBase>& hero , int &actions)
                                 YellowPower += item.power;
                                 hero->deleteItem(item.name);
                                 sys->addItem(item);
-                                actions--;              
+                                              
                                 if (YellowPower >= 9)
                                 {
                                     option = -1;
@@ -1006,8 +1066,10 @@ void Gui::defeatPhase(std::shared_ptr<HeroBase>& hero , int &actions)
                                         sys->killMonster(mon);
                                     }
                                     YellowPower = 0;
+                                    PowerCheck = true;
+                                    actions--;
+                                    return;
                                 }
-                                break;
                             }                     
                         }
                         x += Size + pad;
@@ -1058,7 +1120,7 @@ void Gui::defeatPhase(std::shared_ptr<HeroBase>& hero , int &actions)
                         itemsPowerSum += i.power;  
                     }
                 }
-                if ( itemsPowerSum < 9 ) 
+                if ( itemsPowerSum < 9 && PowerCheck) 
                 {
                     showErr = true;
                     time =GetTime();
@@ -1067,6 +1129,7 @@ void Gui::defeatPhase(std::shared_ptr<HeroBase>& hero , int &actions)
                 }
                 else 
                 {
+                    PowerCheck = false;
                     float panelW = 800, panelH = 600, pad = 20, Size = 170;
                     Rectangle panel = {(SCREEN_WIDTH - panelW) / 2,(SCREEN_HEIGHT - panelH) / 2,panelW, panelH};
                     DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, { 0, 0, 0, 100 });
@@ -1092,8 +1155,7 @@ void Gui::defeatPhase(std::shared_ptr<HeroBase>& hero , int &actions)
                             {
                                 redPower += item.power;
                                 hero->deleteItem(item.name);
-                                sys->addItem(item);
-                                actions--;              
+                                sys->addItem(item);              
                                 if (redPower >= 9)
                                 {
                                     option = -1;
@@ -1104,8 +1166,10 @@ void Gui::defeatPhase(std::shared_ptr<HeroBase>& hero , int &actions)
                                         sys->killMonster(mon);
                                     }
                                     redPower = 0;
+                                    PowerCheck = true;
+                                    actions--;
+                                    return;
                                 }
-                                break;
                             }                     
                         }
                         x += Size + pad;
@@ -1588,6 +1652,8 @@ Gui::~Gui()
 {
     UnloadTexture(gameMap);
     UnloadFont(GameFont);
+    UnloadTexture(coffins);
+    UnloadTexture(smahsedCoffins);
 
     CloseWindow();
 }

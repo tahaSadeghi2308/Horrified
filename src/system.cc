@@ -133,7 +133,6 @@ System::System(){
     
     allMonsters.push_back(dracula);
     allMonsters.push_back(invisibleMan);
-
 }
 
 int System::getTerrorLevel() const { return this->terrorLevel; }
@@ -148,6 +147,7 @@ bool System::destroyClue(string type , string_view clueNamePlace){
     if (type == "coffin"){
         for (int i {}; i < this->coffins.size(); i++){
             if (this->coffins[i] == clueNamePlace){
+                smashed.push_back(coffins[i]);
                 this->coffins.erase(this->coffins.begin() + i);
                 return true;
             }

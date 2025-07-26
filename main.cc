@@ -13,6 +13,20 @@ int main(){
     InitWindow(SCREEN_WIDTH,SCREEN_HEIGHT,"Horrified");
     SetTargetFPS(60);
 
+    BeginDrawing();
+    ClearBackground(BLACK);
+
+    const char* loadingText = "Loading...";
+    int fontSize = 40;
+    int textWidth = MeasureText(loadingText, fontSize);
+    int x = (SCREEN_WIDTH - textWidth) / 2;
+    int y = (SCREEN_HEIGHT - fontSize) / 2;
+
+    DrawText(loadingText, x, y, fontSize, WHITE);
+
+    EndDrawing();
+
+
     System *s = new System();
     Gui t(s,SCREEN_WIDTH,SCREEN_HEIGHT);
     t.run();

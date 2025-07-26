@@ -2,7 +2,7 @@
 3 yellow tarot_deck camp ../../Horrified_Assets/Items/Yellow/Tarot.png
 2 yellow garlic inn ../../Horrified_Assets/Items/Yellow/Garlic.png
 3 yellow mirrored_box mansion ../../Horrified_Assets/Items/Yellow/Mirrored_Box.png
-3 yellow stake abbey ../../Horrified_Assets/Items/Yellow/Stack.png
+3 yellow stake abbey ../../Horrified_Assets/Items/Yellow/Stake.png
 4 yellow scroll_of_thoth museum ../../Horrified_Assets/Items/Yellow/Scroll.png
 3 yellow violin camp ../../Horrified_Assets/Items/Yellow/Violin.png
 3 yellow tablet museum ../../Horrified_Assets/Items/Yellow/Tablet.png

@@ -37,6 +37,7 @@ class System {
     std::vector<std::shared_ptr<Villager>> allVillagers;
     //draculas coffins
     std::vector<std::string> coffins = {"crypt" ,"cave" ,"dungeon","graveyard"};
+    std::vector<std::string> smashed;
     //saving evidence
     std::vector<std::string> evidence = {"inn","barn","mansion","laboratory","institute"};
 
@@ -81,11 +82,12 @@ public:
     std::vector<std::string> getEvidence() { return this->evidence;}
     void setFont(Font gameFont) { font = gameFont ;}
     Font getFont() { return font; }
+    std::vector<std::string> getSmashed() { return smashed ;}
     ~System()
     {
-        for(auto& remove : itemBag->getAll())
+        for(int i{} ; i < itemBag->getAll().size() ; i += 2)
         {
-            UnloadTexture(remove.address);
+            UnloadTexture(itemBag->getAll()[i].address);
         }
         for(auto& rm : perkDeck->getAll())
         {
