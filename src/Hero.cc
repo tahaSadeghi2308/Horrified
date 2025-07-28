@@ -26,13 +26,13 @@ std::string HeroBase::getHeroName() { return this->heroName; }
 Archaeologist::Archaeologist(const int &_num , std::string_view _name , const Perk &perk) :
     HeroBase(_num , _name , perk) 
     {
-        setAddress("../../Horrified_Assets/Heros/Archaeologist.png");
+        setAddress("../Horrified_Assets/Heros/Archaeologist.png");
     }
 
 Mayor::Mayor(const int &_num , std::string_view _name , const Perk &perk) :
     HeroBase(_num , _name , perk) 
     {
-        setAddress("../../Horrified_Assets/Heros/Mayor.png");
+        setAddress("../Horrified_Assets/Heros/Mayor.png");
     }
 
 void HeroBase::setCurrentPlace(shared_ptr<Place> _place) {

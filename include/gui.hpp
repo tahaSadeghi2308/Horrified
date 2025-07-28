@@ -17,6 +17,8 @@ class HeroBase;
 class MonsterBase;
 class Place;
 class Villager;
+class PageBase;
+
 
 class Gui final {
     System *sys {nullptr};
@@ -56,7 +58,7 @@ class Gui final {
     Rectangle Help;
     Rectangle firstHero;
     Rectangle secondHero;
-
+    std::unordered_map<PageNumbers , std::shared_ptr<PageBase>> pages;
 public:
     explicit Gui(System *s, const int ,const int);
     void run();

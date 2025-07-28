@@ -1,4 +1,7 @@
 #include "gui.hpp"
+#include "gui/page_base.hpp"
+#include "gui/hero_phase_page.hpp"
+
 using namespace std;
 
 Gui::Gui(System *s,const int width,const int height):sys(s),scroll(0.0f),SCREEN_WIDTH(width),SCREEN_HEIGHT(height)
@@ -7,8 +10,8 @@ Gui::Gui(System *s,const int width,const int height):sys(s),scroll(0.0f),SCREEN_
     pageNumber = PageNumbers::HERO_PHASE_PAGE;
     isEnd = -1;
     round = 0;
-    gameMap = LoadTexture("../../Horrified_Assets/map.png");
-    GameFont = LoadFont("../../Horrified_Assets/Melted.ttf");
+    // gameMap = LoadTexture("../../Horrified_Assets/map.png");
+    GameFont = LoadFont("../Horrified_Assets/Melted.ttf");
     sys->setFont(GameFont);
     this->playerPriority.push_back("archaeologist"); //for test needs welcom page
     this->playerPriority.push_back("mayor");
@@ -23,30 +26,20 @@ Gui::Gui(System *s,const int width,const int height):sys(s),scroll(0.0f),SCREEN_
     PerkRec = { pad , DefeatRec.y + pad + panelH , panelW ,panelH };
     exitANDsave = { pad , PerkRec.y + pad + panelH , panelW , panelH};
     Help = {pad , exitANDsave.y + pad + panelH , panelW , panelH };
-    coffins = LoadTexture("../../Horrified_Assets/Items/Coffins/Coffin.png");
-    smahsedCoffins = LoadTexture("../../Horrified_Assets/Items/Coffins/SmashedCoffin.png");
+    // coffins = LoadTexture("../../Horrified_Assets/Items/Coffins/Coffin.png");
+    // smahsedCoffins = LoadTexture("../../Horrified_Assets/Items/Coffins/SmashedCoffin.png");
+    pages = {
+        { PageNumbers::HERO_PHASE_PAGE , make_shared<HeroPhasePage>(GameFont , s)} 
+    };
 }
 
-
 void Gui::run() {
-    Rectangle Src = { 0, 0, (float)gameMap.width, (float)gameMap.height };
-    Rectangle Dest = {(float)LEFT_PANEL_WIDTH , (float)UP_PANEL_HEIGHT , (float)(UP_PANEL_WIDTH) ,(float)(SCREEN_HEIGHT - UP_PANEL_HEIGHT)};
-    Vector2 origin = { 0, 0 };
+    // Rectangle Src = { 0, 0, (float)gameMap.width, (float)gameMap.height };
+    // Rectangle Dest = {(float)LEFT_PANEL_WIDTH , (float)UP_PANEL_HEIGHT , (float)(UP_PANEL_WIDTH) ,(float)(SCREEN_HEIGHT - UP_PANEL_HEIGHT)};
+    // Vector2 origin = { 0, 0 };
     
 
     while (!WindowShouldClose()) {
-        BeginDrawing();
-        ClearBackground(BLACK);
-
-
-        DrawTexturePro(gameMap, Src, Dest, origin, 0 , WHITE);
-
-        drawLeftPanel();
-        drawEvindence();
-        drawCoffin();
-        
-        handleInput();
-        
         if (currentHero == nullptr) {
             string name = playerPriority[round % playerPriority.size()];
             for (auto& h : sys->getAllHeros()) {
@@ -54,34 +47,46 @@ void Gui::run() {
             }
             actions = currentHero->getActionCount();
             doNextPhase = true;
-            pageNumber = PageNumbers::HERO_PHASE_PAGE;
+            // pageNumber = PageNumbers::HERO_PHASE_PAGE;
         }
-        drawRightPanel(currentHero);
-        drawUpPanel(currentHero,actions);
-        isEnd = sys->isEndGame();
-        if (this->pageNumber != PageNumbers::HERO_PHASE_PAGE)
-        {
-            if (this->pageNumber == PageNumbers::MOVE_PAGE) this->MovePhase(currentHero , actions);
-            else if (this->pageNumber == PageNumbers::GUIDE_PAGE) this->guidePhase(currentHero , actions);
-            else if (this->pageNumber == PageNumbers::PICKUP_PAGE) this->pickUpPhase(currentHero , actions);
-            else if (this->pageNumber == PageNumbers::SPECIALACTION_PAGE) currentHero -> speciallAction(sys,pageNumber,actions,SCREEN_WIDTH,SCREEN_HEIGHT);
-            else if (this->pageNumber == PageNumbers::ADVANCED_PAGE) this->advancedPhase(currentHero , actions);
-            else if (this->pageNumber == PageNumbers::DEFEAT_PAGE) this->defeatPhase(currentHero , actions);
-            else if (this->pageNumber == PageNumbers::PLAYPERK_PAGE) this->playPerkPhase(currentHero , actions , doNextPhase);
-                // else if (this->pageNumber == PageNumbers::HELP_PAGE) this->helpPage();
-            }
-            if (actions <= 0 && isEnd == -1) {
-                if(doNextPhase)
-                {
-                    //monsterPhasePage(currentHero);
-                }
-                currentHero = nullptr;
-                round++;
-            }
-            EndDrawing();
-        }
+        BeginDrawing();
+        pages[PageNumbers::HERO_PHASE_PAGE]->draw(currentHero , actions);
+        pages[PageNumbers::HERO_PHASE_PAGE]->update(currentHero , actions);
+        // ClearBackground(BLACK);
+        // DrawTexturePro(gameMap, Src, Dest, origin, 0 , WHITE);
+
+        // drawLeftPanel();
+        // drawEvindence();
+        // drawCoffin();
+        
+        // handleInput();
+        
+        // drawRightPanel(currentHero);
+        // drawUpPanel(currentHero,actions);
+        // isEnd = sys->isEndGame();
+        // if (this->pageNumber != PageNumbers::HERO_PHASE_PAGE)
+        // {
+        //     if (this->pageNumber == PageNumbers::MOVE_PAGE) this->MovePhase(currentHero , actions);
+        //     else if (this->pageNumber == PageNumbers::GUIDE_PAGE) this->guidePhase(currentHero , actions);
+        //     else if (this->pageNumber == PageNumbers::PICKUP_PAGE) this->pickUpPhase(currentHero , actions);
+        //     else if (this->pageNumber == PageNumbers::SPECIALACTION_PAGE) currentHero -> speciallAction(sys,pageNumber,actions,SCREEN_WIDTH,SCREEN_HEIGHT);
+        //     else if (this->pageNumber == PageNumbers::ADVANCED_PAGE) this->advancedPhase(currentHero , actions);
+        //     else if (this->pageNumber == PageNumbers::DEFEAT_PAGE) this->defeatPhase(currentHero , actions);
+        //     else if (this->pageNumber == PageNumbers::PLAYPERK_PAGE) this->playPerkPhase(currentHero , actions , doNextPhase);
+        //         // else if (this->pageNumber == PageNumbers::HELP_PAGE) this->helpPage();
+        //     }
+        //     if (actions <= 0 && isEnd == -1) {
+        //         if(doNextPhase)
+        //         {
+        //             //monsterPhasePage(currentHero);
+        //         }
+        //         currentHero = nullptr;
+        //         round++;
+        //     }
+        // }
+        EndDrawing();
     }
-    
+}
 void Gui::drawLeftPanel()
 {
     Rectangle rec {0 , 0 , (float)LEFT_PANEL_WIDTH , (float)SCREEN_HEIGHT};
