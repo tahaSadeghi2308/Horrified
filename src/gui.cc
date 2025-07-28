@@ -1,6 +1,7 @@
 #include "gui.hpp"
 #include "gui/page_base.hpp"
 #include "gui/hero_phase_page.hpp"
+#include "gui/move_page.hpp"
 
 using namespace std;
 
@@ -29,7 +30,8 @@ Gui::Gui(System *s,const int width,const int height):sys(s),scroll(0.0f),SCREEN_
     // coffins = LoadTexture("../../Horrified_Assets/Items/Coffins/Coffin.png");
     // smahsedCoffins = LoadTexture("../../Horrified_Assets/Items/Coffins/SmashedCoffin.png");
     pages = {
-        { PageNumbers::HERO_PHASE_PAGE , make_shared<HeroPhasePage>(GameFont , s)} 
+        { PageNumbers::HERO_PHASE_PAGE , make_shared<HeroPhasePage>(GameFont , s)},
+        { PageNumbers::MOVE_PAGE , make_shared<MovePage>(GameFont , s)}
     };
 }
 
@@ -50,8 +52,8 @@ void Gui::run() {
             // pageNumber = PageNumbers::HERO_PHASE_PAGE;
         }
         BeginDrawing();
-        pages[PageNumbers::HERO_PHASE_PAGE]->draw(currentHero , actions);
-        pages[PageNumbers::HERO_PHASE_PAGE]->update(currentHero , actions);
+        pages[this->pageNumber]->draw(currentHero , actions , pageNumber);
+        pages[this->pageNumber]->update(currentHero , actions , pageNumber);
         // ClearBackground(BLACK);
         // DrawTexturePro(gameMap, Src, Dest, origin, 0 , WHITE);
 

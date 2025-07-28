@@ -93,6 +93,9 @@ public:
         {
             UnloadTexture(rm.address);
         }
+        // for (int i{}; i < perkDeck->getAll().size();i++){
+        //     UnloadTexture(perkDeck->getAll()[i].address);
+        // }
         for(auto& rm : monsterDeck->getAll())
         {
             UnloadTexture(rm.address);

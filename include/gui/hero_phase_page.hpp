@@ -7,8 +7,6 @@ class HeroBase;
 class System;
 class Place;
 
-constexpr int SCREEN_WIDTH { 1600 };
-constexpr int SCREEN_HEIGHT { 900 };
 constexpr int RIGHT_PANEL_WIDTH { 300 };
 constexpr int LEFT_PANEL_WIDTH { 300 };
 constexpr int UP_PANEL_WIDTH { SCREEN_WIDTH - LEFT_PANEL_WIDTH - RIGHT_PANEL_WIDTH };
@@ -37,8 +35,8 @@ public:
                 const Font &f,
                 System *s
         );
-        void draw(std::shared_ptr<HeroBase> &cHero ,int &actions) override;
-        void update(std::shared_ptr<HeroBase> &cHero ,int &actions) override;
+        void draw(std::shared_ptr<HeroBase> &cHero ,int &actions , PageNumbers &cPage) override;
+        void update(std::shared_ptr<HeroBase> &cHero ,int &actions ,PageNumbers &cPage) override;
         void drawRightPanel(std::shared_ptr<HeroBase>& hero );
         void drawUpPanel(std::shared_ptr<HeroBase>& heroInfo , int actions);
         void drawLeftPanel();

@@ -22,6 +22,7 @@ set(
   src/tui.cc
   src/gui.cc
   src/gui/hero_phase_page.cc
+  src/gui/move_page.cc
 )
 
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})

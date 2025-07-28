@@ -24,7 +24,7 @@ HeroPhasePage::HeroPhasePage (
     Help = {pad , exitANDsave.y + pad + panelH , panelW , panelH };
 }
 
-void HeroPhasePage::draw(shared_ptr<HeroBase> &cHero ,int &actions) {
+void HeroPhasePage::draw(shared_ptr<HeroBase> &cHero ,int &actions, PageNumbers &cPage) {
     static Rectangle Src = { 0, 0, (float)gameMapImg.width, (float)gameMapImg.height };
     static Rectangle Dest = {
             (float)LEFT_PANEL_WIDTH,
@@ -178,7 +178,7 @@ void HeroPhasePage::drawMap() {
     }
 }
 
-void HeroPhasePage::update(shared_ptr<HeroBase> &cHero ,int &actions){
+void HeroPhasePage::update(shared_ptr<HeroBase> &cHero ,int &actions , PageNumbers &cPage){
     Vector2 mouse = GetMousePosition();
     drawMap();
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) ) {
@@ -199,13 +199,13 @@ void HeroPhasePage::update(shared_ptr<HeroBase> &cHero ,int &actions){
     }
     if(CheckCollisionPointRec(mouse, moveRec)){
         DrawRectangleLinesEx(moveRec, 8 ,DARKGREEN);
-        // if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-        // pageNumber = PageNumbers::MOVE_PAGE;
+        if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+            cPage = PageNumbers::MOVE_PAGE;
     }
     else if (CheckCollisionPointRec(mouse,PickRec)){
         DrawRectangleLinesEx(PickRec, 8 ,DARKGREEN);
         // if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-        // pageNumber = PageNumbers::PICKUP_PAGE;
+            // page = PageNumbers::PICKUP_PAGE;
     }
     else if(CheckCollisionPointRec(mouse , GuidRec)){
         DrawRectangleLinesEx(GuidRec, 8 ,DARKGREEN);
