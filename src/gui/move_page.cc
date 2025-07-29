@@ -1,6 +1,6 @@
 #include "gui/move_page.hpp"
 #include "system.hpp"
-#include <cmath>
+
 using namespace std;
 
 MovePage::MovePage(

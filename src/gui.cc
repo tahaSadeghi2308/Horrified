@@ -54,8 +54,22 @@ void Gui::run() {
             // pageNumber = PageNumbers::HERO_PHASE_PAGE;
         }
         BeginDrawing();
-        pages[this->pageNumber]->draw(currentHero , actions , pageNumber);
-        pages[this->pageNumber]->update(currentHero , actions , pageNumber);
+//        if (this->pageNumber != PageNumbers::MONSTERPHASE_PAGE){
+////            ClearBackground(BLACK);
+////            pages[PageNumbers::HERO_PHASE_PAGE]->draw(currentHero , actions , pageNumber);
+////            pages[PageNumbers::HERO_PHASE_PAGE]->update(currentHero , actions , pageNumber);
+//        }
+        if (this->pageNumber == PageNumbers::HERO_PHASE_PAGE){
+            ClearBackground(BLACK);
+            pages[this->pageNumber]->draw(currentHero , actions , pageNumber);
+            pages[this->pageNumber]->update(currentHero , actions , pageNumber);
+        }
+        else if (this->pageNumber != PageNumbers::MONSTERPHASE_PAGE) {
+            ClearBackground(BLACK);
+            pages[PageNumbers::HERO_PHASE_PAGE]->draw(currentHero , actions , pageNumber);
+            pages[this->pageNumber]->draw(currentHero , actions , pageNumber);
+            pages[this->pageNumber]->update(currentHero , actions , pageNumber);
+        }
         // ClearBackground(BLACK);
         // DrawTexturePro(gameMap, Src, Dest, origin, 0 , WHITE);
 
