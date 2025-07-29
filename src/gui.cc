@@ -3,6 +3,7 @@
 #include "gui/hero_phase_page.hpp"
 #include "gui/move_page.hpp"
 #include "gui/pickup_page.hpp"
+#include "gui/guide_page.hpp"
 
 using namespace std;
 
@@ -33,16 +34,12 @@ Gui::Gui(System *s,const int width,const int height):sys(s),scroll(0.0f),SCREEN_
     pages = {
         { PageNumbers::HERO_PHASE_PAGE , make_shared<HeroPhasePage>(GameFont , s)},
         { PageNumbers::MOVE_PAGE , make_shared<MovePage>(GameFont , s)},
-        { PageNumbers::PICKUP_PAGE , make_shared<PickupPage>(GameFont , s)}
+        { PageNumbers::PICKUP_PAGE , make_shared<PickupPage>(GameFont , s)},
+        { PageNumbers::GUIDE_PAGE , make_shared<GuidePage>(GameFont , s)}
     };
 }
 
 void Gui::run() {
-    // Rectangle Src = { 0, 0, (float)gameMap.width, (float)gameMap.height };
-    // Rectangle Dest = {(float)LEFT_PANEL_WIDTH , (float)UP_PANEL_HEIGHT , (float)(UP_PANEL_WIDTH) ,(float)(SCREEN_HEIGHT - UP_PANEL_HEIGHT)};
-    // Vector2 origin = { 0, 0 };
-    
-
     while (!WindowShouldClose()) {
         if (currentHero == nullptr) {
             string name = playerPriority[round % playerPriority.size()];
@@ -54,11 +51,6 @@ void Gui::run() {
             // pageNumber = PageNumbers::HERO_PHASE_PAGE;
         }
         BeginDrawing();
-//        if (this->pageNumber != PageNumbers::MONSTERPHASE_PAGE){
-////            ClearBackground(BLACK);
-////            pages[PageNumbers::HERO_PHASE_PAGE]->draw(currentHero , actions , pageNumber);
-////            pages[PageNumbers::HERO_PHASE_PAGE]->update(currentHero , actions , pageNumber);
-//        }
         if (this->pageNumber == PageNumbers::HERO_PHASE_PAGE){
             ClearBackground(BLACK);
             pages[this->pageNumber]->draw(currentHero , actions , pageNumber);

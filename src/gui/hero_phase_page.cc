@@ -209,8 +209,8 @@ void HeroPhasePage::update(shared_ptr<HeroBase> &cHero ,int &actions , PageNumbe
     }
     else if(CheckCollisionPointRec(mouse , GuidRec)){
         DrawRectangleLinesEx(GuidRec, 8 ,DARKGREEN);
-        // if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-        // pageNumber = PageNumbers::GUIDE_PAGE;
+         if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+            cPage = PageNumbers::GUIDE_PAGE;
     }
     else if(CheckCollisionPointRec(mouse , AdvanceRec)){
         DrawRectangleLinesEx(AdvanceRec, 8 ,DARKGREEN);
