@@ -10,19 +10,20 @@ include_directories(./include)
 
 # Main executable
 set(
-  PROJECT_SOURCES
-  main.cc
-  src/utility.cc
-  src/exceptions.cc
-  src/Hero.cc
-  src/location.cc
-  src/system.cc
-  src/villager.cc
-  src/monster.cc
-  src/tui.cc
-  src/gui.cc
-  src/gui/hero_phase_page.cc
-  src/gui/move_page.cc
+    PROJECT_SOURCES
+    main.cc
+    src/utility.cc
+    src/exceptions.cc
+    src/Hero.cc
+    src/location.cc
+    src/system.cc
+    src/villager.cc
+    src/monster.cc
+    src/tui.cc
+    src/gui.cc
+    src/gui/hero_phase_page.cc
+    src/gui/move_page.cc
+    src/gui/pickup_page.cc
 )
 
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})

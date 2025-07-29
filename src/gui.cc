@@ -2,6 +2,7 @@
 #include "gui/page_base.hpp"
 #include "gui/hero_phase_page.hpp"
 #include "gui/move_page.hpp"
+#include "gui/pickup_page.hpp"
 
 using namespace std;
 
@@ -31,7 +32,8 @@ Gui::Gui(System *s,const int width,const int height):sys(s),scroll(0.0f),SCREEN_
     // smahsedCoffins = LoadTexture("../../Horrified_Assets/Items/Coffins/SmashedCoffin.png");
     pages = {
         { PageNumbers::HERO_PHASE_PAGE , make_shared<HeroPhasePage>(GameFont , s)},
-        { PageNumbers::MOVE_PAGE , make_shared<MovePage>(GameFont , s)}
+        { PageNumbers::MOVE_PAGE , make_shared<MovePage>(GameFont , s)},
+        { PageNumbers::PICKUP_PAGE , make_shared<PickupPage>(GameFont , s)}
     };
 }
 
