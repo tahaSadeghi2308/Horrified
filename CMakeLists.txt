@@ -24,8 +24,9 @@ set(
     src/gui/hero_phase_page.cc
     src/gui/move_page.cc
     src/gui/pickup_page.cc
-        src/gui/guide_page.cc
-        src/gui/advanced_page.cc
+    src/gui/guide_page.cc
+    src/gui/advanced_page.cc
+    src/gui/welcome_page.cc
 )
 
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})

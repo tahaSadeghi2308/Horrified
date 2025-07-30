@@ -4,13 +4,14 @@
 #include "gui/move_page.hpp"
 #include "gui/pickup_page.hpp"
 #include "gui/guide_page.hpp"
+#include "gui/welcome_page.hpp"
 
 using namespace std;
 
 Gui::Gui(System *s,const int width,const int height):sys(s),scroll(0.0f),SCREEN_WIDTH(width),SCREEN_HEIGHT(height)
 {
     UP_PANEL_WIDTH = SCREEN_WIDTH - LEFT_PANEL_WIDTH - RIGHT_PANEL_WIDTH;
-    pageNumber = PageNumbers::HERO_PHASE_PAGE;
+    pageNumber = PageNumbers::WELCOME_PAGE;
     isEnd = -1;
     round = 0;
     // gameMap = LoadTexture("../../Horrified_Assets/map.png");
@@ -35,7 +36,8 @@ Gui::Gui(System *s,const int width,const int height):sys(s),scroll(0.0f),SCREEN_
         { PageNumbers::HERO_PHASE_PAGE , make_shared<HeroPhasePage>(GameFont , s)},
         { PageNumbers::MOVE_PAGE , make_shared<MovePage>(GameFont , s)},
         { PageNumbers::PICKUP_PAGE , make_shared<PickupPage>(GameFont , s)},
-        { PageNumbers::GUIDE_PAGE , make_shared<GuidePage>(GameFont , s)}
+        { PageNumbers::GUIDE_PAGE , make_shared<GuidePage>(GameFont , s)},
+        { PageNumbers::WELCOME_PAGE , make_shared<WelcomePage>()}
     };
 }
 
@@ -59,6 +61,11 @@ void Gui::run() {
         else if (this->pageNumber != PageNumbers::MONSTERPHASE_PAGE) {
             ClearBackground(BLACK);
             pages[PageNumbers::HERO_PHASE_PAGE]->draw(currentHero , actions , pageNumber);
+            pages[this->pageNumber]->draw(currentHero , actions , pageNumber);
+            pages[this->pageNumber]->update(currentHero , actions , pageNumber);
+        }
+        else if (this->pageNumber != PageNumbers::WELCOME_PAGE) {
+            ClearBackground(BLACK);
             pages[this->pageNumber]->draw(currentHero , actions , pageNumber);
             pages[this->pageNumber]->update(currentHero , actions , pageNumber);
         }
