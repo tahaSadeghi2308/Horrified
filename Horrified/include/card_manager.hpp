@@ -1,0 +1,218 @@
+#ifndef CARD_MANAGER_HPP
+#define CARD_MANAGER_HPP
+
+#include <vector>
+#include <string>
+#include <random>
+#include <fstream>
+#include <sstream>
+#include <algorithm>
+#include <memory>
+#include "exceptions.hpp"
+#include "location.hpp"
+
+    namespace card {
+    enum Color { R , B , Y };
+    }
+constexpr int ITEM_COUNT {2};
+
+struct Item {
+    int power;
+    card::Color color;
+    std::string name;
+    std::string place; 
+    Texture2D address;
+    friend std::ostream& operator<< (std::ostream& output , Item&items)
+    {  
+        output<< "Name-> " << items.name << '\t' << "Color-> ";
+        if(items.color == 0)
+        output << "Red\t";
+        else if(items.color == 1)
+        output << "Blue\t";
+        else
+        output << "Yellow\t";
+        output<< "Power-> " << items.power  << '\t' << "Place-> " << items.place ;
+        return output;
+    }
+    friend bool operator==(Item a ,Item b)
+    {
+        if(a.name == b.name)
+        return true;
+        else
+        return false;
+    }
+};
+
+struct Perk {
+    std::string name;
+    std::string description;
+    Texture2D address;
+};
+
+struct MonsterCard {
+    std::string name;
+    int dice;
+    int move;
+    int itemCount;
+    std::vector<std::string> strikePriorities;
+    Texture2D address;
+};
+
+template <class T>
+class CardManagerBase {
+    void shuffleCards();
+    std::vector<T> cards;
+    std::vector<T> all;
+public:
+    CardManagerBase<T>() = default;
+    T pickOneRandomly();
+    void push(const T &temp);
+    void pop(const int index);
+    std::vector<T> getCards();
+    int size() const;
+    std::vector<T> getAll() { return all; }
+    void setInAll(T temp) { all.push_back(temp);}
+};
+
+template <class T>
+class ItemBag : public CardManagerBase<T> {
+public:
+    ItemBag<T>();
+    void addItem(const T &item);
+};
+
+template <class T>
+class PerkDeck : public CardManagerBase<T> {
+public:
+    PerkDeck<T>();
+};
+
+template <class T>
+class MonsterCardDeck : public CardManagerBase<T> {
+public:
+    MonsterCardDeck<T>();
+};
+
+template<class T>
+void ItemBag<T>::addItem(const T &item){
+    this->push(item);
+}
+
+template <class T>
+void CardManagerBase<T>::shuffleCards() {
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(cards.begin(), cards.end(), g);
+}
+
+template <class T>
+std::vector<T> CardManagerBase<T>::getCards()
+    {
+        return cards;
+    }
+
+template <class T>
+void CardManagerBase<T>::push(const T &item) {
+    this->cards.push_back(item);
+}
+
+template <class T>
+void CardManagerBase<T>::pop(const int index) {
+    this->cards.erase(cards.begin() + index);
+}
+
+template <class T>
+T CardManagerBase<T>::pickOneRandomly() {
+    shuffleCards();
+    T temp = cards[0];
+    this->pop(0);
+    return temp;
+}
+
+template<class T>
+int CardManagerBase<T>::size() const { return this->cards.size(); }
+
+template <class T>
+MonsterCardDeck<T>::MonsterCardDeck() {
+    std::ifstream file("../data/before_game/monster_cards.txt");
+    if(file.is_open()) {
+        std::string line, count, itemCount, name, move, dice, pri , png;
+        while(getline(file, line)) {
+            std::stringstream stream(line);
+            stream >> count >> itemCount >> name >> move >> dice >> pri >> png;
+            T temp;
+            temp.address = LoadTexture(png.c_str());
+            for (int i {}; i < std::stoi(count); i++) {
+                temp.name = name; 
+                temp.dice = std::stoi(dice); 
+                temp.move = std::stoi(move);
+                temp.itemCount = std::stoi(itemCount);
+                std::stringstream ss(pri);
+                std::string tmp;
+                while(getline(ss, tmp, '_')) {
+                    temp.strikePriorities.push_back(tmp);
+                }
+                this->setInAll(temp);
+                this->push(temp);
+            }
+        }
+        file.close();
+    }
+    else {
+        throw FileOpenningExecption("couldn't open this file!!!\n"); 
+    }
+}
+
+template <class T>
+ItemBag<T>::ItemBag() {
+    std::ifstream file("../data/before_game/items.txt");
+    if(file.is_open()) {
+        std::string line, power, color, name, place , png;
+        while(getline(file, line)) {
+            std::stringstream stream(line);
+            stream >> power >> color >> name >> place >> png;
+            T temp;
+            temp.address = LoadTexture(png.c_str());
+            for (int i {}; i < ITEM_COUNT; i++) {
+                temp.power = std::stoi(power);
+                temp.name = name;
+                temp.place = place;
+                if (color == "red") temp.color = card::Color::R;
+                if (color == "blue") temp.color = card::Color::B;
+                if (color == "yellow") temp.color = card::Color::Y; 
+                this->setInAll(temp);
+                this->push(temp);
+            }
+        }
+        file.close();
+    }
+    else {
+        throw FileOpenningExecption("couldn't open this file!!!\n"); 
+    }
+}
+
+template <class T>
+PerkDeck<T>::PerkDeck() {
+    std::ifstream file("../data/before_game/perks.txt");
+    if(file.is_open()) {
+        std::string line, count, name, desc , png;
+        while(getline(file, line)) {
+            std::stringstream stream(line);
+            stream >> count >> name >> desc >> png;
+            T temp;
+            temp.address = LoadTexture(png.c_str());
+            for (int i {}; i < std::stoi(count); i++) {
+                temp.name = name; 
+                temp.description = desc;
+                this->setInAll(temp);
+                this->push(temp);
+            }
+        }
+        file.close();
+    }
+    else {
+        throw FileOpenningExecption("couldn't open this file!!!\n"); 
+    }
+}
+
+#endif // CARD_MANAGER_HPP
