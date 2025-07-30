@@ -214,8 +214,8 @@ void HeroPhasePage::update(shared_ptr<HeroBase> &cHero ,int &actions , PageNumbe
     }
     else if(CheckCollisionPointRec(mouse , AdvanceRec)){
         DrawRectangleLinesEx(AdvanceRec, 8 ,DARKGREEN);
-        // if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-        // pageNumber = PageNumbers::ADVANCED_PAGE;
+        if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+            cPage = PageNumbers::ADVANCED_PAGE;
     }
     else if(CheckCollisionPointRec(mouse , DefeatRec)){
          DrawRectangleLinesEx(DefeatRec, 8 ,DARKGREEN);
@@ -233,7 +233,6 @@ void HeroPhasePage::update(shared_ptr<HeroBase> &cHero ,int &actions , PageNumbe
         // pageNumber = PageNumbers::PLAYPERK_PAGE;
     }
 }
-
 
 void HeroPhasePage::PlaceInfo(shared_ptr<Place> selected){
     vector<Texture2D> temp;
