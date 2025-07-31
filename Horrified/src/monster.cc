@@ -297,16 +297,20 @@ int MonsterBase::attack(
 ){
     if (dice == '*'){
         shared_ptr<Place> p = this->getCurrentLocation();
-        if (!p->getVillagers().empty()){
-            sys->killVillager(p->getVillagers()[0]);
-            return 1; // for killing a viilager
+        if(p->getAllHeroes().empty() && p->getVillagers().empty())
+        {
+            return -1;
         }
-        else if (!p->getAllHeroes().empty()){
-            for (auto her : p->getAllHeroes()){
-                if (her->getHeroName() == cHero->getHeroName()) return 2; // for attack to arch
+            if (!p->getVillagers().empty()){
+                sys->killVillager(p->getVillagers()[0]);
+                return 1; // for killing a viilager
             }
-            return 3; // for attact to mayor
-        }
+            else if (!p->getAllHeroes().empty()){
+                for (auto her : p->getAllHeroes()){
+                    if (her->getHeroName() == cHero->getHeroName()) return 2; // for attack to arch
+                }
+                return 3; // for attact to mayor
+            }
     }
     else if (dice == '!') {
         this->power(monst , cHero);

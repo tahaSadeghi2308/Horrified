@@ -23,6 +23,7 @@ set(
   src/gui.cc
 )
 
+
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})
 
 link_directories(${RAYLIB_PATH}/build/raylib)

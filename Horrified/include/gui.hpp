@@ -74,8 +74,7 @@ public:
     void drawItemSelectionPanel(std::shared_ptr<HeroBase>& hero);
     void drawYesNoPanel();
     std::shared_ptr<HeroBase> getOtherHero(const std::shared_ptr<HeroBase>& current);
-
-
+    
 
     void drawRightPanel(std::shared_ptr<HeroBase>& hero );
     void drawUpPanel(std::shared_ptr<HeroBase>& heroInfo , int actions);

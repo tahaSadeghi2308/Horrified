@@ -30,249 +30,693 @@ Gui::Gui(System *s,const int width,const int height):sys(s),scroll(0.0f),SCREEN_
 
      
 
-void Gui::monsterPhasePage(shared_ptr<HeroBase>& hero  ,MonsterCard currentCard  ) {
+// void Gui::monsterPhasePage(shared_ptr<HeroBase>& hero  ,MonsterCard currentCard  ) {
 
-    static bool intialize {true}; 
-    static deque<pair<string , shared_ptr<MonsterBase>>> strikeMap;
-    static int time = 0;
-    static bool title {true};
+//     static bool intialize {true}; 
+//     static deque<pair<string , shared_ptr<MonsterBase>>> strikeMap;
+//     static int time = 0;
+//     static bool title {true};
 
 
+
+//     ClearBackground(BLACK);
+
+//     if(title)
+//     {
+//         time+=GetFrameTime();
+//         Texture2D t = currentCard.address;
+//         DrawTextureEx( t,{(float)(SCREEN_WIDTH - t.width)/2 , (float) (SCREEN_HEIGHT-t.height)/2}  ,0 ,0.2 , WHITE );
+//         if(time > 3)
+//         {
+//             title = false;
+//             time = 0;
+//         }
+//     }
+//     else
+//     {
+//             if(intialize)
+//             {
+//                 for (auto st : currentCard.strikePriorities){
+//                     if (st == "du"){
+//                         for (auto m : sys->getAllMonsters()){
+//                             if (m->getMonsterName() == "dracula"){
+//                                 pair p {"du", m};
+//                                 strikeMap.push_back(p);
+//                             }
+//                         }
+//                     }
+//                     else if (st == "inm"){
+//                         for (auto m : sys->getAllMonsters()){
+//                             if (m->getMonsterName() == "invisibleMan"){
+//                                 pair p {"inm", m};
+//                                 strikeMap.push_back(p);
+//                             }
+//                         }
+//                     }
+//                     else {
+//                         for (auto m : sys->getAllMonsters()){
+//                             if (m->getIsFrenzed()){
+//                                 pair p {"fz", m};
+//                                 strikeMap.push_back(p);
+//                             }
+//                         }
+//                     }
+//                 }
+//                 intialize = false;
+//             }
+
+//             if(strikeMap.empty())
+//             {
+//                 pageNumber = PageNumbers::HERO_PHASE_PAGE;
+//                 return;
+//             }
+
+//             static bool continuePhase {true};
+//             static bool moveOnce {true};
+//             static bool diceOnce {true};
+//             static int status;
+//             static bool attackOnce {true};
+
+//                 auto& s = strikeMap.front(); 
+                    
+//                     if(moveOnce)
+//                     {
+//                         s.second->move(currentCard.move , s.first);
+//                         moveOnce = false;
+//                     }
+
+//                     static deque<char> dices;
+                    
+//                     if(diceOnce)
+//                     {
+//                         for (int i{}; i < currentCard.dice; i++) dices.push_back(sys->rollDice());
+//                         diceOnce = false;
+//                     }
+                    
+//                         auto& d = dices.front();
+
+//                         // endGame situation
+                    
+//                         if(attackOnce)
+//                         {
+//                             status = s.second->attack(d , s.second , hero);
+//                             attackOnce = false;
+//                         }
+//                         // no attack or power ran !!
+//                         if (status == -1 || status == 4) 
+//                         {
+//                             time += GetFrameTime();
+//                             if(status == -1)
+//                             DrawText("nothing happend" , 100 ,100, 25 , WHITE);
+//                             else
+//                             DrawText("power ran" , 100 ,100, 25 , WHITE);
+//                             if(time > 2)
+//                             {
+//                                 dices.pop_front();
+//                                 attackOnce = true;
+//                                 time = 0;
+//                             }
+//                         }
+//                         // attack to current hero!!
+//                         else if (status == 2 || status == 3) 
+//                         {
+//                             static int option = 0;
+//                             if(option == 1)
+//                             {
+//                                 float panelW = 800, panelH = 600, pad = 20, Size = 170;
+//                                 Rectangle panel = {(SCREEN_WIDTH - panelW) / 2,(SCREEN_HEIGHT - panelH) / 2,panelW, panelH};
+//                                 DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, { 0, 0, 0, 100 });
+//                                 DrawRectangleRec(panel, DARKGRAY);
+//                                 float x = panel.x + pad;
+//                                 float y = panel.y + pad;
+//                                 for (auto& item : hero->getHeroItems())
+//                                 {
+//                                     Texture2D itemTexure = item.address;
+//                                     float scale = Size / itemTexure.width;
+//                                     Rectangle rec = { x, y, itemTexure.width * scale, itemTexure.height * scale };
+//                                     DrawTextureEx(itemTexure, { x, y }, 0, scale, WHITE);
+                        
+//                                     if (CheckCollisionPointRec(GetMousePosition(), rec))
+//                                     {
+//                                         DrawRectangleLinesEx(rec, 2, YELLOW);
+//                                         if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+//                                         {
+//                                                 hero->deleteItem(item.name);
+//                                                 sys->addItem(item);          
+//                                                 pageNumber = PageNumbers::HERO_PHASE_PAGE;
+//                                                 option = 0;
+//                                                 dices.pop_front();
+//                                                 attackOnce = true;
+
+//                                         }                     
+//                                     }
+//                                     x += Size + pad;
+//                                     if (x + Size > panel.x + panel.width)
+//                                     {
+//                                         x = panel.x + pad;
+//                                         y += Size + pad;
+//                                     }
+//                                 }
+//                             }
+//                             else
+//                             {
+//                                 shared_ptr<HeroBase> attacedHero;
+//                                 if (status == 2) attacedHero = hero;
+//                                 else {
+//                                     for (auto h : sys->getAllHeros()){
+//                                         if (h->getHeroName() != hero->getHeroName()) attacedHero = h;
+//                                     }
+//                                 }
+                                
+//                                 if(attacedHero ->getHeroItems().empty())
+//                                 {
+//                                     pageNumber = PageNumbers::HERO_PHASE_PAGE;
+//                                         moveOnce = true;
+//                                         diceOnce =true;
+//                                         status = 0;
+//                                         attackOnce =true;
+//                                         intialize  = true; 
+//                                         strikeMap.clear();
+//                                         time = 0;
+//                                         title = true;
+//                                         dices.clear();
+//                                         return;
+//                                     return;
+//                                 }
+                                
+//                                 Rectangle Y {100, 100 , 100 ,100};
+//                                 Rectangle N {200,200,100,100};
+
+//                                 if(CheckCollisionPointRec(GetMousePosition() , Y))
+//                                 {
+//                                     if( IsMouseButtonPressed (MOUSE_BUTTON_LEFT))
+//                                     {
+//                                         option = 1;
+//                                     }
+//                                 }
+//                                 if(CheckCollisionPointRec(GetMousePosition() , N))
+//                                 {
+//                                     if( IsMouseButtonPressed (MOUSE_BUTTON_LEFT))
+//                                     {
+//                                         sys->increaseTerrorLevel();
+//                                         pageNumber = PageNumbers::HERO_PHASE_PAGE;
+//                                         for(auto loc : sys->getAllLocations()){
+//                                             if (loc->getName() == "hospital"){
+//                                                 sys->moveHero(attacedHero , loc);
+//                                                 continuePhase = false;
+//                                                 break;
+//                                             }
+//                                         }
+//                                         bool continuePhase {true};
+//                                         moveOnce = true;
+//                                         diceOnce =true;
+//                                         status = 0;
+//                                         attackOnce =true;
+//                                         intialize  = true; 
+//                                         strikeMap.clear();
+//                                         time = 0;
+//                                         title = true;
+//                                         dices.clear();
+//                                         return;
+//                                     }
+//                                 }
+//                             }
+
+//                         }
+//                         // attaced to a villager
+//                         else {
+//                             DrawText("we lost villager" , 200 ,200, 50 , WHITE);
+//                             sys->increaseTerrorLevel();
+//                             pageNumber = PageNumbers::HERO_PHASE_PAGE;
+//                             bool continuePhase {true};
+//                             moveOnce = true;
+//                             diceOnce =true;
+//                             status = 0;
+//                             attackOnce =true;
+//                             intialize  = true; 
+//                             strikeMap.clear();
+//                             time = 0;
+//                             title = true;
+//                             dices.clear();
+//                             return;
+//                         }
+//                         if(dices.empty())
+//                         {
+//                             strikeMap.pop_front();
+//                             diceOnce = true;
+//                             moveOnce = true;
+//                         }
+//     }
+// }
+
+void Gui::monsterPhasePage(shared_ptr<HeroBase>& hero, MonsterCard currentCard) {
+    static bool intialize = true; 
+    static deque<pair<string, shared_ptr<MonsterBase>>> strikeMap;
+    static float time = 0;
+    static bool title = true;
+    static bool moveOnce = true;
+    static bool diceOnce = true;
+    static int status = -1;
+    static bool attackOnce = true;
+    static deque<char> dices;
+    static int option = 0;
+    static float diceTime = 0;
 
     ClearBackground(BLACK);
-
-    if(title)
+    if (title) 
     {
-        time+=GetFrameTime();
+        time += GetFrameTime(); 
         Texture2D t = currentCard.address;
-        DrawTextureEx( t,{(float)(SCREEN_WIDTH - t.width)/2 , (float) (SCREEN_HEIGHT-t.height)/2}  ,0 ,0.2 , WHITE );
-        if(time > 3)
+        float scale = 0.3;
+        Vector2 position  // base position (texture position) 
+        {
+            (SCREEN_WIDTH - t.width * scale) / 2,
+            (SCREEN_HEIGHT - t.height * scale) / 2
+        };
+        
+        DrawTextureEx(t, position, 0, scale, WHITE);
+        
+        const char* titleText = "MONSTER PHASE BEGAN"; // dont using cstr anymore
+        int fontSize = 60;
+        Vector2 textSize = MeasureTextEx(GameFont, titleText, fontSize, 2);
+        Vector2 textPos  
+        {
+            (SCREEN_WIDTH - textSize.x) / 2,
+            position.y - 90
+        };
+        
+        Color titleColor = RED;
+        titleColor.a = (unsigned char)(255 * (time / 5)); // with alpha we can fade
+
+        DrawTextEx(GameFont, titleText, textPos, fontSize, 2, titleColor);
+        
+        const char* subtitle = "MONSTERS ARE OUT BECAREFULL";
+        fontSize = 30;
+        textSize = MeasureTextEx(GameFont, subtitle, fontSize, 1);
+        textPos =
+        {
+            (SCREEN_WIDTH - textSize.x) / 2,
+            position.y + t.height * scale + 20
+        };
+        DrawTextEx(GameFont, subtitle, textPos, fontSize, 1, titleColor);
+        
+        if (time > 5) 
         {
             title = false;
             time = 0;
         }
-    }
-    else
+    } 
+    else 
     {
-            if(intialize)
+        if (intialize) 
+        {
+            strikeMap.clear();
+
+            for (auto st : currentCard.strikePriorities) {
+                if (st == "du") {
+                    for (auto m : sys->getAllMonsters()) {
+                        if (m->getMonsterName() == "dracula") {
+                            pair p {"du", m};
+                            strikeMap.push_back(p);
+                        }
+                    }
+                } else if (st == "inm") {
+                    for (auto m : sys->getAllMonsters()) {
+                        if (m->getMonsterName() == "invisibleMan") {
+                            pair p {"inm", m};
+                            strikeMap.push_back(p);
+                        }
+                    }
+                } else {
+                    for (auto m : sys->getAllMonsters()) {
+                        if (m->getIsFrenzed()) {
+                            pair p {"fz", m};
+                            strikeMap.push_back(p);
+                        }
+                    }
+                }
+            }
+            intialize = false;
+        }
+
+        if (strikeMap.empty()) 
+        {
+            // reseting all the variables it could be a function in second form
+            intialize = true;
+            title = true;
+            moveOnce = true;
+            diceOnce = true;
+            status = -1;
+            attackOnce = true;
+            option = 0;
+            dices.clear();
+            strikeMap.clear();
+            time = 0;
+            pageNumber = PageNumbers::HERO_PHASE_PAGE;
+            return;
+        }
+
+        
+
+        auto& s = strikeMap.front(); 
+            
+        if (moveOnce)
+        {
+            s.second->move(currentCard.move, s.first);
+            moveOnce = false;
+        }
+
+        if (diceOnce) 
+        {
+            dices.clear();
+            for (int i = 0; i < currentCard.dice; i++) {
+                dices.push_back(sys->rollDice());
+            }
+            diceOnce = false;
+        }
+        
+        if (!dices.empty()) 
+        {
+            auto& d = dices.front();
+
+            const char* monsterName = s.second->getMonsterName().c_str();
+            Vector2 textSize = MeasureTextEx(GameFont, monsterName, 40, 2);
+            Vector2 textPos = {(SCREEN_WIDTH - textSize.x) / 2, 50};
+            DrawTextEx(GameFont, monsterName, textPos, 40 , 2, RED);
+
+            if (attackOnce) 
             {
-                for (auto st : currentCard.strikePriorities){
-                    if (st == "du"){
-                        for (auto m : sys->getAllMonsters()){
-                            if (m->getMonsterName() == "dracula"){
-                                pair p {"du", m};
-                                strikeMap.push_back(p);
+                status = s.second->attack(d, s.second, hero);
+                attackOnce = false;
+            }
+
+            string roll = "DICE SIGN IS :  ";
+    
+                for(auto di : dices)
+                {
+                    roll += di;
+                    roll += "   ";
+                }
+
+            Vector2 rollSize = MeasureTextEx(GameFont , roll.c_str() , 40 , 0 );
+            Vector2 rollPos {textPos.x - 50  , textPos.y + 100};
+            DrawTextEx(GameFont,roll.c_str(),rollPos,40,0,WHITE);
+            
+            diceTime += GetFrameTime();
+            
+            if (status == -1 || status == 4) 
+            {
+                time += GetFrameTime();
+    
+                float panelWidth = 800;
+                float panelHeight = 200;
+                Rectangle panel 
+                {
+                    (SCREEN_WIDTH - panelWidth) / 2,
+                    (SCREEN_HEIGHT - panelHeight) / 2,
+                    panelWidth,
+                    panelHeight
+                };
+                
+                DrawRectangleRec(panel, DARKGRAY);
+                
+                const char* resultText;
+                Color textColor = WHITE;
+                
+                if (status == -1) 
+                {
+                    resultText = "Lucky! Nothing happened this time.";
+                    textColor = GREEN;
+                } 
+                else
+                {
+                    resultText = "Monster power activated!";
+                    textColor = PURPLE;
+                }
+                
+                textSize = MeasureTextEx(GameFont, resultText, 40, 0);
+                Vector2 textPos 
+                {
+                    panel.x + ((panel.width - textSize.x) / 2),
+                    panel.y + ((panel.height - textSize.y) / 2)
+                };
+                
+                DrawRectangleLinesEx(panel, 3, textColor);
+                DrawTextEx(GameFont, resultText, textPos, 40 , 0 , textColor);
+                
+                if (time > 2) 
+                {
+                    dices.pop_front();
+                    attackOnce = true;
+                    time = 0;
+                    diceTime = 0;
+                }
+            } 
+            else if (status == 2 || status == 3) {
+                if (diceTime < 2) 
+                {
+                    shared_ptr<HeroBase> attacedHero;
+                        if (status == 2) attacedHero = hero;
+                        else {
+                            for (auto h : sys->getAllHeros()) {
+                                if (h->getHeroName() != hero->getHeroName()) attacedHero = h;
                             }
                         }
-                    }
-                    else if (st == "inm"){
-                        for (auto m : sys->getAllMonsters()){
-                            if (m->getMonsterName() == "invisibleMan"){
-                                pair p {"inm", m};
-                                strikeMap.push_back(p);
+                        float panelWidth = 600;
+                        float panelHeight = 200;
+                        Rectangle panel 
+                        {
+                            (SCREEN_WIDTH - panelWidth) / 2,
+                            (SCREEN_HEIGHT - panelHeight) / 2,
+                            panelWidth,
+                            panelHeight
+                        };
+                        
+                        string attackText = attacedHero->getHeroName();
+                        attackText += " is under attack!";
+                        textSize = MeasureTextEx(GameFont, attackText.c_str(), 30 , 0);
+                        Vector2 textPos 
+                        {
+                            panel.x + (panel.width - textSize.x) / 2,
+                            panel.y + (panel.height - textSize.y) / 2
+                        };
+                        DrawRectangleRec(panel, DARKGRAY);
+                        DrawRectangleLinesEx(panel, 3, RED);
+                
+
+                    DrawTextEx(GameFont, attackText.c_str() , textPos, 30, 0, RED);
+
+                } 
+                else
+                {
+                    if (option == 1) {
+                        float panelW = 800, panelH = 600, pad = 20, Size = 170;
+                        Rectangle panel = {(SCREEN_WIDTH - panelW) / 2, (SCREEN_HEIGHT - panelH) / 2, panelW, panelH};
+                        DrawRectangleRec(panel, DARKGRAY);
+                        DrawRectangleLinesEx(panel, 3, GOLD);
+                        
+                        const char* panelTitle = "Choose an item for protection";
+                        int fontSize = 30;
+                        Vector2 textSize = MeasureTextEx(GameFont, panelTitle, fontSize, 2);
+                        Vector2 textPos = {panel.x + (panel.width - textSize.x) / 2, panel.y + 20};
+                        DrawTextEx(GameFont, panelTitle, textPos, fontSize, 2, WHITE);
+                        
+                        float x = panel.x + pad;
+                        float y = panel.y + pad + 60;
+                        
+                        for (auto& item : hero->getHeroItems()) {
+                            Texture2D itemTexure = item.address;
+                            float scale = Size / itemTexure.width;
+                            Rectangle rec = {x, y, itemTexure.width * scale, itemTexure.height * scale};
+                            DrawTextureEx(itemTexure, {x, y}, 0, scale, WHITE);
+                            
+                            if (CheckCollisionPointRec(GetMousePosition(), rec)) {
+                                DrawRectangleLinesEx(rec, 3, YELLOW);
+                                if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+                                    hero->deleteItem(item.name);
+                                    sys->addItem(item);          
+                                    dices.pop_front();
+                                    attackOnce = true;
+                                    time = 0;
+                                    diceTime = 0;
+                                    return;
+                                }                     
+                            }
+                            x += Size + pad;
+                            if (x + Size > panel.x + panel.width) {
+                                x = panel.x + pad;
+                                y += Size + pad;
                             }
                         }
-                    }
-                    else {
-                        for (auto m : sys->getAllMonsters()){
-                            if (m->getIsFrenzed()){
-                                pair p {"fz", m};
-                                strikeMap.push_back(p);
+                    } 
+                    else 
+                    {
+                        shared_ptr<HeroBase> attacedHero;
+                        if (status == 2) attacedHero = hero;
+                        else {
+                            for (auto h : sys->getAllHeros()) {
+                                if (h->getHeroName() != hero->getHeroName()) attacedHero = h;
+                            }
+                        }
+                        
+                        if (attacedHero->getHeroItems().empty()) {
+                            sys->increaseTerrorLevel();
+                            for (auto loc : sys->getAllLocations()) {
+                                if (loc->getName() == "hospital") {
+                                    sys->moveHero(attacedHero, loc);
+                                    break;
+                                }
+                            }
+                            intialize = true;
+                            title = true;
+                            moveOnce = true;
+                            diceOnce = true;
+                            status = -1;
+                            attackOnce = true;
+                            option = 0;
+                            diceTime = 0;
+                            time = 0;
+                            dices.clear();
+                            strikeMap.clear();
+                            pageNumber = PageNumbers::HERO_PHASE_PAGE;
+                            return;
+                        }
+                        else 
+                        {
+                            float panelWidth = 500;
+                            float panelHeight = 300;
+                            Rectangle panel = {
+                                (SCREEN_WIDTH - panelWidth) / 2,
+                                (SCREEN_HEIGHT - panelHeight) / 2,
+                                panelWidth,
+                                panelHeight
+                            };
+                            
+                            DrawRectangleRec(panel, DARKGRAY);
+                            DrawRectangleLinesEx(panel, 3, GOLD);
+                            
+                            const char* question = "Hero under attack!";
+                            int fontSize = 30;
+                            Vector2 textSize = MeasureTextEx(GameFont, question, fontSize, 2);
+                            Vector2 textPos = {panel.x + (panel.width - textSize.x) / 2, panel.y + 30};
+                            DrawTextEx(GameFont, question, textPos, fontSize, 2, RED);
+                            
+                            const char* subtitle = "Use an item for protection?";
+                            fontSize = 20;
+                            textSize = MeasureTextEx(GameFont, subtitle, fontSize, 1);
+                            textPos = {panel.x + (panel.width - textSize.x) / 2, panel.y + 80};
+                            DrawTextEx(GameFont, subtitle, textPos, fontSize, 1, WHITE);
+                            
+                            Rectangle yesButton = {panel.x + 50, panel.y + 150, 150, 60};
+                            Color yesHover = CheckCollisionPointRec(GetMousePosition(), yesButton) ? GREEN : Color{0,0,0,0} ;
+                            DrawRectangleRec(yesButton, yesHover);
+                            DrawRectangleLinesEx(yesButton, 2, WHITE);
+                            
+                            const char* yesText = "YES";
+                            fontSize = 25;
+                            textSize = MeasureTextEx(GameFont, yesText, fontSize, 2);
+                            textPos = {yesButton.x + (yesButton.width - textSize.x) / 2, yesButton.y + (yesButton.height - textSize.y) / 2};
+                            DrawTextEx(GameFont, yesText, textPos, fontSize, 2, WHITE);
+                            
+                            Rectangle noButton = {panel.x + 300, panel.y + 150, 150, 60};
+                            Color noHover = CheckCollisionPointRec(GetMousePosition(), noButton) ? RED : Color{150, 0, 0, 255};
+                            DrawRectangleRec(noButton, noHover);
+                            DrawRectangleLinesEx(noButton, 2, WHITE);
+                            
+                            const char* noText = "NO";
+                            fontSize = 25;
+                            textSize = MeasureTextEx(GameFont, noText, fontSize, 2);
+                            textPos = {noButton.x + (noButton.width - textSize.x) / 2, noButton.y + (noButton.height - textSize.y) / 2};
+                            DrawTextEx(GameFont, noText, textPos, fontSize, 2, WHITE);
+                            
+                            if (CheckCollisionPointRec(GetMousePosition(), yesButton) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+                                option = 1;
+
+                            if (CheckCollisionPointRec(GetMousePosition(), noButton) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) 
+                            {
+                                sys->increaseTerrorLevel();
+                                for (auto loc : sys->getAllLocations()) {
+                                    if (loc->getName() == "hospital") {
+                                        sys->moveHero(attacedHero, loc);
+                                        break;
+                                    }
+                                }
+                                intialize = true;
+                                title = true;
+                                moveOnce = true;
+                                diceOnce = true;
+                                status = -1;
+                                attackOnce = true;
+                                option = 0;
+                                diceTime = 0;
+                                time = 0;
+                                dices.clear();
+                                strikeMap.clear();
+                                pageNumber = PageNumbers::HERO_PHASE_PAGE;
+                                return;
                             }
                         }
                     }
                 }
-                intialize = false;
-            }
-
-            if(strikeMap.empty())
+            } 
+            else 
             {
-                pageNumber = PageNumbers::HERO_PHASE_PAGE;
-                return;
+                time += GetFrameTime();
+                
+                float panelWidth = 600;
+                float panelHeight = 200;
+                Rectangle panel 
+                {
+                    (SCREEN_WIDTH - panelWidth) / 2,
+                    (SCREEN_HEIGHT - panelHeight) / 2,
+                    panelWidth,
+                    panelHeight
+                };
+                
+                DrawRectangleRec(panel, DARKGRAY);
+                DrawRectangleLinesEx(panel, 3, RED);
+                
+                const char* message = "We lost a villager!";
+                textSize = MeasureTextEx(GameFont, message, 35,0);
+                Vector2 textPos 
+                {
+                    panel.x + (panel.width - textSize.x) / 2,
+                    panel.y + (panel.height - textSize.y) / 2
+                };
+                DrawTextEx(GameFont, message, textPos, 35, 0 , RED);
+                
+                if (time > 2)
+                {
+                    sys->increaseTerrorLevel();
+                    intialize = true;
+                    title = true;
+                    moveOnce = true;
+                    diceOnce = true;
+                    status = -1;
+                    attackOnce = true;
+                    option = 0;
+                    diceTime = 0;
+                    time = 0;
+                    dices.clear();
+                    strikeMap.clear();
+                    pageNumber = PageNumbers::HERO_PHASE_PAGE;
+                    return;
+                }
             }
-
-            static bool continuePhase {true};
-            static bool moveOnce {true};
-            static bool diceOnce {true};
-            static int status;
-            static bool attackOnce {true};
-
-                auto& s = strikeMap.front(); 
-                    
-                    if(moveOnce)
-                    {
-                        s.second->move(currentCard.move , s.first);
-                        moveOnce = false;
-                    }
-
-                    static deque<char> dices;
-                    
-                    if(diceOnce)
-                    {
-                        for (int i{}; i < currentCard.dice; i++) dices.push_back(sys->rollDice());
-                        diceOnce = false;
-                    }
-                    
-                        auto& d = dices.front();
-
-                        // endGame situation
-                    
-                        if(attackOnce)
-                        {
-                            status = s.second->attack(d , s.second , hero);
-                            attackOnce = false;
-                        }
-                        // no attack or power ran !!
-                        if (status == -1 || status == 4) 
-                        {
-                            time += GetFrameTime();
-                            if(status == -1)
-                            DrawText("nothing happend" , 100 ,100, 25 , WHITE);
-                            else
-                            DrawText("power ran" , 100 ,100, 25 , WHITE);
-                            if(time > 2)
-                            {
-                                dices.pop_front();
-                                attackOnce = true;
-                                time = 0;
-                            }
-                        }
-                        // attack to current hero!!
-                        else if (status == 2 || status == 3) 
-                        {
-                            static int option = 0;
-                            if(option == 1)
-                            {
-                                float panelW = 800, panelH = 600, pad = 20, Size = 170;
-                                Rectangle panel = {(SCREEN_WIDTH - panelW) / 2,(SCREEN_HEIGHT - panelH) / 2,panelW, panelH};
-                                DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, { 0, 0, 0, 100 });
-                                DrawRectangleRec(panel, DARKGRAY);
-                                float x = panel.x + pad;
-                                float y = panel.y + pad;
-                                for (auto& item : hero->getHeroItems())
-                                {
-                                    Texture2D itemTexure = item.address;
-                                    float scale = Size / itemTexure.width;
-                                    Rectangle rec = { x, y, itemTexure.width * scale, itemTexure.height * scale };
-                                    DrawTextureEx(itemTexure, { x, y }, 0, scale, WHITE);
-                        
-                                    if (CheckCollisionPointRec(GetMousePosition(), rec))
-                                    {
-                                        DrawRectangleLinesEx(rec, 2, YELLOW);
-                                        if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
-                                        {
-                                                hero->deleteItem(item.name);
-                                                sys->addItem(item);          
-                                                pageNumber = PageNumbers::HERO_PHASE_PAGE;
-                                                option = 0;
-                                                dices.pop_front();
-                                                attackOnce = true;
-
-                                        }                     
-                                    }
-                                    x += Size + pad;
-                                    if (x + Size > panel.x + panel.width)
-                                    {
-                                        x = panel.x + pad;
-                                        y += Size + pad;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                shared_ptr<HeroBase> attacedHero;
-                                if (status == 2) attacedHero = hero;
-                                else {
-                                    for (auto h : sys->getAllHeros()){
-                                        if (h->getHeroName() != hero->getHeroName()) attacedHero = h;
-                                    }
-                                }
-                                
-                                if(attacedHero ->getHeroItems().empty())
-                                {
-                                    pageNumber = PageNumbers::HERO_PHASE_PAGE;
-                                        moveOnce = true;
-                                        diceOnce =true;
-                                        status = 0;
-                                        attackOnce =true;
-                                        intialize  = true; 
-                                        strikeMap.clear();
-                                        time = 0;
-                                        title = true;
-                                        dices.clear();
-                                        return;
-                                    return;
-                                }
-                                
-                                Rectangle Y {100, 100 , 100 ,100};
-                                Rectangle N {200,200,100,100};
-
-                                if(CheckCollisionPointRec(GetMousePosition() , Y))
-                                {
-                                    if( IsMouseButtonPressed (MOUSE_BUTTON_LEFT))
-                                    {
-                                        option = 1;
-                                    }
-                                }
-                                if(CheckCollisionPointRec(GetMousePosition() , N))
-                                {
-                                    if( IsMouseButtonPressed (MOUSE_BUTTON_LEFT))
-                                    {
-                                        sys->increaseTerrorLevel();
-                                        pageNumber = PageNumbers::HERO_PHASE_PAGE;
-                                        for(auto loc : sys->getAllLocations()){
-                                            if (loc->getName() == "hospital"){
-                                                sys->moveHero(attacedHero , loc);
-                                                continuePhase = false;
-                                                break;
-                                            }
-                                        }
-                                        bool continuePhase {true};
-                                        moveOnce = true;
-                                        diceOnce =true;
-                                        status = 0;
-                                        attackOnce =true;
-                                        intialize  = true; 
-                                        strikeMap.clear();
-                                        time = 0;
-                                        title = true;
-                                        dices.clear();
-                                        return;
-                                    }
-                                }
-                            }
-
-                        }
-                        // attaced to a villager
-                        else {
-                            DrawText("we lost villager" , 200 ,200, 50 , WHITE);
-                            sys->increaseTerrorLevel();
-                            pageNumber = PageNumbers::HERO_PHASE_PAGE;
-                            bool continuePhase {true};
-                            moveOnce = true;
-                            diceOnce =true;
-                            status = 0;
-                            attackOnce =true;
-                            intialize  = true; 
-                            strikeMap.clear();
-                            time = 0;
-                            title = true;
-                            dices.clear();
-                            return;
-                        }
-                        if(dices.empty())
-                        {
-                            strikeMap.pop_front();
-                            diceOnce = true;
-                            moveOnce = true;
-                        }
+        } 
+        else 
+        {
+            strikeMap.pop_front();
+            diceOnce = true;
+            moveOnce = true;
+            attackOnce = true;
+            option = 0;
+            diceTime = 0;
+            time = 0;
+            return;
+        }
     }
 }
-    
-
-
-
-    
 
 void Gui::run() {
     Rectangle Src = { 0, 0, (float)gameMap.width, (float)gameMap.height };
@@ -1039,6 +1483,7 @@ void Gui::advancedPhase(std::shared_ptr<HeroBase>& hero,int &actions)
 
         for(auto coffin : sys ->getCoffins())
             if (hero->getCurrentPlace()->getName() == coffin) isCoffin = true;
+
             if(!isCoffin)
             {
                 showErr = true;
