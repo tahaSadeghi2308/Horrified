@@ -27,6 +27,7 @@ set(
     src/gui/guide_page.cc
     src/gui/advanced_page.cc
     src/gui/welcome_page.cc
+    src/gui/monster_page.cc
 )
 
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})

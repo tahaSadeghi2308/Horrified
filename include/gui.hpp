@@ -37,7 +37,7 @@ class Gui final {
     Texture2D smahsedCoffins;
     //about game loop
     std::vector<std::string> playerPriority;
-    PageNumbers pageNumber { PageNumbers::HERO_PHASE_PAGE };
+    PageNumbers pageNumber ;
     int isEnd;
     int round;
     int actions;

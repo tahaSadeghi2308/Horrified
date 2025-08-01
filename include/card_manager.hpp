@@ -142,16 +142,16 @@ MonsterCardDeck<T>::MonsterCardDeck() {
             stream >> count >> itemCount >> name >> move >> dice >> pri >> png;
             T temp;
             temp.address = LoadTexture(png.c_str());
+            std::stringstream ss(pri);
+            std::string tmp;
+            while(getline(ss, tmp, '_')) {
+                temp.strikePriorities.push_back(tmp);
+            }
             for (int i {}; i < std::stoi(count); i++) {
                 temp.name = name; 
                 temp.dice = std::stoi(dice); 
                 temp.move = std::stoi(move);
                 temp.itemCount = std::stoi(itemCount);
-                std::stringstream ss(pri);
-                std::string tmp;
-                while(getline(ss, tmp, '_')) {
-                    temp.strikePriorities.push_back(tmp);
-                }
                 this->setInAll(temp);
                 this->push(temp);
             }

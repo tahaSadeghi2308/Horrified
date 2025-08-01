@@ -5,6 +5,7 @@
 #include "gui/pickup_page.hpp"
 #include "gui/guide_page.hpp"
 #include "gui/welcome_page.hpp"
+#include "gui/monster_page.hpp"
 
 using namespace std;
 
@@ -17,7 +18,7 @@ Gui::Gui(System *s,const int width,const int height):sys(s),scroll(0.0f),SCREEN_
     // gameMap = LoadTexture("../../Horrified_Assets/map.png");
     GameFont = LoadFont("../Horrified_Assets/Melted.ttf");
     sys->setFont(GameFont);
-    this->playerPriority.push_back("archaeologist"); //for test needs welcom page
+    this->playerPriority.push_back("archaeologist"); //for test (needs welcom page)
     this->playerPriority.push_back("mayor");
     float pad = 20;
     float panelH = (SCREEN_HEIGHT / 9) - 25 , panelW = LEFT_PANEL_WIDTH - (2*pad);
@@ -37,7 +38,8 @@ Gui::Gui(System *s,const int width,const int height):sys(s),scroll(0.0f),SCREEN_
         { PageNumbers::MOVE_PAGE , make_shared<MovePage>(GameFont , s)},
         { PageNumbers::PICKUP_PAGE , make_shared<PickupPage>(GameFont , s)},
         { PageNumbers::GUIDE_PAGE , make_shared<GuidePage>(GameFont , s)},
-        { PageNumbers::WELCOME_PAGE , make_shared<WelcomePage>()}
+        { PageNumbers::WELCOME_PAGE , make_shared<WelcomePage>()},
+        { PageNumbers::MONSTERPHASE_PAGE , make_shared<MonsterPhasePage>(GameFont , s)}
     };
 }
 
@@ -64,10 +66,27 @@ void Gui::run() {
             pages[this->pageNumber]->draw(currentHero , actions , pageNumber);
             pages[this->pageNumber]->update(currentHero , actions , pageNumber);
         }
-        else if (this->pageNumber != PageNumbers::WELCOME_PAGE) {
-            ClearBackground(BLACK);
+        else if (pageNumber == PageNumbers::MONSTERPHASE_PAGE) {
+            ClearBackground(BLACK); 
             pages[this->pageNumber]->draw(currentHero , actions , pageNumber);
-            pages[this->pageNumber]->update(currentHero , actions , pageNumber);
+
+            if (pageNumber == HERO_PHASE_PAGE) {
+                currentHero = nullptr;
+                round++;
+            }
+        }
+        
+        if (actions <= 0 && isEnd == -1) {
+            if(doNextPhase)
+            {
+                pageNumber = PageNumbers::MONSTERPHASE_PAGE;
+                actions = 1;
+            }
+            else
+            {
+                currentHero = nullptr;
+                round++;
+            }
         }
         // ClearBackground(BLACK);
         // DrawTexturePro(gameMap, Src, Dest, origin, 0 , WHITE);

@@ -88,16 +88,18 @@ System::System(){
         if (place->getName() == "docks"){
             place->addHero(arch);
             arch->setCurrentPlace(place);
-            dracula->setCurrentLocation(place);
-            place->addMonster(dracula);
         }
+        else if(place -> getName() == "crypt") {
+            place->addMonster(dracula);
+            dracula->setCurrentLocation(place);
+        }   
         else if (place->getName() == "theatre"){
             place->addHero(mayor);
             mayor->setCurrentPlace(place);
         }
-        else if(place->getName() == "hospital") {
-            invisibleMan->setCurrentLocation(place);
+        else if(place->getName() == "inn") {
             place->addMonster(invisibleMan);
+            invisibleMan->setCurrentLocation(place);
         }
     }
 
@@ -126,7 +128,7 @@ System::System(){
         throw FileOpenningExecption("couldn't open villager.txt");
     } 
 
-    for(int i{} ; i < 60 ; i++) {
+    for(int i{} ; i < 12 ; i++) {
         Item selectedItem = getRandomItem();
         putItemInPlace(selectedItem.place , selectedItem);
     }
