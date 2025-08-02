@@ -8,3 +8,4 @@
 - [X] Test all hero phase actions
 - [x] Checking validation range for smaller than 1 not 0 !!
 - [x] Validation in invisibleMan power for is villager in game ??
+- [ ] Test loading mecanizem

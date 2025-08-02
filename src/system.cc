@@ -398,6 +398,56 @@ void System::loadState(const int folderNumber) {
         }
         clues.close();
     }
+
+    // clear map from its normal distro !!!!
+    for (auto &loc : this->getAllLocations()) {
+        for (auto i : loc->getItems()){
+            auto temp = i;
+            loc->removeItem(temp);
+            itemBag->push(temp); 
+        }
+    }
+
+    // Insert items in right place which was
+    ifstream locations(folderPath / "locations.txt");
+    unordered_map<string , vector<int>> locsData;
+    if (locations.is_open()){
+        string line;
+        while (getline(locations , line)){
+            if (line != "" && line != "_"){
+                stringstream stream(line);
+                string placeName , ids , x;
+                vector<int> int_ids;
+                stream >> placeName >> ids;
+                stringstream ss(ids);
+                while(ss , x , '_') int_ids.push_back(stoi(x));
+                locsData[placeName] = int_ids;
+            }
+        }
+        locations.is_open();
+    }
+    for (auto &[placeName , int_ids] : locsData){
+        shared_ptr<Place> place {nullptr};
+        for(auto &loc : this->getAllLocations()){
+            if (loc->getName() == placeName){
+                place = loc;
+                break;
+            }
+        }
+        for (auto id : int_ids) {
+            Item i;
+            int index {0};
+            for (auto x : this->itemBag->getCards()){
+                if (x.id == id) {
+                    i = x;
+                    break;
+                }
+                index++;
+            }
+            place->addItem(i);
+            itemBag->pop(index);
+        }
+    }
 }
 
 void System::moveMonster(shared_ptr<MonsterBase> monst , shared_ptr<Place> newPlace){
