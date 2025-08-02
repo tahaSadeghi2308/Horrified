@@ -251,6 +251,15 @@ void System::saveState() {
         monsterCards.close();
     }
 
+    // perk cards !!
+    ofstream perkCards(folderPath / "perk_cards.txt");
+    if (perkCards.is_open()){
+        for (auto& card : perkDeck->getCards()){
+            perkCards << card.id << "_";
+        }
+        perkCards.close();
+    }
+
     // Villagers
     ofstream villagers(folderPath / "villagers.txt");
     if (villagers.is_open()){
