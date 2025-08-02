@@ -333,17 +333,23 @@ void System::saveState() {
     // clues
     ofstream clues(folderPath / "clues.txt");
     if (clues.is_open()){
-        for (auto &cof : this->coffins) {
-            clues << cof << "_";
-        }
+        if (!this->coffins.empty()){
+            for (auto &cof : this->coffins) {
+                clues << cof << "_";
+            }
+        } else clues << "_";
         clues << '\n';
-        for (auto &cof : this->smashed) {
-            clues << cof << "_";
-        }
+        if (!this->smashed.empty()){
+            for (auto &cof : this->smashed) {
+                clues << cof << "_";
+            }
+        } else clues << "_";
         clues << '\n';
-        for (auto &ev : this->evidence) {
-            clues << ev << "_";
-        }
+        if (!this->evidence.empty()){
+            for (auto &ev : this->evidence) {
+                clues << ev << "_";
+            }
+        } else clues << "_";
         clues.close();
     }
 }
