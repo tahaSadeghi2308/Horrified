@@ -5,8 +5,10 @@
 #include <iostream>
 #include <unordered_map>
 #include <queue>
+#include <filesystem>
 
 using namespace std;
+namespace fs = std::filesystem;
 
 System::System(){
     // Here we initialize the game
@@ -213,7 +215,7 @@ void System::killVillager(shared_ptr<Villager> vill){
     for (auto& loc : this->allLocations) {
         loc->deleteVillager(vill->getName());
     }
-    auto it = std::remove_if(
+    auto it = remove_if(
         this->allVillagers.begin(), this->allVillagers.end(),
         [&](const shared_ptr<Villager>& v) { return v->getName() == vill->getName(); }
     );
@@ -228,7 +230,122 @@ int System::foundCluesCount(string type){
 }
 
 void System::saveState() {
-    
+    // NOTE : collect all folders which are saved games
+    vector<string> dirNames;
+    for (const auto& entry : fs::directory_iterator("../data/after_game/")) {
+        if (entry.is_directory()) {
+            dirNames.push_back(entry.path().filename().string());
+        }
+    }
+    fs::path folderPath = fs::path("../data/after_game") / to_string(dirNames.size() + 1) ;
+    // NOTE : create a folder for saving files
+    fs::create_directories(folderPath);
+
+    // MONSTER CARDS INFO
+    // SAVE the id of alive cards !!
+    ofstream monsterCards(folderPath / "monster_cards.txt");
+    if (monsterCards.is_open()){
+        for (auto& card : monsterDeck->getCards()){
+            monsterCards << card.id << "_";
+        }
+        monsterCards.close();
+    }
+
+    // Villagers
+    ofstream villagers(folderPath / "villagers.txt");
+    if (villagers.is_open()){
+        for (auto& vill : this->getAllVillagers()){
+            villagers << vill->getName() << " ";
+            if (vill->getVillagerLoc() != nullptr) {
+                villagers << vill->getVillagerLoc()->getName() << '\n';
+            } else {
+                villagers << "_\n";
+            }
+        }
+        villagers.close();
+    }
+
+    // locations
+    ofstream locations(folderPath / "locations.txt");
+    if (locations.is_open()){
+        for (auto& loc : this->getAllLocations()){
+            locations << loc->getName() << " ";
+            if (!loc->getItems().empty()){
+                for (auto& card : loc->getItems()) {
+                    locations << card.id << "_";
+                }
+                locations << '\n';
+            } else locations << "_\n";
+        }
+        locations.close();
+    }
+
+    // monsters
+    ofstream monsters(folderPath / "monsters.txt");
+    if (monsters.is_open()){
+        for(auto &monst : this->getAllMonsters()){
+            if (monst) {
+                monsters << monst->getMonsterName() << " ";
+                if (monst->getCurrentLocation()) {
+                    monsters << monst->getCurrentLocation()->getName() << " "
+                             << monst->getIsFrenzed() << "\n";
+                } else {
+                    monsters << "_ _\n";
+                }
+            }
+        }
+        monsters.close();
+    }
+
+    // heroes
+    fs::create_directories(folderPath / "heroes");
+    for (auto &h : this->getAllHeros()) {
+        if (h) {
+            string filename = h->getHeroName() + ".txt";
+            fs::path fullPath = folderPath / "heroes" / filename;
+            ofstream file(fullPath);
+            if (file.is_open()){
+                file << h->getHeroName() << " ";
+                // collect perk ids
+                if (!h->getHeroPerks().empty()){
+                    for (auto & card : h->getHeroPerks()){
+                        file << card.id << "_";
+                    }
+                } else {
+                    file << "_";
+                }
+                file << " ";
+
+                // collect item ids
+                if (!h->getHeroItems().empty()){
+                    for (auto & card : h->getHeroItems()){
+                        file << card.id << "_";
+                    }
+                } else {
+                    file << "_";
+                }
+                file << '\n';
+                file.close();
+            }
+        }
+    }
+
+    // clues
+    ofstream clues(folderPath / "clues.txt");
+    if (clues.is_open()){
+        for (auto &cof : this->coffins) {
+            clues << cof << "_";
+        }
+        clues << '\n';
+        for (auto &cof : this->smashed) {
+            clues << cof << "_";
+        }
+        clues << '\n';
+        for (auto &ev : this->evidence) {
+            clues << ev << "_";
+        }
+        clues.close();
+    }
 }
 
 void System::moveMonster(shared_ptr<MonsterBase> monst , shared_ptr<Place> newPlace){

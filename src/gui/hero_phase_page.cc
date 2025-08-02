@@ -222,6 +222,12 @@ void HeroPhasePage::update(shared_ptr<HeroBase> &cHero ,int &actions , PageNumbe
         // if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         // pageNumber = PageNumbers::DEFEAT_PAGE;
     }
+    else if(CheckCollisionPointRec(mouse , this->exitANDsave)){
+        DrawRectangleLinesEx(this->exitANDsave, 8 ,DARKGREEN);
+         if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
+             sys->saveState();
+         }
+    }
     else if(CheckCollisionPointRec(mouse , speciallRec)){
          DrawRectangleLinesEx(speciallRec, 8 ,DARKGREEN);
         // if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
