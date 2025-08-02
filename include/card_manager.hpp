@@ -17,6 +17,7 @@
 constexpr int ITEM_COUNT {2};
 
 struct Item {
+    int id;
     int power;
     card::Color color;
     std::string name;
@@ -44,12 +45,14 @@ struct Item {
 };
 
 struct Perk {
+    int id , count;
     std::string name;
     std::string description;
     Texture2D address;
 };
 
 struct MonsterCard {
+    int id , count;
     std::string name;
     int dice;
     int move;
@@ -135,12 +138,14 @@ int CardManagerBase<T>::size() const { return this->cards.size(); }
 template <class T>
 MonsterCardDeck<T>::MonsterCardDeck() {
     std::ifstream file("../data/before_game/monster_cards.txt");
+    int temp_id {1};
     if(file.is_open()) {
         std::string line, count, itemCount, name, move, dice, pri , png;
         while(getline(file, line)) {
             std::stringstream stream(line);
             stream >> count >> itemCount >> name >> move >> dice >> pri >> png;
             T temp;
+            temp.count = stoi(count);
             temp.address = LoadTexture(png.c_str());
             std::stringstream ss(pri);
             std::string tmp;
@@ -149,11 +154,13 @@ MonsterCardDeck<T>::MonsterCardDeck() {
             }
             for (int i {}; i < std::stoi(count); i++) {
                 temp.name = name; 
+                temp.id = temp_id;
                 temp.dice = std::stoi(dice); 
                 temp.move = std::stoi(move);
                 temp.itemCount = std::stoi(itemCount);
                 this->setInAll(temp);
                 this->push(temp);
+                temp_id++;
             }
         }
         file.close();
@@ -166,6 +173,7 @@ MonsterCardDeck<T>::MonsterCardDeck() {
 template <class T>
 ItemBag<T>::ItemBag() {
     std::ifstream file("../data/before_game/items.txt");
+    int temp_id {1};
     if(file.is_open()) {
         std::string line, power, color, name, place , png;
         while(getline(file, line)) {
@@ -174,6 +182,7 @@ ItemBag<T>::ItemBag() {
             T temp;
             temp.address = LoadTexture(png.c_str());
             for (int i {}; i < ITEM_COUNT; i++) {
+                temp.id = temp_id;
                 temp.power = std::stoi(power);
                 temp.name = name;
                 temp.place = place;
@@ -182,6 +191,7 @@ ItemBag<T>::ItemBag() {
                 if (color == "yellow") temp.color = card::Color::Y; 
                 this->setInAll(temp);
                 this->push(temp);
+                temp_id++;
             }
         }
         file.close();
@@ -194,23 +204,26 @@ ItemBag<T>::ItemBag() {
 template <class T>
 PerkDeck<T>::PerkDeck() {
     std::ifstream file("../data/before_game/perks.txt");
+    int temp_id {1};
     if(file.is_open()) {
         std::string line, count, name, desc , png;
         while(getline(file, line)) {
             std::stringstream stream(line);
             stream >> count >> name >> desc >> png;
             T temp;
+            temp.count = stoi(count);
             temp.address = LoadTexture(png.c_str());
             for (int i {}; i < std::stoi(count); i++) {
                 temp.name = name; 
                 temp.description = desc;
+                temp.id = temp_id;
                 this->setInAll(temp);
                 this->push(temp);
+                temp_id++;
             }
         }
         file.close();
-    }
-    else {
+    } else {
         throw FileOpenningExecption("couldn't open this file!!!\n"); 
     }
 }

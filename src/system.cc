@@ -48,11 +48,10 @@ System::System(){
 
             float px = 0, py = 0;
             size_t p = pos.find('_');
-        if (p != string::npos)
-        {
-            px = stof(pos.substr(0, p));
-            py = stof(pos.substr(p + 1));
-        }
+            if (p != string::npos) {
+                px = stof(pos.substr(0, p));
+                py = stof(pos.substr(p + 1));
+            }
             // seprate neighbors here
             stringstream ss(neighbors);
             vector<string> temp; string x;
@@ -226,6 +225,10 @@ void System::increaseTerrorLevel() { this->terrorLevel++; }
 int System::foundCluesCount(string type){
     if (type == "coffin") return 4 - this->coffins.size();
     else return 5 - this->evidence.size();
+}
+
+void System::saveState() {
+    
 }
 
 void System::moveMonster(shared_ptr<MonsterBase> monst , shared_ptr<Place> newPlace){

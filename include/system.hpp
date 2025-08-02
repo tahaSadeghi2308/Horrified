@@ -1,5 +1,4 @@
-#ifndef SYSTEM_HPP
-#define SYSTEM_HPP
+#pragma once
 
 #include "card_manager.hpp"
 #include "Hero.hpp"
@@ -80,27 +79,22 @@ public:
     std::vector<std::shared_ptr<Villager>> getAllVillagers () { return this->allVillagers; } 
     std::vector<std::string> getCoffins() {return this->coffins; }
     std::vector<std::string> getEvidence() { return this->evidence;}
+    void saveState();
     void setFont(Font gameFont) { font = gameFont ;}
     Font getFont() { return font; }
     std::vector<std::string> getSmashed() { return smashed ;}
-    ~System()
-    {
-        for(int i{} ; i < itemBag->getAll().size() ; i += 2)
-        {
+    ~System() {
+        for(int i{} ; i < itemBag->getAll().size() ; i += 2) {
             UnloadTexture(itemBag->getAll()[i].address);
         }
-        for(auto& rm : perkDeck->getAll())
-        {
+        for(auto& rm : perkDeck->getAll()) {
             UnloadTexture(rm.address);
         }
         // for (int i{}; i < perkDeck->getAll().size();i++){
         //     UnloadTexture(perkDeck->getAll()[i].address);
         // }
-        for(auto& rm : monsterDeck->getAll())
-        {
+        for(auto& rm : monsterDeck->getAll()) {
             UnloadTexture(rm.address);
         }
     }
 };
-
-#endif //SYSTEM_HPP

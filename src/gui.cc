@@ -45,6 +45,11 @@ Gui::Gui(System *s,const int width,const int height):sys(s),scroll(0.0f),SCREEN_
 
 void Gui::run() {
     while (!WindowShouldClose()) {
+        if (this->pageNumber == PageNumbers::EXIT_PAGE) {
+            delete sys;
+            sys = nullptr;
+            break;
+        }
         if (currentHero == nullptr) {
             string name = playerPriority[round % playerPriority.size()];
             for (auto& h : sys->getAllHeros()) {
@@ -77,49 +82,14 @@ void Gui::run() {
         }
         
         if (actions <= 0 && isEnd == -1) {
-            if(doNextPhase)
-            {
+            if(doNextPhase) {
                 pageNumber = PageNumbers::MONSTERPHASE_PAGE;
                 actions = 1;
-            }
-            else
-            {
+            } else {
                 currentHero = nullptr;
                 round++;
             }
         }
-        // ClearBackground(BLACK);
-        // DrawTexturePro(gameMap, Src, Dest, origin, 0 , WHITE);
-
-        // drawLeftPanel();
-        // drawEvindence();
-        // drawCoffin();
-        
-        // handleInput();
-        
-        // drawRightPanel(currentHero);
-        // drawUpPanel(currentHero,actions);
-        // isEnd = sys->isEndGame();
-        // if (this->pageNumber != PageNumbers::HERO_PHASE_PAGE)
-        // {
-        //     if (this->pageNumber == PageNumbers::MOVE_PAGE) this->MovePhase(currentHero , actions);
-        //     else if (this->pageNumber == PageNumbers::GUIDE_PAGE) this->guidePhase(currentHero , actions);
-        //     else if (this->pageNumber == PageNumbers::PICKUP_PAGE) this->pickUpPhase(currentHero , actions);
-        //     else if (this->pageNumber == PageNumbers::SPECIALACTION_PAGE) currentHero -> speciallAction(sys,pageNumber,actions,SCREEN_WIDTH,SCREEN_HEIGHT);
-        //     else if (this->pageNumber == PageNumbers::ADVANCED_PAGE) this->advancedPhase(currentHero , actions);
-        //     else if (this->pageNumber == PageNumbers::DEFEAT_PAGE) this->defeatPhase(currentHero , actions);
-        //     else if (this->pageNumber == PageNumbers::PLAYPERK_PAGE) this->playPerkPhase(currentHero , actions , doNextPhase);
-        //         // else if (this->pageNumber == PageNumbers::HELP_PAGE) this->helpPage();
-        //     }
-        //     if (actions <= 0 && isEnd == -1) {
-        //         if(doNextPhase)
-        //         {
-        //             //monsterPhasePage(currentHero);
-        //         }
-        //         currentHero = nullptr;
-        //         round++;
-        //     }
-        // }
         EndDrawing();
     }
 }

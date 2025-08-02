@@ -26,11 +26,10 @@ int main(){
 
     EndDrawing();
 
-
     System *s = new System();
     Gui t(s,SCREEN_WIDTH,SCREEN_HEIGHT);
     t.run();
-    delete s;
+    if (s) delete s;
     
     return 0;
 }

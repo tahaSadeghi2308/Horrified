@@ -39,7 +39,7 @@ void WelcomePage::update(std::shared_ptr<HeroBase> &cHero, int &actions, PageNum
     }
     else if (CheckCollisionPointRec(mouse, exit)) {
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-//            CloseWindow();
+            cPage = PageNumbers::EXIT_PAGE;
         }
     }
 }
