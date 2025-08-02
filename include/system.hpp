@@ -80,6 +80,7 @@ public:
     std::vector<std::string> getCoffins() {return this->coffins; }
     std::vector<std::string> getEvidence() { return this->evidence;}
     void saveState();
+    void loadState(const int folderNumber);
     void setFont(Font gameFont) { font = gameFont ;}
     Font getFont() { return font; }
     std::vector<std::string> getSmashed() { return smashed ;}

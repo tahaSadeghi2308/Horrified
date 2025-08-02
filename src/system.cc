@@ -354,6 +354,52 @@ void System::saveState() {
     }
 }
 
+void System::loadState(const int folderNumber) {
+    // find path to that folder !!!
+    fs::path folderPath = fs::path("../data/after_game") / to_string(folderNumber);
+
+    // loading clues
+    ifstream clues(folderPath / "clues.txt");
+    if (clues.is_open()){
+        for (int i {}; i < 3; i++) {
+            string line;
+            getline(clues , line);
+            stringstream stream(line);
+            if (i == 0) {
+                if (line == "_"){
+                    this->coffins = {};
+                } else {
+                    vector<string> temp;
+                    string x;
+                    while(getline(stream , x , '_')) temp.push_back(x);
+                    this->coffins = temp;
+                }
+            }
+            else if (i == 1) {
+                if (line == "_"){
+                    this->smashed = {};
+                } else {
+                    vector<string> temp;
+                    string x;
+                    while(getline(stream , x , '_')) temp.push_back(x);
+                    this->smashed = temp;
+                }
+            }
+            else {
+                if (line == "_"){
+                    this->evidence = {};
+                } else {
+                    vector<string> temp;
+                    string x;
+                    while(getline(stream , x , '_')) temp.push_back(x);
+                    this->evidence = temp;
+                }
+            }
+        }
+        clues.close();
+    }
+}
+
 void System::moveMonster(shared_ptr<MonsterBase> monst , shared_ptr<Place> newPlace){
     if (!monst || !newPlace) return;
     shared_ptr<Place> currentPlace = monst->getCurrentLocation();
