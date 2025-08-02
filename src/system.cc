@@ -409,19 +409,22 @@ void System::loadState(const int folderNumber) {
     }
 
     // Insert items in right place which was
+    // TEST : [ ]
     ifstream locations(folderPath / "locations.txt");
     unordered_map<string , vector<int>> locsData;
     if (locations.is_open()){
         string line;
         while (getline(locations , line)){
-            if (line != "" && line != "_"){
+            if (line != ""){
                 stringstream stream(line);
                 string placeName , ids , x;
-                vector<int> int_ids;
                 stream >> placeName >> ids;
-                stringstream ss(ids);
-                while(ss , x , '_') int_ids.push_back(stoi(x));
-                locsData[placeName] = int_ids;
+                if (ids != "_"){
+                    vector<int> int_ids;
+                    stringstream ss(ids);
+                    while(ss , x , '_') int_ids.push_back(stoi(x));
+                    locsData[placeName] = int_ids;
+                }
             }
         }
         locations.is_open();
@@ -446,6 +449,39 @@ void System::loadState(const int folderNumber) {
             }
             place->addItem(i);
             itemBag->pop(index);
+        }
+    }
+
+    // loading villagers
+    // TEST : [ ]
+    unordered_map<string , string> villInfo;
+    vector<string> killedVillagers;
+    ifstream villagers(folderPath / "villagers.txt");
+    if (villagers.is_open()){
+        string line;
+        while(getline(villagers , line)){
+            stringstream stream(line);
+            string villName , currentPlace;
+            stream >> villName >> currentPlace;
+            villInfo[villName] = currentPlace;
+        }
+        villagers.close();
+    }
+    for (auto &vill : this->getAllVillagers()){
+        if(!villInfo.count(vill->getName())){
+            killedVillagers.push_back(vill->getName());
+        } else {
+            for (auto &loc : this->getAllLocations()){
+                if (loc->getName() == villInfo[vill->getName()]){
+                    vill->changeLoc(loc);
+                }
+            }
+        }
+    }
+    // killing villagers
+    for (auto &name : killedVillagers){
+        for(auto &vill : this->getAllVillagers()){
+            if(vill->getName() == name) this->killVillager(vill);
         }
     }
 }
