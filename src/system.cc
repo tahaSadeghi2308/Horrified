@@ -333,6 +333,13 @@ void System::saveState() {
                 } else {
                     file << "_";
                 }
+                file << " ";
+
+                if (h->getCurrentPlace()){
+                    file << h->getCurrentPlace()->getName();
+                } else {
+                    file << "_";
+                }
                 file << '\n';
                 file.close();
             }
