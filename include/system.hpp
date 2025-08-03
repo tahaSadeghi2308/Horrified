@@ -22,6 +22,8 @@ class System {
     // heroes 
     std::shared_ptr<Archaeologist> arch {nullptr};
     std::shared_ptr<Mayor> mayor {nullptr};
+    std::shared_ptr<Scientist> scientist {nullptr};
+    std::shared_ptr<Courier> courier {nullptr};
 
     // monsters
     std::shared_ptr<Dracula> dracula;
@@ -73,6 +75,7 @@ public:
     void killMonster(std::shared_ptr<MonsterBase> monst);
     void killVillager(std::shared_ptr<Villager> vill);
     void placeWithMaxItem();
+    void setHeroInitLoacation(std::vector<std::string> heroNameList);
     std::vector<std::shared_ptr<MonsterBase>> getAllMonsters() { return allMonsters; }    
     std::vector<std::shared_ptr<HeroBase>> getAllHeros() { return {arch , mayor}; }
     std::vector<std::shared_ptr<Place>> getAllLocations() { return this->allLocations; } 

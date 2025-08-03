@@ -19,6 +19,8 @@ System::System(){
     // setup heroes
     arch = make_shared<Archaeologist>(4 , "archaeologist" , perkDeck->pickOneRandomly());
     mayor = make_shared<Mayor>(5 , "mayor" , perkDeck->pickOneRandomly());
+    scientist = make_shared<Scientist>(4 , "scientist" , perkDeck->pickOneRandomly());
+    courier = make_shared<Courier>(4 , "courier" , perkDeck->pickOneRandomly());
 
     // setup monsters
     dracula = make_shared<Dracula>("dracula" , true , this);
@@ -78,27 +80,17 @@ System::System(){
             }
         }
         file2.close();
-    }
-    else {
+    } else {
         throw FileOpenningExecption("couldn't open file locations.txt");
     }
 
-    // put heroes in right place
-    // we have to set it in place and in hero 
+    // put monsters in right place
+    // we have to set it in place and in monster
     for(auto place : allLocations){
-        if (place->getName() == "docks"){
-            place->addHero(arch);
-            arch->setCurrentPlace(place);
-        }
-        else if(place -> getName() == "crypt") {
+        if(place -> getName() == "crypt") {
             place->addMonster(dracula);
             dracula->setCurrentLocation(place);
-        }   
-        else if (place->getName() == "theatre"){
-            place->addHero(mayor);
-            mayor->setCurrentPlace(place);
-        }
-        else if(place->getName() == "inn") {
+        } else if(place->getName() == "inn") {
             place->addMonster(invisibleMan);
             invisibleMan->setCurrentLocation(place);
         }
@@ -120,12 +112,10 @@ System::System(){
                     temp->setSafeZone(_place);
                 }
             }
-
             this->allVillagers.push_back(temp);
         }
         villFile.close();
-    }
-    else {
+    } else {
         throw FileOpenningExecption("couldn't open villager.txt");
     } 
 
@@ -133,9 +123,28 @@ System::System(){
         Item selectedItem = getRandomItem();
         putItemInPlace(selectedItem.place , selectedItem);
     }
-    
     allMonsters.push_back(dracula);
     allMonsters.push_back(invisibleMan);
+}
+
+void System::setHeroInitLoacation(vector<string> heroNameList) {
+    for (auto &name : heroNameList){
+        for(auto &loc : this->getAllLocations()){
+            if (name == "archaeologist" && loc->getName() == "docks"){
+                loc->addHero(arch);
+                arch->setCurrentPlace(loc);
+            } else if (name == "mayor" && loc->getName() == "theatre"){
+                loc->addHero(mayor);
+                mayor->setCurrentPlace(loc);
+            } else if (name == "scientist" && loc->getName() == "institute") {
+                loc->addHero(scientist);
+                scientist->setCurrentPlace(loc);
+            } else if (name == "courier" && loc->getName() == "shop") {
+                loc->addHero(courier);
+                courier->setCurrentPlace(loc);
+            }
+        }
+    }
 }
 
 int System::getTerrorLevel() const { return this->terrorLevel; }
