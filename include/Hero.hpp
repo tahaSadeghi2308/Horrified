@@ -11,9 +11,9 @@
 #include "monster.hpp"
 #include "pageNumber.hpp"
 
-class System;
 class Mayor;
 class Archaeologist;
+class System;
 class HeroBase {
     int actionCount;
     std::string heroName;
@@ -57,6 +57,17 @@ public:
 class Mayor final : public HeroBase {
 public:
     Mayor(const int &_num , std::string_view _name , const Perk &perk);
+};
+
+class Courier final : public HeroBase {
+    public :
+    Courier(const int &_num , std::string_view _name , const Perk &perk);
+    void speciallAction(System *sys,int &pageNumber,int& actions,const int SCREEN_WIDTH,const int SCREEN_HEIGHT) override;
+};
+
+class Scientist final : public HeroBase {
+    public :
+    Scientist(const int &_num , std::string_view _name , const Perk &perk);
 };
 
 #endif // HERO_HPP

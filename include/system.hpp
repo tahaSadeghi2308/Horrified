@@ -85,17 +85,21 @@ public:
     Font getFont() { return font; }
     std::vector<std::string> getSmashed() { return smashed ;}
     ~System() {
-        for(int i{} ; i < itemBag->getAll().size() ; i += 2) {
-            UnloadTexture(itemBag->getAll()[i].address);
+        for(auto& rm : itemBag->getAll()) {
+            UnloadTexture(rm.address);
         }
         for(auto& rm : perkDeck->getAll()) {
             UnloadTexture(rm.address);
         }
-        // for (int i{}; i < perkDeck->getAll().size();i++){
-        //     UnloadTexture(perkDeck->getAll()[i].address);
-        // }
         for(auto& rm : monsterDeck->getAll()) {
             UnloadTexture(rm.address);
         }
+        for(auto& rm : getAllHeros()) {
+            UnloadTexture(rm->getAddress());
+        }
+        for(auto& rm : getAllMonsters()) {
+            UnloadTexture(rm->getAddress());
+        }
+
     }
 };

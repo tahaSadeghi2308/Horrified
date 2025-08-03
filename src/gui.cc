@@ -769,8 +769,9 @@ void Gui::advancedPhase(std::shared_ptr<HeroBase>& hero,int &actions)
     {
         bool isCoffin {false};
 
-        for(auto coffin : sys ->getCoffins()){
+        for(auto coffin : sys ->getCoffins())
             if (hero->getCurrentPlace()->getName() == coffin) isCoffin = true;
+
             if(!isCoffin)
             {
                 showErr = true;
@@ -781,47 +782,63 @@ void Gui::advancedPhase(std::shared_ptr<HeroBase>& hero,int &actions)
                 option = -1;
             }
 
-            else {
+            else 
+            {
                 vector<Item> redItems;
                 int itemsPowerSum = 0;
-                for (auto i: hero->getHeroItems()) {
-                    if (i.color == card::Color::R) {
-                        redItems.push_back(i);
+                for(auto i : hero->getHeroItems()) 
+                {
+                    if (i.color == card::Color::R) 
+                    { 
+                        redItems.push_back(i); 
                         itemsPowerSum += i.power;
+
+                        if(hero->getHeroName() == "scientist")
+                            ++itemsPowerSum;  
                     }
                 }
-                if (itemsPowerSum < 6 && checkRedPower) {
+                if ( itemsPowerSum < 6 && checkRedPower) 
+                {
                     showErr = true;
                     time = GetTime();
-                    errText = "You dont have enough item to advance dracula";
+                    errText = "You dont have enough item to advance dracula"; 
                     option = -1;
-                } else {
-                    checkRedPower = false;
+                }
+                else 
+                {
+                    checkRedPower = false ;
                     float panelW = 800, panelH = 600, pad = 20, Size = 170;
-                    Rectangle panel = {(SCREEN_WIDTH - panelW) / 2, (SCREEN_HEIGHT - panelH) / 2, panelW, panelH};
-                    DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, {0, 0, 0, 100});
+                    Rectangle panel = {(SCREEN_WIDTH - panelW) / 2,(SCREEN_HEIGHT - panelH) / 2,panelW, panelH};
+                    DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, { 0, 0, 0, 100 });
                     DrawRectangleRec(panel, DARKGRAY);
                     float x = panel.x + pad;
                     float y = panel.y + pad;
 
                     static int redPower = 0;
-
-                    for (auto &item: hero->getHeroItems()) {
+                      
+                    for (auto& item : hero->getHeroItems())
+                    {
                         if (item.color != card::Color::R) continue;
 
                         Texture2D itemTexure = item.address;
                         float scale = Size / itemTexure.width;
-                        Rectangle rec = {x, y, itemTexure.width * scale, itemTexure.height * scale};
-                        DrawTextureEx(itemTexure, {x, y}, 0, scale, WHITE);
-
-                        if (CheckCollisionPointRec(mouse, rec)) {
+                        Rectangle rec = { x, y, itemTexure.width * scale, itemTexure.height * scale };
+                        DrawTextureEx(itemTexure, { x, y }, 0, scale, WHITE);
+            
+                        if (CheckCollisionPointRec(mouse, rec))
+                        {
                             DrawRectangleLinesEx(rec, 2, YELLOW);
-                            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+                            if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+                            {
                                 redPower += item.power;
+                                if(hero->getHeroName() == "scientist")
+                                    ++redPower;
+
                                 hero->deleteItem(item.name);
                                 sys->addItem(item);
-
-                                if (redPower >= 6) {
+                                              
+                                if (redPower >= 6)
+                                {
                                     option = -1;
                                     pageNumber = PageNumbers::HERO_PHASE_PAGE;
                                     sys->destroyClue("coffin", hero->getCurrentPlace()->getName());
@@ -830,16 +847,17 @@ void Gui::advancedPhase(std::shared_ptr<HeroBase>& hero,int &actions)
                                     actions--;
                                     return;
                                 }
-                            }
+                            }                     
                         }
                         x += Size + pad;
-                        if (x + Size > panel.x + panel.width) {
+                        if (x + Size > panel.x + panel.width)
+                        {
                             x = panel.x + pad;
                             y += Size + pad;
                         }
                     }
                 }
-            }    }
+}
     }
     else if(option == 2)
     {
@@ -1016,7 +1034,9 @@ void Gui::defeatPhase(std::shared_ptr<HeroBase>& hero , int &actions)
                     if (i.color == card::Color::Y) 
                     { 
                         YellowItems.push_back(i); 
-                        itemsPowerSum += i.power;  
+                        itemsPowerSum += i.power;
+                        if(hero->getHeroName() == "scientist") 
+                            ++itemsPowerSum; 
                     }
                 }
                 if ( itemsPowerSum < 9 && PowerCheck ) 
@@ -1053,6 +1073,9 @@ void Gui::defeatPhase(std::shared_ptr<HeroBase>& hero , int &actions)
                             if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
                             {
                                 YellowPower += item.power;
+                                if(hero->getHeroName() == "scientist")
+                                    ++YellowPower;
+
                                 hero->deleteItem(item.name);
                                 sys->addItem(item);
                                               
@@ -1118,6 +1141,8 @@ void Gui::defeatPhase(std::shared_ptr<HeroBase>& hero , int &actions)
                     { 
                         redItems.push_back(i); 
                         itemsPowerSum += i.power;  
+                        if(hero->getHeroName() == "scientist")
+                            ++itemsPowerSum;
                     }
                 }
                 if ( itemsPowerSum < 9 && PowerCheck) 
@@ -1154,6 +1179,9 @@ void Gui::defeatPhase(std::shared_ptr<HeroBase>& hero , int &actions)
                             if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
                             {
                                 redPower += item.power;
+                                if(hero->getHeroName() == "scientist")
+                                    ++redPower;
+
                                 hero->deleteItem(item.name);
                                 sys->addItem(item);              
                                 if (redPower >= 9)

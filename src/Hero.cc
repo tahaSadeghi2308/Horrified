@@ -1,5 +1,5 @@
 #include "Hero.hpp"
-
+#include "system.hpp"
 using namespace std;
 
 void HeroBase::addPerkCard(const Perk &perk) {
@@ -34,6 +34,18 @@ Mayor::Mayor(const int &_num , std::string_view _name , const Perk &perk) :
     {
         setAddress("../Horrified_Assets/Heros/Mayor.png");
     }
+
+Courier::Courier(const int &_num , std::string_view _name , const Perk &perk) :
+    HeroBase(_num,_name,perk)
+{
+    setAddress("../Horrified_Assets/Heros/Courier.png");
+}
+
+Scientist::Scientist(const int &_num , std::string_view _name , const Perk &perk) :
+    HeroBase(_num,_name,perk)
+{
+    setAddress("../Horrified_Assets/Heros/Scientist.png");
+}
 
 void HeroBase::setCurrentPlace(shared_ptr<Place> _place) {
     this->currentPlace = _place;
@@ -187,3 +199,56 @@ void Archaeologist::speciallAction(System* sys,int& pageNumber, int &actions,con
         }
     }
 }
+
+void Courier::speciallAction(System* sys,int& pageNumber, int &actions,const int SCREEN_WIDTH,const int SCREEN_HEIGHT)
+{
+    
+    Vector2 mouse = GetMousePosition(); 
+    
+        vector<shared_ptr<Place>> targetPlace; 
+        for(auto& otherHero : sys->getAllHeros())
+        {
+            if(otherHero->getHeroName() != getHeroName())
+            {
+                targetPlace.push_back(otherHero->getCurrentPlace());
+            }
+        }
+        for (auto& place : targetPlace)
+        {
+            Vector2 pos = place -> getPosition();
+            float w = 120, h = 120;
+            Rectangle rect = {pos.x - w/2, pos.y - h/2, w, h}; // we should go back and up for 1/2 of the squere
+            float pulse = (sinf(GetTime() * 4 ) + 1) * 7; // get it with testing diffrent options  
+    
+            Rectangle fadingRec = {rect.x - pulse , rect.y - pulse , rect.width + 2 * pulse , rect.height + 2 * pulse};
+    
+            DrawRectangleLinesEx(fadingRec, 3, Fade(YELLOW, 0.4f));
+            DrawRectangleLinesEx(rect, 2, YELLOW);
+            
+        }
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+        {
+            for (auto& place : targetPlace)
+            {
+                if (place->isClicked(mouse))
+                {
+                    actions--;
+                    for(auto& mv : sys->getAllHeros())
+                    {
+                        if(mv->getHeroName() == getHeroName())
+                        {
+                            sys->moveHero( mv , place);
+                        }
+                    }
+                    pageNumber = PageNumbers::HERO_PHASE_PAGE;
+                    return;
+                }
+            }
+        }
+    
+        if(IsKeyPressed(KEY_BACKSPACE))
+        {
+            pageNumber = PageNumbers::HERO_PHASE_PAGE;
+        }
+}
+

@@ -158,10 +158,10 @@ MonsterCardDeck<T>::MonsterCardDeck() {
                 temp.dice = std::stoi(dice); 
                 temp.move = std::stoi(move);
                 temp.itemCount = std::stoi(itemCount);
-                this->setInAll(temp);
                 this->push(temp);
                 temp_id++;
             }
+            this->setInAll(temp);
         }
         file.close();
     }
@@ -189,10 +189,10 @@ ItemBag<T>::ItemBag() {
                 if (color == "red") temp.color = card::Color::R;
                 if (color == "blue") temp.color = card::Color::B;
                 if (color == "yellow") temp.color = card::Color::Y; 
-                this->setInAll(temp);
                 this->push(temp);
                 temp_id++;
             }
+            this->setInAll(temp);
         }
         file.close();
     }
@@ -217,10 +217,10 @@ PerkDeck<T>::PerkDeck() {
                 temp.name = name; 
                 temp.description = desc;
                 temp.id = temp_id;
-                this->setInAll(temp);
                 this->push(temp);
                 temp_id++;
             }
+            this->setInAll(temp);
         }
         file.close();
     } else {
