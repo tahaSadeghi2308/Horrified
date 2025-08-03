@@ -493,6 +493,36 @@ void System::loadState(const int folderNumber) {
             if(vill->getName() == name) this->killVillager(vill);
         }
     }
+
+    // loading monster cards
+    // TEST : [ ]
+    vector<int> validCards;
+    vector<int> destoryedCardsId;
+    ifstream monsterCard(folderPath / "monster_card.txt");
+    if (monsterCard.is_open()){
+        string line , x; getline(monsterCard , line);
+        stringstream ss(line);
+        while(ss , x , '_') validCards.push_back(stoi(x));
+        monsterCard.close();
+    }
+    for (auto &card : this->monsterDeck->getCards()){
+        bool isIn {};
+        for (auto &id : validCards){
+            if (card.id == id) {
+                isIn = true;
+                break;
+            }
+        }
+        if (!isIn) destoryedCardsId.push_back(card.id);
+    }
+    for (auto id : destoryedCardsId) {
+        int index {0};
+        for (auto &card : this->monsterDeck->getCards()){
+            if (card.id == id) break;
+            else index++;
+        }
+        monsterDeck->pop(index);
+    }
 }
 
 void System::moveMonster(shared_ptr<MonsterBase> monst , shared_ptr<Place> newPlace){
