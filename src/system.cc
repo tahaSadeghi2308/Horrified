@@ -127,21 +127,25 @@ System::System(){
     allMonsters.push_back(invisibleMan);
 }
 
-void System::setHeroInitLoacation(vector<string> heroNameList) {
-    for (auto &name : heroNameList){
+void System::setHeroInitLoacation(vector<pair<string , string>> heroNameList) {
+    for (auto &[ pName , name ] : heroNameList){
         for(auto &loc : this->getAllLocations()){
             if (name == "archaeologist" && loc->getName() == "docks"){
                 loc->addHero(arch);
                 arch->setCurrentPlace(loc);
+                arch->setPlayerName(pName);
             } else if (name == "mayor" && loc->getName() == "theatre"){
                 loc->addHero(mayor);
                 mayor->setCurrentPlace(loc);
+                mayor->setPlayerName(pName);
             } else if (name == "scientist" && loc->getName() == "institute") {
                 loc->addHero(scientist);
                 scientist->setCurrentPlace(loc);
+                scientist->setPlayerName(pName);
             } else if (name == "courier" && loc->getName() == "shop") {
                 loc->addHero(courier);
                 courier->setCurrentPlace(loc);
+                courier->setPlayerName(pName);
             }
         }
     }
@@ -334,6 +338,14 @@ void System::saveState() {
                 }
                 file << " ";
 
+                // add player name
+                if (!h->getPlayerName().empty()){
+                    file << h->getPlayerName();
+                } else {
+                    file << "_";
+                }
+                file << " ";
+
                 // collect item ids
                 if (!h->getHeroItems().empty()){
                     for (auto & card : h->getHeroItems()){
@@ -344,6 +356,7 @@ void System::saveState() {
                 }
                 file << " ";
 
+                // add current place name
                 if (h->getCurrentPlace()){
                     file << h->getCurrentPlace()->getName();
                 } else {

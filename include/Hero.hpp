@@ -16,6 +16,7 @@ class Archaeologist;
 class System;
 class HeroBase {
     int actionCount;
+    std::string playerName;
     std::string heroName;
     std::vector<Item> heroItems;
     std::vector<Perk> heroPerks;
@@ -29,6 +30,8 @@ public:
     void setLastPlayed(std::string_view p) { this->last_played_perk_ = p; }
     HeroBase(const int &_num , std::string_view _name , const Perk &perk);
     int getActionCount();
+    const std::string &getPlayerName() const;
+    void setPlayerName(const std::string &playerName);
     void setActionCount(const int &num);
     std::string getHeroName();
     void deleteItem(std::string_view itemName);

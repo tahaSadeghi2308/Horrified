@@ -105,6 +105,13 @@ void HeroBase::speciallAction(System* sys, int& pageNumber, int &actions, const 
     }
 }
 
+const string &HeroBase::getPlayerName() const {
+    return playerName;
+}
+
+void HeroBase::setPlayerName(const string &playerName) {
+    HeroBase::playerName = playerName;
+}
 
 void Archaeologist::speciallAction(System* sys,int& pageNumber, int &actions,const int SCREEN_WIDTH,const int SCREEN_HEIGHT)
 {

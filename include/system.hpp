@@ -75,7 +75,7 @@ public:
     void killMonster(std::shared_ptr<MonsterBase> monst);
     void killVillager(std::shared_ptr<Villager> vill);
     void placeWithMaxItem();
-    void setHeroInitLoacation(std::vector<std::string> heroNameList);
+    void setHeroInitLoacation(std::vector<std::pair<std::string , std::string>> heroNameList);
     std::vector<std::shared_ptr<MonsterBase>> getAllMonsters() { return allMonsters; }    
     std::vector<std::shared_ptr<HeroBase>> getAllHeros() { return {arch , mayor}; }
     std::vector<std::shared_ptr<Place>> getAllLocations() { return this->allLocations; } 
