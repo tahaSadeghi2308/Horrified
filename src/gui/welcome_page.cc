@@ -28,7 +28,7 @@ void WelcomePage::update(std::shared_ptr<HeroBase> &cHero, int &actions, PageNum
     
     if (CheckCollisionPointRec(mouse, start)) {
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-            cPage = PageNumbers::HERO_PHASE_PAGE;
+            cPage = PageNumbers::PLAYER_SETUP_PAGE;
         }
     }
     else if (CheckCollisionPointRec(mouse, load)) {

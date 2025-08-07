@@ -448,8 +448,8 @@ void System::loadState(const int folderNumber) {
 
     // Insert items in right place which was
     // TEST : [ ]
-    ifstream locations(folderPath / "locations.txt");
     unordered_map<string , vector<int>> locsData;
+    ifstream locations(folderPath / "locations.txt");
     if (locations.is_open()){
         string line;
         while (getline(locations , line)){
@@ -460,12 +460,12 @@ void System::loadState(const int folderNumber) {
                 if (ids != "_"){
                     vector<int> int_ids;
                     stringstream ss(ids);
-                    while(ss , x , '_') int_ids.push_back(stoi(x));
+                    while(getline(ss , x , '_')) int_ids.push_back(stoi(x));
                     locsData[placeName] = int_ids;
                 }
             }
         }
-        locations.is_open();
+        locations.close();
     }
     for (auto &[placeName , int_ids] : locsData){
         shared_ptr<Place> place {nullptr};
@@ -531,7 +531,7 @@ void System::loadState(const int folderNumber) {
     if (monsterCard.is_open()){
         string line , x; getline(monsterCard , line);
         stringstream ss(line);
-        while(ss , x , '_') validCards.push_back(stoi(x));
+        while(getline(ss , x , '_')) validCards.push_back(stoi(x));
         monsterCard.close();
     }
     for (auto &card : this->monsterDeck->getCards()){

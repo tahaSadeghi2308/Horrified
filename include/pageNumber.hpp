@@ -13,7 +13,8 @@ enum PageNumbers {
     PLAYPERK_PAGE = 7,
     HELP_PAGE = 8,
     MONSTERPHASE_PAGE = 10,
-    WELCOME_PAGE = 11
+    WELCOME_PAGE = 11,
+    PLAYER_SETUP_PAGE = 12
 };
 
 #endif

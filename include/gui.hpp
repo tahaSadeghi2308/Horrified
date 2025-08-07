@@ -11,6 +11,7 @@
 #include <fmt/core.h>
 #include "pageNumber.hpp"
 #include <unordered_set>
+#include <utility>
 
 class System;
 class HeroBase;
@@ -36,7 +37,7 @@ class Gui final {
     Texture2D coffins;
     Texture2D smahsedCoffins;
     //about game loop
-    std::vector<std::string> playerPriority;
+    std::vector<std::pair<std::string, int>> playerPriority;
     PageNumbers pageNumber ;
     int isEnd;
     int round;

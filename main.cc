@@ -29,7 +29,6 @@ int main(){
     System *s = new System();
     Gui t(s,SCREEN_WIDTH,SCREEN_HEIGHT);
     t.run();
-    if (s) delete s;
-    
+
     return 0;
 }

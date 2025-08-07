@@ -6,6 +6,7 @@
 #include "gui/guide_page.hpp"
 #include "gui/welcome_page.hpp"
 #include "gui/monster_page.hpp"
+#include "gui/player_setup_page.hpp"
 
 using namespace std;
 
@@ -18,8 +19,8 @@ Gui::Gui(System *s,const int width,const int height):sys(s),scroll(0.0f),SCREEN_
     // gameMap = LoadTexture("../../Horrified_Assets/map.png");
     GameFont = LoadFont("../Horrified_Assets/Melted.ttf");
     sys->setFont(GameFont);
-    this->playerPriority.push_back("archaeologist"); //for test (needs welcom page)
-    this->playerPriority.push_back("mayor");
+//    this->playerPriority.push_back("archaeologist"); //for test (needs welcom page)
+//    this->playerPriority.push_back("mayor");
     float pad = 20;
     float panelH = (SCREEN_HEIGHT / 9) - 25 , panelW = LEFT_PANEL_WIDTH - (2*pad);
     moveRec = { pad , pad , panelW , panelH };
@@ -39,7 +40,8 @@ Gui::Gui(System *s,const int width,const int height):sys(s),scroll(0.0f),SCREEN_
         { PageNumbers::PICKUP_PAGE , make_shared<PickupPage>(GameFont , s)},
         { PageNumbers::GUIDE_PAGE , make_shared<GuidePage>(GameFont , s)},
         { PageNumbers::WELCOME_PAGE , make_shared<WelcomePage>()},
-        { PageNumbers::MONSTERPHASE_PAGE , make_shared<MonsterPhasePage>(GameFont , s)}
+        { PageNumbers::MONSTERPHASE_PAGE , make_shared<MonsterPhasePage>(GameFont , s)},
+        { PageNumbers::PLAYER_SETUP_PAGE , make_shared<PlayerSetupPage>(this->playerPriority)}
     };
 }
 
@@ -50,17 +52,24 @@ void Gui::run() {
             sys = nullptr;
             break;
         }
-        if (currentHero == nullptr) {
-            string name = playerPriority[round % playerPriority.size()];
+        if (currentHero == nullptr && !playerPriority.empty()) {
+//            string name = playerPriority[round % playerPriority.size()].first;
+            string name = "mayor";
             for (auto& h : sys->getAllHeros()) {
                 if (h->getHeroName() == name) { currentHero = h; break; }
             }
-            actions = currentHero->getActionCount();
-            doNextPhase = true;
-            // pageNumber = PageNumbers::HERO_PHASE_PAGE;
+            if (currentHero != nullptr) {
+                actions = currentHero->getActionCount();
+                doNextPhase = true;
+            }
         }
         BeginDrawing();
         if (this->pageNumber == PageNumbers::HERO_PHASE_PAGE){
+            ClearBackground(BLACK);
+            pages[this->pageNumber]->draw(currentHero , actions , pageNumber);
+            pages[this->pageNumber]->update(currentHero , actions , pageNumber);
+        }
+        else if (this->pageNumber == PageNumbers::WELCOME_PAGE || this->pageNumber == PageNumbers::PLAYER_SETUP_PAGE) {
             ClearBackground(BLACK);
             pages[this->pageNumber]->draw(currentHero , actions , pageNumber);
             pages[this->pageNumber]->update(currentHero , actions , pageNumber);
