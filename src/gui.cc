@@ -8,6 +8,7 @@
 #include "gui/monster_page.hpp"
 #include "gui/player_setup_page.hpp"
 #include "gui/advanced_page.hpp"
+#include "gui/defeat_page.hpp"
 
 using namespace std;
 
@@ -40,7 +41,8 @@ Gui::Gui(System *s,const int width,const int height):sys(s),scroll(0.0f),SCREEN_
         { PageNumbers::WELCOME_PAGE , make_shared<WelcomePage>()},
         { PageNumbers::MONSTERPHASE_PAGE , make_shared<MonsterPhasePage>(GameFont , s)},
         { PageNumbers::PLAYER_SETUP_PAGE , make_shared<PlayerSetupPage>(this->playerPriority)},
-        { PageNumbers::ADVANCED_PAGE , make_shared<AdvancedPage>(GameFont , s)}
+        { PageNumbers::ADVANCED_PAGE , make_shared<AdvancedPage>(GameFont , s)},
+        { PageNumbers::DEFEAT_PAGE , make_shared<DefeatPage>(GameFont , s)}
     };
 }
 

@@ -29,6 +29,7 @@ set(
     src/gui/welcome_page.cc
     src/gui/monster_page.cc
     src/gui/player_setup_page.cc
+    src/gui/defeat_page.cc
 )
 
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})
