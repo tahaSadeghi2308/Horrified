@@ -16,7 +16,6 @@ Gui::Gui(System *s,const int width,const int height):sys(s),scroll(0.0f),SCREEN_
     pageNumber = PageNumbers::WELCOME_PAGE;
     isEnd = -1;
     round = 0;
-    // gameMap = LoadTexture("../../Horrified_Assets/map.png");
     GameFont = LoadFont("../Horrified_Assets/Melted.ttf");
     sys->setFont(GameFont);
 //    this->playerPriority.push_back("archaeologist"); //for test (needs welcom page)

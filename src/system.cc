@@ -125,6 +125,15 @@ System::System(){
     }
     allMonsters.push_back(dracula);
     allMonsters.push_back(invisibleMan);
+
+
+    // NOTE : just for test is here 
+    this->setHeroInitLoacation(
+        {
+            {"taha" , "mayor"},
+            {"seyyed" , "scientist"}
+        }
+    );
 }
 
 void System::setHeroInitLoacation(vector<pair<string , string>> heroNameList) {
