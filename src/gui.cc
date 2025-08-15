@@ -7,6 +7,7 @@
 #include "gui/welcome_page.hpp"
 #include "gui/monster_page.hpp"
 #include "gui/player_setup_page.hpp"
+#include "gui/advanced_page.hpp"
 
 using namespace std;
 
@@ -31,8 +32,6 @@ Gui::Gui(System *s,const int width,const int height):sys(s),scroll(0.0f),SCREEN_
     PerkRec = { pad , DefeatRec.y + pad + panelH , panelW ,panelH };
     exitANDsave = { pad , PerkRec.y + pad + panelH , panelW , panelH};
     Help = {pad , exitANDsave.y + pad + panelH , panelW , panelH };
-    // coffins = LoadTexture("../../Horrified_Assets/Items/Coffins/Coffin.png");
-    // smahsedCoffins = LoadTexture("../../Horrified_Assets/Items/Coffins/SmashedCoffin.png");
     pages = {
         { PageNumbers::HERO_PHASE_PAGE , make_shared<HeroPhasePage>(GameFont , s)},
         { PageNumbers::MOVE_PAGE , make_shared<MovePage>(GameFont , s)},
@@ -40,7 +39,8 @@ Gui::Gui(System *s,const int width,const int height):sys(s),scroll(0.0f),SCREEN_
         { PageNumbers::GUIDE_PAGE , make_shared<GuidePage>(GameFont , s)},
         { PageNumbers::WELCOME_PAGE , make_shared<WelcomePage>()},
         { PageNumbers::MONSTERPHASE_PAGE , make_shared<MonsterPhasePage>(GameFont , s)},
-        { PageNumbers::PLAYER_SETUP_PAGE , make_shared<PlayerSetupPage>(this->playerPriority)}
+        { PageNumbers::PLAYER_SETUP_PAGE , make_shared<PlayerSetupPage>(this->playerPriority)},
+        { PageNumbers::ADVANCED_PAGE , make_shared<AdvancedPage>(GameFont , s)}
     };
 }
 
@@ -52,7 +52,6 @@ void Gui::run() {
             break;
         }
         if (currentHero == nullptr && !playerPriority.empty()) {
-//            string name = playerPriority[round % playerPriority.size()].first;
             string name = "mayor";
             for (auto& h : sys->getAllHeros()) {
                 if (h->getHeroName() == name) { currentHero = h; break; }
@@ -794,10 +793,8 @@ void Gui::advancedPhase(std::shared_ptr<HeroBase>& hero,int &actions)
             {
                 vector<Item> redItems;
                 int itemsPowerSum = 0;
-                for(auto i : hero->getHeroItems()) 
-                {
-                    if (i.color == card::Color::R) 
-                    { 
+                for(auto i : hero->getHeroItems()) {
+                    if (i.color == card::Color::R) { 
                         redItems.push_back(i); 
                         itemsPowerSum += i.power;
 
@@ -865,12 +862,11 @@ void Gui::advancedPhase(std::shared_ptr<HeroBase>& hero,int &actions)
                         }
                     }
                 }
-}
+            }
     }
     else if(option == 2)
     {
-        if(hero->getCurrentPlace()->getName() == "precinct")
-        {
+        if(hero->getCurrentPlace()->getName() == "precinct") {
             bool check{true};
             vector<Item> validItems;
             for(auto& evi:sys->getEvidence())
@@ -1000,8 +996,7 @@ void Gui::advancedPhase(std::shared_ptr<HeroBase>& hero,int &actions)
     }
 }
 
-void Gui::defeatPhase(std::shared_ptr<HeroBase>& hero , int &actions)
-{
+void Gui::defeatPhase(std::shared_ptr<HeroBase>& hero , int &actions){
     static int option = -1;
     Vector2 mouse = GetMousePosition();
     static bool showErr = false;

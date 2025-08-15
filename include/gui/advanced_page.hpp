@@ -10,7 +10,7 @@ class HeroBase;
 class AdvancedPage final : public PageBase {
     Font font;
     System *sys;
-    int option;
+    int option , redPower {0};
     bool showErr;
     float time;
     std::string errText;
