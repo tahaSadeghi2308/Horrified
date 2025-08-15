@@ -77,7 +77,7 @@ public:
     void placeWithMaxItem();
     void setHeroInitLoacation(std::vector<std::pair<std::string , std::string>> heroNameList);
     std::vector<std::shared_ptr<MonsterBase>> getAllMonsters() { return allMonsters; }    
-    std::vector<std::shared_ptr<HeroBase>> getAllHeros() { return {arch , mayor}; }
+    std::vector<std::shared_ptr<HeroBase>> getAllHeros() { return { arch , mayor , scientist , courier}; }
     std::vector<std::shared_ptr<Place>> getAllLocations() { return this->allLocations; } 
     std::vector<std::shared_ptr<Villager>> getAllVillagers () { return this->allVillagers; } 
     std::vector<std::string> getCoffins() {return this->coffins; }

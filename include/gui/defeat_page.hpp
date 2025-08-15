@@ -13,7 +13,7 @@ class DefeatPage final : public PageBase {
     int option , YellowPower , redPower;
     bool showErr;
     float time;
-    string errText;
+    std::string errText;
     bool PowerCheck;
 public:
     DefeatPage(const Font &f , System *s);

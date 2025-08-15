@@ -219,8 +219,8 @@ void HeroPhasePage::update(shared_ptr<HeroBase> &cHero ,int &actions , PageNumbe
     }
     else if(CheckCollisionPointRec(mouse , DefeatRec)){
          DrawRectangleLinesEx(DefeatRec, 8 ,DARKGREEN);
-        // if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-        // pageNumber = PageNumbers::DEFEAT_PAGE;
+        if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+            cPage = PageNumbers::DEFEAT_PAGE;
     }
     else if(CheckCollisionPointRec(mouse , this->exitANDsave)){
         DrawRectangleLinesEx(this->exitANDsave, 8 ,DARKGREEN);
@@ -230,13 +230,13 @@ void HeroPhasePage::update(shared_ptr<HeroBase> &cHero ,int &actions , PageNumbe
     }
     else if(CheckCollisionPointRec(mouse , speciallRec)){
          DrawRectangleLinesEx(speciallRec, 8 ,DARKGREEN);
-        // if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-        // pageNumber = PageNumbers::SPECIALACTION_PAGE;
+        if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+            cPage = PageNumbers::SPECIALACTION_PAGE;
     }
     else if(CheckCollisionPointRec(mouse , PerkRec)){
         DrawRectangleLinesEx(PerkRec, 8 ,DARKGREEN);
-        // if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-        // pageNumber = PageNumbers::PLAYPERK_PAGE;
+        if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+            cPage = PageNumbers::PLAYPERK_PAGE;
     }
 }
 
