@@ -7,6 +7,7 @@
 #include "gui/welcome_page.hpp"
 #include "gui/monster_page.hpp"
 #include "gui/player_setup_page.hpp"
+#include "gui/hero_selection_page.hpp"
 #include "gui/advanced_page.hpp"
 #include "gui/defeat_page.hpp"
 #include "gui/perk_page.hpp"
@@ -42,6 +43,7 @@ Gui::Gui(System *s,const int width,const int height):sys(s),scroll(0.0f),SCREEN_
         { PageNumbers::WELCOME_PAGE , make_shared<WelcomePage>()},
         { PageNumbers::MONSTERPHASE_PAGE , make_shared<MonsterPhasePage>(GameFont , s)},
         { PageNumbers::PLAYER_SETUP_PAGE , make_shared<PlayerSetupPage>(this->playerPriority)},
+        { PageNumbers::HERO_SELECTION_PAGE , make_shared<HeroSelectionPage>(this->playerPriority, this->mainPri, s)},
         { PageNumbers::ADVANCED_PAGE , make_shared<AdvancedPage>(GameFont , s)},
         { PageNumbers::DEFEAT_PAGE , make_shared<DefeatPage>(GameFont , s)} ,
         { PageNumbers::PLAYPERK_PAGE , make_shared<PerkPage>(GameFont , s , doNextPhase)} 
@@ -55,10 +57,10 @@ void Gui::run() {
             sys = nullptr;
             break;
         }
-        if (currentHero == nullptr && !playerPriority.empty()) {
-            string name = "mayor";
+        if (currentHero == nullptr && !mainPri.empty()) {
+            string currentHeroName = mainPri[round % mainPri.size()].second;
             for (auto& h : sys->getAllHeros()) {
-                if (h->getHeroName() == name) { currentHero = h; break; }
+                if (h->getHeroName() == currentHeroName) { currentHero = h; break; }
             }
             if (currentHero != nullptr) {
                 actions = currentHero->getActionCount();
@@ -71,7 +73,7 @@ void Gui::run() {
             pages[this->pageNumber]->draw(currentHero , actions , pageNumber);
             pages[this->pageNumber]->update(currentHero , actions , pageNumber);
         }
-        else if (this->pageNumber == PageNumbers::WELCOME_PAGE || this->pageNumber == PageNumbers::PLAYER_SETUP_PAGE) {
+        else if (this->pageNumber == PageNumbers::WELCOME_PAGE || this->pageNumber == PageNumbers::PLAYER_SETUP_PAGE || this->pageNumber == PageNumbers::HERO_SELECTION_PAGE) {
             ClearBackground(BLACK);
             pages[this->pageNumber]->draw(currentHero , actions , pageNumber);
             pages[this->pageNumber]->update(currentHero , actions , pageNumber);
@@ -309,12 +311,12 @@ void Gui::handleInput()
         if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         pageNumber = PageNumbers::DEFEAT_PAGE;
     }
-    else if(CheckCollisionPointRec(mouse , speciallRec))
-    {
-         DrawRectangleLinesEx(speciallRec, 8 ,DARKGREEN);
-        if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-        pageNumber = PageNumbers::SPECIALACTION_PAGE;
-    }
+    // else if(CheckCollisionPointRec(mouse , speciallRec))
+    // {
+    //      DrawRectangleLinesEx(speciallRec, 8 ,DARKGREEN);
+    //     if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+    //     pageNumber = PageNumbers::SPECIALACTION_PAGE;
+    // }
     else if(CheckCollisionPointRec(mouse , PerkRec))
     {
         DrawRectangleLinesEx(PerkRec, 8 ,DARKGREEN);
@@ -1689,6 +1691,5 @@ Gui::~Gui()
     UnloadFont(GameFont);
     UnloadTexture(coffins);
     UnloadTexture(smahsedCoffins);
-
     CloseWindow();
 }

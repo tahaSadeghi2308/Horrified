@@ -38,6 +38,7 @@ class Gui final {
     Texture2D smahsedCoffins;
     //about game loop
     std::vector<std::pair<std::string, int>> playerPriority;
+    std::vector<std::pair<std::string, std::string>> mainPri; // player name, hero name
     PageNumbers pageNumber ;
     int isEnd;
     int round;

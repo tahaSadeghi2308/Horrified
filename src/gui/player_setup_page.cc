@@ -146,7 +146,7 @@ void PlayerSetupPage::update(shared_ptr<HeroBase> &cHero, int &actions, PageNumb
     if (CheckCollisionPointRec(mouse, startGameButton)) {
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
             if (players.size() == 2) {
-                cPage = PageNumbers::HERO_PHASE_PAGE;
+                cPage = PageNumbers::HERO_SELECTION_PAGE;
             }
         }
     }
