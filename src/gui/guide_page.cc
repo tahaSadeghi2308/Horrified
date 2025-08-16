@@ -174,10 +174,32 @@ void GuidePage::draw(shared_ptr<HeroBase> &cHero, int &actions, PageNumbers &cPa
     else {
         float panelW = 840 , panelH = 100  , padding = 10;
         float fontSize = 35 ;
-        Rectangle panel = {(SCREEN_WIDTH - panelW) / 2 ,(SCREEN_HEIGHT - panelH) / 2 , panelW , panelH};
+        // Rectangle panel = {(SCREEN_WIDTH - panelW) / 2 ,(SCREEN_HEIGHT - panelH) / 2 , panelW , panelH};
+        float borderThickness = 2.0f; // Thin border
+
+        Rectangle panel = {
+                (SCREEN_WIDTH - panelW) / 2.0f,
+                (SCREEN_HEIGHT - panelH) / 2.0f,
+                panelW,
+                panelH
+            };
+        
+        Color backgroundColor = CLITERAL(Color){ 62, 95, 68, 255 };     // #3E5F44
+        Color borderColor = CLITERAL(Color){ 232, 255, 215, 255 }; 
+        
+        Rectangle innerRect = {
+            panel.x + borderThickness,
+            panel.y + borderThickness,
+            panel.width - 2 * borderThickness,
+            panel.height - 2 * borderThickness
+        };
+        
+        DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, {0,0,0,100});
+        DrawRectangleRounded(panel, 0.15f, 0, backgroundColor);
+        DrawRectangleRounded(innerRect, 0.15F, 0, borderColor);
         string bring = "You can bring a villager to your location.";
         string put = "You can put a villager from your place to a neighbor location.";
-        DrawRectangleRec(panel,DARKGRAY);
+        // DrawRectangleRec(panel,DARKGRAY);
         Color bringHover = BLACK;
         Color putHover = BLACK;
         Vector2 bringPos = {panel.x + padding,panel.y + padding };
