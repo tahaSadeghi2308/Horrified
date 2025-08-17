@@ -39,7 +39,7 @@ void HeroSelectionPage::addPlayerHero() {
 
 void HeroSelectionPage::drawHeroOptions() {
     Vector2 mouse = GetMousePosition();
-    auto heroes = sys->getAllHeros();
+    auto heroes = sys->getAllHerosAvailable();
     
     float heroSize = 150;
     float spacing = 50;
@@ -126,7 +126,7 @@ void HeroSelectionPage::update(shared_ptr<HeroBase> &cHero, int &actions, PageNu
     
     // Handle hero selection
     if (currentPlayerIndex < firstPri.size()) {
-        auto heroes = sys->getAllHeros();
+        auto heroes = sys->getAllHerosAvailable();
         float heroSize = 150;
         float spacing = 50;
         float totalWidth = heroes.size() * heroSize + (heroes.size() - 1) * spacing;
@@ -168,6 +168,7 @@ void HeroSelectionPage::update(shared_ptr<HeroBase> &cHero, int &actions, PageNu
             if (currentPlayerIndex >= firstPri.size()) {
                 cPage = PageNumbers::HERO_PHASE_PAGE;
                 sys->setHeroInitLoacation(mainPri);
+                sys->setAllHeros(mainPri);
             }
         }
     }

@@ -128,12 +128,6 @@ System::System(){
 
 
     // NOTE : just for test is here 
-    this->setHeroInitLoacation(
-        {
-            {"taha" , "mayor"},
-            {"seyyed" , "scientist"}
-        }
-    );
 }
 
 void System::setHeroInitLoacation(vector<pair<string , string>> heroNameList) {
@@ -231,6 +225,22 @@ void System::killMonster(shared_ptr<MonsterBase> monst){
     else if (monst->getMonsterName() == "invisibleMan") this->invisibleMan = nullptr;
     this->changeFrenzy();
 }
+
+void System::setAllHeros(vector<pair<string,string>> mainPri){
+    for (auto &name : mainPri){
+            if (name.second == "archaeologist"){
+                allHeros.push_back(arch);
+            } else if (name.second == "mayor"){
+                allHeros.push_back(mayor);
+            } else if (name.second == "scientist") {
+                allHeros.push_back(scientist);
+            } else if (name.second == "courier") {
+                allHeros.push_back(courier);
+            }
+    }
+}
+
+
 
 void System::killVillager(shared_ptr<Villager> vill){
     if (!vill) return;

@@ -24,7 +24,7 @@ class System {
     std::shared_ptr<Mayor> mayor {nullptr};
     std::shared_ptr<Scientist> scientist {nullptr};
     std::shared_ptr<Courier> courier {nullptr};
-
+    std::vector<std::shared_ptr<HeroBase>> allHeros;
     // monsters
     std::shared_ptr<Dracula> dracula;
     std::shared_ptr<InvisibleMan> invisibleMan;
@@ -77,11 +77,13 @@ public:
     void placeWithMaxItem();
     void setHeroInitLoacation(std::vector<std::pair<std::string , std::string>> heroNameList);
     std::vector<std::shared_ptr<MonsterBase>> getAllMonsters() { return allMonsters; }    
-    std::vector<std::shared_ptr<HeroBase>> getAllHeros() { return { arch , mayor , scientist , courier}; }
+    std::vector<std::shared_ptr<HeroBase>> getAllHeros() { return allHeros; }
+    std::vector<std::shared_ptr<HeroBase>> getAllHerosAvailable() { return { arch , mayor , scientist , courier}; }
     std::vector<std::shared_ptr<Place>> getAllLocations() { return this->allLocations; } 
     std::vector<std::shared_ptr<Villager>> getAllVillagers () { return this->allVillagers; } 
     std::vector<std::string> getCoffins() {return this->coffins; }
     std::vector<std::string> getEvidence() { return this->evidence;}
+    void setAllHeros(std::vector<std::pair<std::string, std::string>> mainPri);
     void saveState();
     void loadState(const int folderNumber);
     void setFont(Font gameFont) { font = gameFont ;}
