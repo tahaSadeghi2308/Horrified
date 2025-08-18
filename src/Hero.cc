@@ -79,7 +79,7 @@ void HeroBase::deletePerk(string_view perkName) {
     }
 }
 
-void HeroBase::speciallAction(System* sys, int& pageNumber, int &actions, const int SCREEN_WIDTH, const int SCREEN_HEIGHT)
+void HeroBase::speciallAction(System* sys, PageNumbers& pageNumber, int &actions, const int SCREEN_WIDTH, const int SCREEN_HEIGHT)
 {
     static double time = 0.0;
     static bool showErr = false;
@@ -113,7 +113,7 @@ void HeroBase::setPlayerName(const string &playerName) {
     HeroBase::playerName = playerName;
 }
 
-void Archaeologist::speciallAction(System* sys,int& pageNumber, int &actions,const int SCREEN_WIDTH,const int SCREEN_HEIGHT)
+void Archaeologist::speciallAction(System* sys,PageNumbers& pageNumber, int &actions,const int SCREEN_WIDTH,const int SCREEN_HEIGHT)
 {
     Vector2 mouse =GetMousePosition(); 
     static shared_ptr<Place> choosenPlace;
@@ -207,21 +207,19 @@ void Archaeologist::speciallAction(System* sys,int& pageNumber, int &actions,con
     }
 }
 
-void Courier::speciallAction(System* sys,int& pageNumber, int &actions,const int SCREEN_WIDTH,const int SCREEN_HEIGHT)
+void Courier::speciallAction(System* sys,PageNumbers& pageNumber, int &actions,const int SCREEN_WIDTH,const int SCREEN_HEIGHT)
 {
     
     Vector2 mouse = GetMousePosition(); 
     
         vector<shared_ptr<Place>> targetPlace; 
-        for(auto& otherHero : sys->getAllHeros())
-        {
-            if(otherHero->getHeroName() != getHeroName())
-            {
-                targetPlace.push_back(otherHero->getCurrentPlace());
+        for(auto& otherHero : sys->getAllHeros()){
+            if(otherHero->getHeroName() != getHeroName()){
+                if (otherHero->getCurrentPlace())
+                    targetPlace.push_back(otherHero->getCurrentPlace());
             }
         }
-        for (auto& place : targetPlace)
-        {
+        for (auto& place : targetPlace){
             Vector2 pos = place -> getPosition();
             float w = 120, h = 120;
             Rectangle rect = {pos.x - w/2, pos.y - h/2, w, h}; // we should go back and up for 1/2 of the squere

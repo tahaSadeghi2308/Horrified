@@ -43,7 +43,7 @@ public:
     std::vector<Perk> getHeroPerks()const { return heroPerks; }
     void deletePerk(std::string_view perkName);
     Texture2D getAddress() { return address;}
-    virtual void speciallAction(System *sys,int &pageNumber,int& actions,const int SCREEN_WIDTH,const int SCREEN_HEIGHT);
+    virtual void speciallAction(System *sys,PageNumbers &pageNumber,int& actions,const int SCREEN_WIDTH,const int SCREEN_HEIGHT);
     void setAddress(std::string ad) {address = LoadTexture(ad.c_str());}
     virtual ~HeroBase()
     {
@@ -54,7 +54,7 @@ public:
 class Archaeologist final : public HeroBase {
 public:
     Archaeologist(const int &_num , std::string_view _name, const Perk &perk);
-    void speciallAction(System *sys,int &pageNumber,int& actions,const int SCREEN_WIDTH,const int SCREEN_HEIGHT) override;
+    void speciallAction(System *sys,PageNumbers &pageNumber,int& actions,const int SCREEN_WIDTH,const int SCREEN_HEIGHT) override;
 };
 
 class Mayor final : public HeroBase {
@@ -65,7 +65,7 @@ public:
 class Courier final : public HeroBase {
     public :
     Courier(const int &_num , std::string_view _name , const Perk &perk);
-    void speciallAction(System *sys,int &pageNumber,int& actions,const int SCREEN_WIDTH,const int SCREEN_HEIGHT) override;
+    void speciallAction(System *sys,PageNumbers &pageNumber,int& actions,const int SCREEN_WIDTH,const int SCREEN_HEIGHT) override;
 };
 
 class Scientist final : public HeroBase {
