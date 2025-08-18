@@ -125,9 +125,6 @@ System::System(){
     }
     allMonsters.push_back(dracula);
     allMonsters.push_back(invisibleMan);
-
-
-    // NOTE : just for test is here 
 }
 
 void System::setHeroInitLoacation(vector<pair<string , string>> heroNameList) {
@@ -293,6 +290,7 @@ void System::saveState() {
     }
 
     // Villagers
+    // PATTERN : villName _/placeName\n
     ofstream villagers(folderPath / "villagers.txt");
     if (villagers.is_open()){
         for (auto& vill : this->getAllVillagers()){
@@ -528,9 +526,11 @@ void System::loadState(const int folderNumber) {
         if(!villInfo.count(vill->getName())){
             killedVillagers.push_back(vill->getName());
         } else {
-            for (auto &loc : this->getAllLocations()){
-                if (loc->getName() == villInfo[vill->getName()]){
-                    vill->changeLoc(loc);
+            if (villInfo[vill->getName()] != "_"){
+                for (auto &loc : this->getAllLocations()){
+                    if (loc->getName() == villInfo[vill->getName()]){
+                        vill->changeLoc(loc);
+                    }
                 }
             }
         }
