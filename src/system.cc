@@ -708,6 +708,53 @@ void System::loadState(const int folderNumber) {
         }
         monsterDeck->pop(index);
     }
+
+    // loading monsters
+    ifstream monsters(folderPath / "monsters.txt");
+    if (monsters.is_open()){
+        struct MonsterContainer {
+            string monsterName;
+            string placeName;
+            bool isFrezed;
+        };
+
+        MonsterContainer temp;
+        string line;
+        unordered_map<string , bool> visitedMonster = {
+                {"dracula" , false},
+                {"invisibleMan" , false}
+        };
+        while (getline(monsters , line)){
+            stringstream stream(line);
+            string x;
+            stream >> temp.monsterName >> temp.placeName >> x;
+            temp.isFrezed = (bool)(stoi(x));
+            if (temp.monsterName == "dracula") {
+                dracula->changeFrenzedState(temp.isFrezed);
+                for (auto& loc : this->getAllLocations()){
+                    if (loc->getName() == temp.placeName){
+                        dracula->setCurrentLocation(loc);
+                    }
+                }
+                visitedMonster["dracula"] = true;
+            } else {
+                invisibleMan->changeFrenzedState(temp.isFrezed);
+                for (auto& loc : this->getAllLocations()){
+                    if (loc->getName() == temp.placeName){
+                        invisibleMan->setCurrentLocation(loc);
+                    }
+                }
+                visitedMonster["invisibleMan"] = true;
+            }
+        }
+        for (auto& [monsterName , visited] : visitedMonster) {
+            if (!visited) {
+                if (monsterName == "dracula") this->killMonster(dracula);
+                else this->killMonster(invisibleMan);
+            }
+        }
+        monsters.close();
+    }
 }
 
 void System::moveMonster(shared_ptr<MonsterBase> monst , shared_ptr<Place> newPlace){
