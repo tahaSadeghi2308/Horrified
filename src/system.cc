@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <queue>
 #include <filesystem>
+#include <algorithm>
 
 using namespace std;
 namespace fs = std::filesystem;
@@ -339,49 +340,56 @@ void System::saveState() {
     // heroes
     fs::create_directories(folderPath / "heroes");
     for (auto &h : this->getAllHeros()) {
-        if (h) {
-            string filename = h->getHeroName() + ".txt";
-            fs::path fullPath = folderPath / "heroes" / filename;
-            ofstream file(fullPath);
-            if (file.is_open()){
-                file << h->getHeroName() << " ";
-                // collect perk ids
-                if (!h->getHeroPerks().empty()){
-                    for (auto & card : h->getHeroPerks()){
-                        file << card.id << "_";
-                    }
-                } else {
-                    file << "_";
-                }
-                file << " ";
+        string filename = h->getHeroName() + ".txt";
+        fs::path fullPath = folderPath / "heroes" / filename;
+        ofstream file(fullPath);
+        /*
+         * saving PATTERN:
+         * heroName
+         * perkID or _
+         * playerName or _
+         * itemID or _
+         * placeName or _
+         */
+        if (file.is_open()){
+            file << h->getHeroName() << "\n";
 
-                // add player name
-                if (!h->getPlayerName().empty()){
-                    file << h->getPlayerName();
-                } else {
-                    file << "_";
+            // collect perk ids
+            if (!h->getHeroPerks().empty()){
+                for (auto & card : h->getHeroPerks()){
+                    file << card.id << "_";
                 }
-                file << " ";
-
-                // collect item ids
-                if (!h->getHeroItems().empty()){
-                    for (auto & card : h->getHeroItems()){
-                        file << card.id << "_";
-                    }
-                } else {
-                    file << "_";
-                }
-                file << " ";
-
-                // add current place name
-                if (h->getCurrentPlace()){
-                    file << h->getCurrentPlace()->getName();
-                } else {
-                    file << "_";
-                }
-                file << '\n';
-                file.close();
+            } else {
+                file << "_";
             }
+            file << "\n";
+
+            // add player name
+            if (!h->getPlayerName().empty()){
+                file << h->getPlayerName();
+            } else {
+                file << "_";
+            }
+            file << "\n";
+
+            // collect item ids
+            if (!h->getHeroItems().empty()){
+                for (auto & card : h->getHeroItems()){
+                    file << card.id << "_";
+                }
+            } else {
+                file << "_";
+            }
+            file << "\n";
+
+            // add current place name
+            if (h->getCurrentPlace()){
+                file << h->getCurrentPlace()->getName();
+            } else {
+                file << "_";
+            }
+            file << '\n';
+            file.close();
         }
     }
 
@@ -456,10 +464,116 @@ void System::loadState(const int folderNumber) {
 
     // clear map from its normal distro !!!!
     for (auto &loc : this->getAllLocations()) {
+        vector<Item> tempItems;
         for (auto i : loc->getItems()){
-            auto temp = i;
-            loc->removeItem(temp);
-            itemBag->push(temp); 
+            tempItems.push_back(i);
+            itemBag->push(i);
+        }
+        for (auto i : tempItems){
+            loc->removeItem(i);
+        }
+    }
+
+    /*
+     * saving PATTERN:
+     * heroName
+     * perkID or _ : 0
+     * playerName or _ : 1
+     * itemID or _ : 2
+     * placeName or _ : 3
+     */
+    // loading heroes
+    unordered_map<int , bool> IDs;
+    generate_n (
+        inserter(IDs, IDs.end()),
+        20 , // perk count
+        [ n = 1 ] () mutable {
+            return make_pair(n++ , false);
+        }
+    );
+    for (auto &h : this->getAllHeros()) {
+        string filename = h->getHeroName() + ".txt";
+        fs::path fullPath = folderPath / "heroes" / filename;
+        ifstream file(fullPath);
+        if (file.is_open()){
+            string heroData[4];
+            for (short lineNumber {}; lineNumber < 5; lineNumber++){
+                if (lineNumber == 0) continue; // pass first line
+                else {
+                    getline(file , heroData[lineNumber - 1]);
+                }
+            }
+
+            // proccess placeName
+            string placeName { heroData[3] };
+            if (placeName != "_"){
+                for (auto& loc : this->getAllLocations()){
+                    if (loc->getName() == placeName) {
+                        h->setCurrentPlace(loc);
+                        break;
+                    }
+                }
+            }
+
+            // process perks
+            // -- clear init perks
+            vector<Perk> initPerks;
+            for (auto& p : h->getHeroPerks()) initPerks.push_back(p);
+            for (auto& p : initPerks) {
+                h->deletePerk(p.name);
+                perkDeck->push(p);
+            }
+
+            if (heroData[1] != "_"){
+                string x;
+                stringstream perkStream( heroData[1] );
+                while(getline(perkStream , x , '_')) IDs[stoi(x)] = true;
+                for (auto& [id , visited] : IDs) {
+                    if (visited) {
+                        int index {};
+                        Perk temp;
+                        for (auto& p : perkDeck->getCards()){
+                            if (p.id == id) {
+                                temp = p;
+                                break;
+                            } else index++;
+                        }
+                        perkDeck->pop(index);
+                        h->addPerkCard(temp);
+                    }
+                }
+            }
+
+            // process items
+            if (heroData[2] != "_"){
+                vector<Item> thisHeroItems;
+                string x;
+                stringstream itemStream( heroData[2] );
+                while(getline(itemStream , x , '_')){
+                    int item_id { stoi(x) };
+                    for (auto& i : itemBag->getCards()){
+                        if (i.id == item_id){
+                            thisHeroItems.push_back(i);
+                            h->addHeroItems(i);
+                        }
+                    }
+                    for (auto& i : thisHeroItems){
+                        int index {};
+                        for (auto& item : itemBag->getCards()){
+                            if (item.id == i.id) break;
+                            else index++;
+                        }
+                        itemBag->pop(index);
+                    }
+                }
+            }
+
+            // set player name
+            if ( heroData[1] != "_" ){
+                h->setPlayerName(heroData[1]);
+            }
+
+            file.close();
         }
     }
 
@@ -504,6 +618,29 @@ void System::loadState(const int folderNumber) {
             }
             place->addItem(i);
             itemBag->pop(index);
+        }
+    }
+
+    // loading perks
+    ifstream perkCards(folderPath / "perk_cards.txt");
+    if (perkCards.is_open()){
+        string line; getline(perkCards , line);
+        stringstream stream(line);
+        string x;
+        while (getline(stream , x , '_')){
+            IDs[stoi(x)] = true;
+        }
+        perkCards.close();
+    }
+    for (auto& [id , isVisited] : IDs){
+        if (!isVisited) {
+            int index {};
+            for (auto& p : perkDeck->getCards()){
+                if (p.id == id) {
+                    break;
+                } else index++;
+            }
+            perkDeck->pop(index);
         }
     }
 
