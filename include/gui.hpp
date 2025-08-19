@@ -65,6 +65,8 @@ public:
     explicit Gui(System *s, const int ,const int);
     void run();
     void handleInput();
+    void saveState();
+    void loadState(const int folderNumber);
     void movingAsset(std::shared_ptr<Place>& destination);
     void advancedPhase(std::shared_ptr<HeroBase>& hero,int &actions);
     void drawMap();

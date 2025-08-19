@@ -238,8 +238,6 @@ void System::setAllHeros(vector<pair<string,string>> mainPri){
     }
 }
 
-
-
 void System::killVillager(shared_ptr<Villager> vill){
     if (!vill) return;
     for (auto& loc : this->allLocations) {

@@ -11,8 +11,10 @@
 #include "gui/advanced_page.hpp"
 #include "gui/defeat_page.hpp"
 #include "gui/perk_page.hpp"
+#include <filesystem>
 
 using namespace std;
+namespace fs = std::filesystem;
 
 Gui::Gui(System *s,const int width,const int height):sys(s),scroll(0.0f),SCREEN_WIDTH(width),SCREEN_HEIGHT(height)
 {
@@ -321,12 +323,6 @@ void Gui::handleInput()
         if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         pageNumber = PageNumbers::DEFEAT_PAGE;
     }
-    // else if(CheckCollisionPointRec(mouse , speciallRec))
-    // {
-    //      DrawRectangleLinesEx(speciallRec, 8 ,DARKGREEN);
-    //     if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-    //     pageNumber = PageNumbers::SPECIALACTION_PAGE;
-    // }
     else if(CheckCollisionPointRec(mouse , PerkRec))
     {
         DrawRectangleLinesEx(PerkRec, 8 ,DARKGREEN);
@@ -418,7 +414,60 @@ void Gui::PlaceInfo(shared_ptr<Place> selected)
     }
     EndScissorMode();
 }
-    
+
+void Gui::saveState() {
+    vector<string> dirNames;
+    for (const auto& entry : fs::directory_iterator("../data/after_game/")) {
+        if (entry.is_directory()) {
+            dirNames.push_back(entry.path().filename().string());
+        }
+    }
+    fs::path folderPath = fs::path("../data/after_game") / dirNames.back();
+    /*
+     * saving pattern:
+     * 0 : page_number
+     * 1 : current remaining actions count
+     * 2 : round
+     * 3 : mainpri data
+     * */
+    ofstream file(folderPath / "util.txt");
+    if (file.is_open()) {
+        file << this->pageNumber << "\n";
+        file << this->actions << "\n";
+        file << this->round << '\n';
+        for (auto& [ playerName , heroName] : this->mainPri){
+            file << playerName << "_" << heroName << "_";
+        }
+        file << '\n';
+        file.close();
+    }
+}
+
+void Gui::loadState(const int folderNumber) {
+    const int DATA_ROW_COUNT {4};
+    fs::path folderPath = fs::path("../data/after_game") / to_string(folderNumber);
+
+    // load data
+    string loadedData[DATA_ROW_COUNT];
+    ifstream file(folderPath / "util.txt");
+    if (file.is_open()) {
+        for (int i {}; i < DATA_ROW_COUNT; i++) {
+            getline(file , loadedData[i]);
+        }
+        file.close();
+    }
+    pageNumber = static_cast<PageNumbers>(stoi(loadedData[0]));
+    actions = stoi(loadedData[1]);
+    round = stoi(loadedData[2]);
+    vector<string> temp;
+    stringstream stream(loadedData[3]);
+    string x;
+    while (getline(stream , x , '_')) temp.push_back(x);
+    for (int i {}; i < temp.size(); i += 2) {
+        this->mainPri.emplace_back(temp[i], temp[i + 1]);
+    }
+}
+
 void Gui::MovePhase(std::shared_ptr<HeroBase>& hero, int &actions)
 {
     static bool isThereVillager = false;
