@@ -497,13 +497,16 @@ void System::loadState(const int folderNumber) {
 
             // proccess placeName
             string placeName { heroData[3] };
+            shared_ptr<Place> curPlace {nullptr};
             if (placeName != "_"){
                 for (auto& loc : this->getAllLocations()){
                     if (loc->getName() == placeName) {
                         h->setCurrentPlace(loc);
+                        curPlace = loc;
                         break;
                     }
                 }
+                curPlace->addHero(h);
             }
 
             // process perks
@@ -569,6 +572,8 @@ void System::loadState(const int folderNumber) {
             if ( heroData[1] != "_" ){
                 h->setPlayerName(heroData[1]);
             }
+
+
 
             file.close();
         }

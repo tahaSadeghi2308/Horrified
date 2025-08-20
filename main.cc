@@ -3,6 +3,7 @@
 #include <iostream>
 #include "system.hpp"
 #include <fmt/core.h>
+#include <thread>
 
 using namespace std;
 
@@ -26,7 +27,7 @@ int main(){
 
     EndDrawing();
 
-    System *s = new System();
+    System *s;
     Gui t(s,SCREEN_WIDTH,SCREEN_HEIGHT);
     t.run();
 
