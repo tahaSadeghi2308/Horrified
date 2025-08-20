@@ -27,7 +27,7 @@ int main(){
 
     EndDrawing();
 
-    System *s;
+    System *s = new System();
     Gui t(s,SCREEN_WIDTH,SCREEN_HEIGHT);
     t.run();
 
