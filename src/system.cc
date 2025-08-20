@@ -224,6 +224,8 @@ void System::killMonster(shared_ptr<MonsterBase> monst){
     this->changeFrenzy();
 }
 
+void System::setTerrorLevel (int level) { this->terrorLevel = level; }
+
 void System::setAllHeros(vector<pair<string,string>> mainPri){
     for (auto &name : mainPri){
             if (name.second == "archaeologist"){

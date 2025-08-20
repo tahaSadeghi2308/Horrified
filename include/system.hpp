@@ -62,6 +62,7 @@ public:
     void addItem(Item i);
     int getTerrorLevel() const;
     void increaseTerrorLevel();
+    void setTerrorLevel (int level);
     Perk getRandomPerk();
     Item getRandomItem();
     MonsterCard getRandomMonstCard();

@@ -90,7 +90,7 @@ void Gui::run() {
             pages[this->pageNumber]->update(currentHero , actions , pageNumber);
         }
         else if (this->pageNumber == PageNumbers::SPECIALACTION_PAGE) {
-            if (currentHero->getHeroName() == "archaeologist" || currentHero->getHeroName() == "courier"){
+            if (currentHero->getHeroName() == "archaeologist" || currentHero->getHeroName() == "scientist"){
                 ClearBackground(BLACK);
                 pages[PageNumbers::HERO_PHASE_PAGE]->draw(currentHero , actions , pageNumber);
                 currentHero->speciallAction(sys , this->pageNumber , actions , SCREEN_WIDTH , SCREEN_HEIGHT);
@@ -446,6 +446,13 @@ void Gui::saveState() {
             dirNames.push_back(entry.path().filename().string());
         }
     }
+
+    sort(
+        dirNames.begin(),
+        dirNames.end(),
+        [](const string& a, const string& b) -> bool { return stoi(a) > stoi(b); }
+    );
+
     fs::path folderPath = fs::path("../data/after_game") / dirNames.front();
     /*
      * saving pattern:
@@ -465,13 +472,14 @@ void Gui::saveState() {
         }
         file << '\n';
         file << (int)(this->doNextPhase) << '\n';
+        file << sys->getTerrorLevel() << '\n';
         file << '\n';
         file.close();
     }
 }
 
 void Gui::loadState(const int folderNumber) {
-    constexpr int DATA_ROW_COUNT {5};
+    constexpr int DATA_ROW_COUNT {6};
     fs::path folderPath = fs::path("../data/after_game") / to_string(folderNumber);
 
     // load data safely
@@ -501,6 +509,7 @@ void Gui::loadState(const int folderNumber) {
         this->mainPri.emplace_back(temp[i], temp[i + 1]);
     }
     doNextPhase = static_cast<bool>(safeStoi(loadedData[4], 1));
+    sys->setTerrorLevel(safeStoi(loadedData[5], 20));
 }
 
 void Gui::MovePhase(std::shared_ptr<HeroBase>& hero, int &actions)

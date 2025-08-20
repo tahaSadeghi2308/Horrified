@@ -1,2 +1,2 @@
-dracula crypt 1
-invisibleMan inn 0
+dracula inn 1
+invisibleMan theatre 0

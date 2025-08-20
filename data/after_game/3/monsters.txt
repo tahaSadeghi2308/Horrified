@@ -1,2 +1,0 @@
-dracula crypt 1
-invisibleMan inn 0
