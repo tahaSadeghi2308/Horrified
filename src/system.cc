@@ -468,7 +468,7 @@ void System::loadState(const int folderNumber) {
             loc->removeItem(i);
         }
     }
-
+    cout << "done all removing items!!\n";
     /*
      * saving PATTERN:
      * perkID or _ : 0
@@ -491,14 +491,14 @@ void System::loadState(const int folderNumber) {
         ifstream file(fullPath);
         if (file.is_open()){
             string heroData[4];
-            for (short lineNumber {}; lineNumber < 4; lineNumber++){
+            for (int lineNumber {}; lineNumber < 4; lineNumber++){
                 getline(file , heroData[lineNumber]);
             }
 
             // proccess placeName
             string placeName { heroData[3] };
             shared_ptr<Place> curPlace {nullptr};
-            if (placeName != "_"){
+            if (placeName != "_") {
                 for (auto& loc : this->getAllLocations()){
                     if (loc->getName() == placeName) {
                         h->setCurrentPlace(loc);
@@ -506,7 +506,9 @@ void System::loadState(const int folderNumber) {
                         break;
                     }
                 }
-                curPlace->addHero(h);
+                if (curPlace) {
+                    curPlace->addHero(h);
+                }
             }
 
             // process perks
@@ -517,7 +519,7 @@ void System::loadState(const int folderNumber) {
                 h->deletePerk(p.name);
                 perkDeck->push(p);
             }
-
+            cout << "done init perks!!\n";
             if (heroData[0] != "_"){
                 string x;
                 stringstream perkStream( heroData[0] );
@@ -533,8 +535,10 @@ void System::loadState(const int folderNumber) {
                                 break;
                             } else index++;
                         }
-                        perkDeck->pop(index);
-                        h->addPerkCard(temp);
+                        if (index < perkDeck->size()){
+                            perkDeck->pop(index);
+                            h->addPerkCard(temp);
+                        }
                     }
                 }
             }
@@ -545,6 +549,7 @@ void System::loadState(const int folderNumber) {
                 string x;
                 stringstream itemStream( heroData[2] );
                 while(getline(itemStream , x , '_')){
+                    if (x.empty()) continue;
                     int item_id { stoi(x) };
                     for (auto& i : itemBag->getCards()){
                         if (i.id == item_id){
@@ -572,9 +577,6 @@ void System::loadState(const int folderNumber) {
             if ( heroData[1] != "_" ){
                 h->setPlayerName(heroData[1]);
             }
-
-
-
             file.close();
         }
     }
@@ -593,7 +595,10 @@ void System::loadState(const int folderNumber) {
                 if (ids != "_"){
                     vector<int> int_ids;
                     stringstream ss(ids);
-                    while(getline(ss , x , '_')) int_ids.push_back(stoi(x));
+                    while(getline(ss , x , '_')) {
+                        if (x.empty()) continue;
+                        int_ids.push_back(stoi(x));
+                    }
                     locsData[placeName] = int_ids;
                 }
             }
@@ -608,18 +613,25 @@ void System::loadState(const int folderNumber) {
                 break;
             }
         }
+        if (!place) {
+            continue;
+        }
         for (auto id : int_ids) {
-            Item i;
+            Item foundItem;
+            bool found {false};
             int index {0};
             for (auto x : this->itemBag->getCards()){
                 if (x.id == id) {
-                    i = x;
+                    foundItem = x;
+                    found = true;
                     break;
                 }
                 index++;
             }
-            place->addItem(i);
-            itemBag->pop(index);
+            if (found && index < itemBag->size()) {
+                place->addItem(foundItem);
+                itemBag->pop(index);
+            }
         }
     }
 
@@ -630,6 +642,7 @@ void System::loadState(const int folderNumber) {
         stringstream stream(line);
         string x;
         while (getline(stream , x , '_')){
+            if (x.empty()) continue;
             IDs[stoi(x)] = true;
         }
         perkCards.close();
@@ -669,6 +682,7 @@ void System::loadState(const int folderNumber) {
                 for (auto &loc : this->getAllLocations()){
                     if (loc->getName() == villInfo[vill->getName()]){
                         vill->changeLoc(loc);
+                        loc->addVillager(vill);
                     }
                 }
             }
@@ -698,6 +712,7 @@ void System::loadState(const int folderNumber) {
         stringstream stream(line);
         string x;
         while(getline(stream , x , '_')){
+            if (x.empty()) continue;
             visitedCard[stoi(x)] = true;
         }
         monsterCard.close();
@@ -746,6 +761,7 @@ void System::loadState(const int folderNumber) {
                 for (auto& loc : this->getAllLocations()){
                     if (loc->getName() == temp.placeName){
                         dracula->setCurrentLocation(loc);
+                        loc->addMonster(dracula);
                     }
                 }
                 visitedMonster["dracula"] = true;
@@ -754,6 +770,7 @@ void System::loadState(const int folderNumber) {
                 for (auto& loc : this->getAllLocations()){
                     if (loc->getName() == temp.placeName){
                         invisibleMan->setCurrentLocation(loc);
+                        loc->addMonster(invisibleMan);
                     }
                 }
                 visitedMonster["invisibleMan"] = true;

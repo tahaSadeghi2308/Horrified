@@ -13,6 +13,7 @@
 #include "gui/perk_page.hpp"
 #include "gui/load_match.hpp"
 #include <filesystem>
+#include <array>
 
 using namespace std;
 namespace fs = std::filesystem;
@@ -70,14 +71,16 @@ void Gui::run() {
             this->pageNumber = PageNumbers::HERO_PHASE_PAGE;
         }
         if (currentHero == nullptr && !mainPri.empty()) {
-            string currentHeroName = mainPri[round % mainPri.size()].second;
-            for (auto& h : sys->getAllHerosAvailable()) {
-                if (h->getHeroName() == currentHeroName) { currentHero = h; break; }
-            }
-            if (currentHero != nullptr) {
-                if (actions == 1000)
-                    actions = currentHero->getActionCount();
-                doNextPhase = true;
+            if (!mainPri.empty()) {
+                string currentHeroName = mainPri[round % mainPri.size()].second;
+                for (auto& h : sys->getAllHerosAvailable()) {
+                    if (h->getHeroName() == currentHeroName) { currentHero = h; break; }
+                }
+                if (currentHero != nullptr) {
+                    if (actions == 1000)
+                        actions = currentHero->getActionCount();
+                    doNextPhase = true;
+                }
             }
         }
         BeginDrawing();
@@ -130,8 +133,11 @@ void Gui::run() {
 
         if (prevPage == PageNumbers::LOAD_MATCH_PAGE && pageNumber == PageNumbers::HERO_PHASE_PAGE) {
             if (selectedSaveFolderNumber >= 0) {
+                cout << "in loading page!!!\n";
                 sys->loadState(selectedSaveFolderNumber);
+                cout << "loaded system\n";
                 this->loadState(selectedSaveFolderNumber);
+                cout << "loaded gui\n";
             }
         }
     }
@@ -468,26 +474,33 @@ void Gui::loadState(const int folderNumber) {
     constexpr int DATA_ROW_COUNT {5};
     fs::path folderPath = fs::path("../data/after_game") / to_string(folderNumber);
 
-    // load data
-    string loadedData[DATA_ROW_COUNT];
+    // load data safely
+    array<string, DATA_ROW_COUNT> loadedData{};
     ifstream file(folderPath / "util.txt");
     if (file.is_open()) {
-        for (int i {}; i < DATA_ROW_COUNT; i++) {
+        for (int i {}; i < DATA_ROW_COUNT && file.good(); i++) {
             getline(file , loadedData[i]);
         }
         file.close();
     }
-    pageNumber = static_cast<PageNumbers>(stoi(loadedData[0]));
-    actions = stoi(loadedData[1]);
-    round = stoi(loadedData[2]);
+
+    auto safeStoi = [] (const string &s, int fallback) -> int {
+        try { return stoi(s); } catch (...) { return fallback; }
+    };
+
+    pageNumber = static_cast<PageNumbers>(safeStoi(loadedData[0], static_cast<int>(PageNumbers::HERO_PHASE_PAGE)));
+    actions = safeStoi(loadedData[1], actions);
+    round = safeStoi(loadedData[2], round);
+
+    this->mainPri.clear();
     vector<string> temp;
     stringstream stream(loadedData[3]);
     string x;
-    while (getline(stream , x , '_')) temp.push_back(x);
-    for (int i {}; i < temp.size(); i += 2) {
+    while (getline(stream , x , '_')) if (!x.empty()) temp.push_back(x);
+    for (size_t i = 0; i + 1 < temp.size(); i += 2) {
         this->mainPri.emplace_back(temp[i], temp[i + 1]);
     }
-    doNextPhase = static_cast<bool>(stoi(loadedData[4]));
+    doNextPhase = static_cast<bool>(safeStoi(loadedData[4], 1));
 }
 
 void Gui::MovePhase(std::shared_ptr<HeroBase>& hero, int &actions)
@@ -1423,7 +1436,20 @@ void Gui::playPerkPhase( std::shared_ptr<HeroBase>& hero , int &actions , bool &
         }
         else if (selectedPerk == "Repel") 
         {
-            static string nameMon = sys->getAllMonsters()[0] ->getMonsterName();
+            static string nameMon;
+            {
+                auto monsters = sys->getAllMonsters();
+                if (!monsters.empty() && monsters[0] != nullptr) {
+                    nameMon = monsters[0]->getMonsterName();
+                } else {
+                    pageNumber = PageNumbers::HERO_PHASE_PAGE;
+                    hero->deletePerk("Repel");
+                    found = false;
+                    selectedPerk = "" ;
+                    count = 0;
+                    return;
+                }
+            }
 
            if(count < 2)
             {
@@ -1437,7 +1463,9 @@ void Gui::playPerkPhase( std::shared_ptr<HeroBase>& hero , int &actions , bool &
                         string name = mon->getMonsterName();
                         Vector2 size = MeasureTextEx(GameFont,name.c_str(),25,0);
                         DrawTextEx(GameFont,name.c_str(),{((SCREEN_WIDTH-size.x)/2)+pad , y + pad },25,0,WHITE);
-                        auto neis = mon->getCurrentLocation()->getNeighbors();
+                        auto currentLoc = mon->getCurrentLocation();
+                        if (!currentLoc) continue;
+                        auto neis = currentLoc->getNeighbors();
                         for (auto& place : neis)
                         {
                             movingAsset(place);
@@ -1477,7 +1505,9 @@ void Gui::playPerkPhase( std::shared_ptr<HeroBase>& hero , int &actions , bool &
                         string name = mon->getMonsterName();
                         Vector2 size = MeasureTextEx(GameFont,name.c_str(),25,0);
                         DrawTextEx(GameFont,name.c_str(),{((SCREEN_WIDTH-size.x)/2)+pad , y + pad },25,0,WHITE);
-                        auto neis = mon->getCurrentLocation()->getNeighbors();
+                        auto currentLoc = mon->getCurrentLocation();
+                        if (!currentLoc) continue;
+                        auto neis = currentLoc->getNeighbors();
 
                         for (auto& place : neis)
                         {

@@ -4,6 +4,10 @@ set(CMAKE_BUILD_TYPE Debug)
 project(Horrified
   LANGUAGES CXX
 )
+
+set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
+
 # ------------------------------ Execution part ------------------------------------------------
 # Include directories
 include_directories(./include)

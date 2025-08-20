@@ -68,7 +68,7 @@ void PerkPage::draw(std::shared_ptr<HeroBase> &cHero, int &actions, PageNumbers 
             cPage = PageNumbers::HERO_PHASE_PAGE;
         }
         else if (selectedPerk == "Overstock") {
-            for (auto her : sys->getAllHeros()) {
+            for (auto her : sys->getAllHerosAvailable()) {
                 Item temp = sys->getRandomItem();
                 if (her->getCurrentPlace())
                     sys->putItemInPlace(her->getCurrentPlace()->getName() , temp);
@@ -278,9 +278,9 @@ void PerkPage::draw(std::shared_ptr<HeroBase> &cHero, int &actions, PageNumbers 
                     return;
                 }
                 
-                for(auto& second : sys->getAllHeros())
+                for(auto& second : sys->getAllHerosAvailable())
                 {
-                
+                    if (!second->getCurrentPlace()) continue;
                     if(second->getHeroName() != cHero->getHeroName())
                     {
                     float x = 0, y = 20 , pad = 20;

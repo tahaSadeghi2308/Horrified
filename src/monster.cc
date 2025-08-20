@@ -59,7 +59,7 @@ void MonsterBase::power(shared_ptr<MonsterBase> monst , shared_ptr<HeroBase> cHe
                         vector<shared_ptr<Place>> path = sys->findShortestPath(this->getCurrentLocation() , ETO);
                         for (auto monst : sys->getAllMonsters()){
                             if (monst->getMonsterName() == "invisibleMan"){
-                                if (!path.empty()) sys->moveMonster(monst , path[1]);
+                                if (path.size() >= 2) sys->moveMonster(monst , path[1]);
                             }
                         }
                     }
@@ -298,7 +298,8 @@ int MonsterBase::attack(
     if (dice == '*'){
         shared_ptr<Place> p = this->getCurrentLocation();
         if (!p->getVillagers().empty()){
-            sys->killVillager(p->getVillagers()[0]);
+            auto villagers = p->getVillagers();
+            if (!villagers.empty()) sys->killVillager(villagers[0]);
             return 1; // for killing a viilager
         }
         else if (!p->getAllHeroes().empty()){
