@@ -461,6 +461,13 @@ void System::loadState(const int folderNumber) {
 
     // clear map from its normal distro !!!!
     for (auto &loc : this->getAllLocations()) {
+        // delete locations from any monster
+        if (!loc->getMonsters().empty()){
+            auto monsts = loc->getMonsters();
+            for (auto monst : monsts){
+                loc->deleteMonster(monst->getMonsterName());
+            }
+        }
         vector<Item> tempItems;
         for (auto i : loc->getItems()){
             tempItems.push_back(i);
