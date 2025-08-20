@@ -337,23 +337,20 @@ void System::saveState() {
 
     // heroes
     fs::create_directories(folderPath / "heroes");
-    for (auto &h : this->getAllHeros()) {
+    for (auto &h : this->getAllHerosAvailable()) {
         string filename = h->getHeroName() + ".txt";
         fs::path fullPath = folderPath / "heroes" / filename;
         ofstream file(fullPath);
         /*
          * saving PATTERN:
-         * heroName
-         * perkID or _
-         * playerName or _
-         * itemID or _
-         * placeName or _
+         * perkID or _ : 0
+         * playerName or _ : 1
+         * itemID or _ : 2
+         * placeName or _ : 3
          */
         if (file.is_open()){
-            file << h->getHeroName() << "\n";
-
             // collect perk ids
-            if (!h->getHeroPerks().empty()){
+            if (!h->getHeroPerks().empty()){ // index : 0
                 for (auto & card : h->getHeroPerks()){
                     file << card.id << "_";
                 }
@@ -363,7 +360,7 @@ void System::saveState() {
             file << "\n";
 
             // add player name
-            if (!h->getPlayerName().empty()){
+            if (!h->getPlayerName().empty()){ // index : 1
                 file << h->getPlayerName();
             } else {
                 file << "_";
@@ -371,7 +368,7 @@ void System::saveState() {
             file << "\n";
 
             // collect item ids
-            if (!h->getHeroItems().empty()){
+            if (!h->getHeroItems().empty()){ // index : 2
                 for (auto & card : h->getHeroItems()){
                     file << card.id << "_";
                 }
@@ -381,7 +378,7 @@ void System::saveState() {
             file << "\n";
 
             // add current place name
-            if (h->getCurrentPlace()){
+            if (h->getCurrentPlace()){ // index : 3
                 file << h->getCurrentPlace()->getName();
             } else {
                 file << "_";
@@ -474,7 +471,6 @@ void System::loadState(const int folderNumber) {
 
     /*
      * saving PATTERN:
-     * heroName
      * perkID or _ : 0
      * playerName or _ : 1
      * itemID or _ : 2
@@ -489,17 +485,14 @@ void System::loadState(const int folderNumber) {
             return make_pair(n++ , false);
         }
     );
-    for (auto &h : this->getAllHeros()) {
+    for (auto &h : this->getAllHerosAvailable()) {
         string filename = h->getHeroName() + ".txt";
         fs::path fullPath = folderPath / "heroes" / filename;
         ifstream file(fullPath);
         if (file.is_open()){
             string heroData[4];
-            for (short lineNumber {}; lineNumber < 5; lineNumber++){
-                if (lineNumber == 0) continue; // pass first line
-                else {
-                    getline(file , heroData[lineNumber - 1]);
-                }
+            for (short lineNumber {}; lineNumber < 4; lineNumber++){
+                getline(file , heroData[lineNumber]);
             }
 
             // proccess placeName
@@ -522,17 +515,18 @@ void System::loadState(const int folderNumber) {
                 perkDeck->push(p);
             }
 
-            if (heroData[1] != "_"){
+            if (heroData[0] != "_"){
                 string x;
-                stringstream perkStream( heroData[1] );
-                while(getline(perkStream , x , '_')) IDs[stoi(x)] = true;
-                for (auto& [id , visited] : IDs) {
-                    if (visited) {
+                stringstream perkStream( heroData[0] );
+                while(getline(perkStream , x , '_')) {
+                    if (!x.empty()){
+                        IDs[stoi(x)] = true;
+                        int perkID = stoi(x);
                         int index {};
                         Perk temp;
-                        for (auto& p : perkDeck->getCards()){
-                            if (p.id == id) {
-                                temp = p;
+                        for (auto &perk : perkDeck->getCards()){
+                            if (perk.id == perkID) {
+                                temp = perk;
                                 break;
                             } else index++;
                         }
@@ -553,15 +547,20 @@ void System::loadState(const int folderNumber) {
                         if (i.id == item_id){
                             thisHeroItems.push_back(i);
                             h->addHeroItems(i);
+                            break;
                         }
                     }
                     for (auto& i : thisHeroItems){
                         int index {};
-                        for (auto& item : itemBag->getCards()){
-                            if (item.id == i.id) break;
+                        int currentId { i.id };
+                        for (auto item : itemBag->getCards()){
+                            if (currentId == item.id) {
+                                break;
+                            }
                             else index++;
                         }
-                        itemBag->pop(index);
+                        if ((index < itemBag->size()))
+                            itemBag->pop(index);
                     }
                 }
             }
@@ -679,29 +678,39 @@ void System::loadState(const int folderNumber) {
 
     // loading monster cards
     // TEST : [ ]
-    vector<int> validCards;
-    vector<int> destoryedCardsId;
-    ifstream monsterCard(folderPath / "monster_card.txt");
+    unordered_map<int , bool> visitedCard;
+    generate_n(
+        inserter(visitedCard , visitedCard.end()),
+        22,
+        [ n = 1 ] () mutable {
+            return make_pair(n++ , false);
+        }
+    );
+    ifstream monsterCard(folderPath / "monster_cards.txt");
     if (monsterCard.is_open()){
-        string line , x; getline(monsterCard , line);
-        stringstream ss(line);
-        while(getline(ss , x , '_')) validCards.push_back(stoi(x));
+        string line;
+        getline(monsterCard , line);
+        stringstream stream(line);
+        string x;
+        while(getline(stream , x , '_')){
+            visitedCard[stoi(x)] = true;
+        }
         monsterCard.close();
     }
-    for (auto &card : this->monsterDeck->getCards()){
-        bool isIn {};
-        for (auto &id : validCards){
-            if (card.id == id) {
-                isIn = true;
-                break;
+    vector<MonsterCard> shouldBeDeleted;
+    for (auto& [id , visited] : visitedCard) {
+        if (!visited) {
+            for (auto card : monsterDeck->getCards()){
+                if (card.id == id) {
+                    shouldBeDeleted.push_back(card);
+                }
             }
         }
-        if (!isIn) destoryedCardsId.push_back(card.id);
     }
-    for (auto id : destoryedCardsId) {
-        int index {0};
-        for (auto &card : this->monsterDeck->getCards()){
-            if (card.id == id) break;
+    for (auto card : shouldBeDeleted) {
+        int index {};
+        for (auto c : monsterDeck->getCards()){
+            if (c.id == card.id) break;
             else index++;
         }
         monsterDeck->pop(index);

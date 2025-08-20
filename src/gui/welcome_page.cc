@@ -33,8 +33,7 @@ void WelcomePage::update(std::shared_ptr<HeroBase> &cHero, int &actions, PageNum
     }
     else if (CheckCollisionPointRec(mouse, load)) {
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-            // TODO: Implement load game functionality
-            // cPage = PageNumbers::LOAD_GAME_PAGE;
+            cPage = PageNumbers::LOAD_MATCH_PAGE;
         }
     }
     else if (CheckCollisionPointRec(mouse, exit)) {

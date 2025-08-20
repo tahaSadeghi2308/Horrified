@@ -61,6 +61,7 @@ class Gui final {
     Rectangle firstHero;
     Rectangle secondHero;
     std::unordered_map<PageNumbers , std::shared_ptr<PageBase>> pages;
+    int selectedSaveFolderNumber;
 public:
     explicit Gui(System *s, const int ,const int);
     void run();

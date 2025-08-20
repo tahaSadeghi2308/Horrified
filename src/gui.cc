@@ -11,6 +11,7 @@
 #include "gui/advanced_page.hpp"
 #include "gui/defeat_page.hpp"
 #include "gui/perk_page.hpp"
+#include "gui/load_match.hpp"
 #include <filesystem>
 
 using namespace std;
@@ -22,6 +23,7 @@ Gui::Gui(System *s,const int width,const int height):sys(s),scroll(0.0f),SCREEN_
     pageNumber = PageNumbers::WELCOME_PAGE;
     isEnd = -1;
     round = 0;
+    actions = 1000;
     GameFont = LoadFont("../Horrified_Assets/Melted.ttf");
     sys->setFont(GameFont);
 //    this->playerPriority.push_back("archaeologist"); //for test (needs welcom page)
@@ -37,6 +39,7 @@ Gui::Gui(System *s,const int width,const int height):sys(s),scroll(0.0f),SCREEN_
     PerkRec = { pad , DefeatRec.y + pad + panelH , panelW ,panelH };
     exitANDsave = { pad , PerkRec.y + pad + panelH , panelW , panelH};
     Help = {pad , exitANDsave.y + pad + panelH , panelW , panelH };
+    selectedSaveFolderNumber = -1;
     pages = {
         { PageNumbers::HERO_PHASE_PAGE , make_shared<HeroPhasePage>(GameFont , s)},
         { PageNumbers::MOVE_PAGE , make_shared<MovePage>(GameFont , s)},
@@ -48,24 +51,32 @@ Gui::Gui(System *s,const int width,const int height):sys(s),scroll(0.0f),SCREEN_
         { PageNumbers::HERO_SELECTION_PAGE , make_shared<HeroSelectionPage>(this->playerPriority, this->mainPri, s)},
         { PageNumbers::ADVANCED_PAGE , make_shared<AdvancedPage>(GameFont , s)},
         { PageNumbers::DEFEAT_PAGE , make_shared<DefeatPage>(GameFont , s)} ,
-        { PageNumbers::PLAYPERK_PAGE , make_shared<PerkPage>(GameFont , s , doNextPhase)} 
+        { PageNumbers::PLAYPERK_PAGE , make_shared<PerkPage>(GameFont , s , doNextPhase)},
+        { PageNumbers::LOAD_MATCH_PAGE , make_shared<LoadMatchPage>(selectedSaveFolderNumber)} 
     };
 }
 
 void Gui::run() {
     while (!WindowShouldClose()) {
+        PageNumbers prevPage = pageNumber;
         if (this->pageNumber == PageNumbers::EXIT_PAGE) {
             delete sys;
             sys = nullptr;
             break;
         }
+        else if (this->pageNumber == PageNumbers::SAVE_MODE){
+            sys->saveState();
+            this->saveState();
+            this->pageNumber = PageNumbers::HERO_PHASE_PAGE;
+        }
         if (currentHero == nullptr && !mainPri.empty()) {
             string currentHeroName = mainPri[round % mainPri.size()].second;
-            for (auto& h : sys->getAllHeros()) {
+            for (auto& h : sys->getAllHerosAvailable()) {
                 if (h->getHeroName() == currentHeroName) { currentHero = h; break; }
             }
             if (currentHero != nullptr) {
-                actions = currentHero->getActionCount();
+                if (actions == 1000)
+                    actions = currentHero->getActionCount();
                 doNextPhase = true;
             }
         }
@@ -85,7 +96,7 @@ void Gui::run() {
             }
 
         }
-        else if (this->pageNumber == PageNumbers::WELCOME_PAGE || this->pageNumber == PageNumbers::PLAYER_SETUP_PAGE || this->pageNumber == PageNumbers::HERO_SELECTION_PAGE) {
+        else if (this->pageNumber == PageNumbers::WELCOME_PAGE || this->pageNumber == PageNumbers::PLAYER_SETUP_PAGE || this->pageNumber == PageNumbers::HERO_SELECTION_PAGE || this->pageNumber == PageNumbers::LOAD_MATCH_PAGE) {
             ClearBackground(BLACK);
             pages[this->pageNumber]->draw(currentHero , actions , pageNumber);
             pages[this->pageNumber]->update(currentHero , actions , pageNumber);
@@ -109,13 +120,20 @@ void Gui::run() {
         if (actions <= 0 && isEnd == -1) {
             if(doNextPhase) {
                 pageNumber = PageNumbers::MONSTERPHASE_PAGE;
-                actions = 1;
+                actions = 1000;
             } else {
                 currentHero = nullptr;
                 round++;
             }
         }
         EndDrawing();
+
+        if (prevPage == PageNumbers::LOAD_MATCH_PAGE && pageNumber == PageNumbers::HERO_PHASE_PAGE) {
+            if (selectedSaveFolderNumber >= 0) {
+                sys->loadState(selectedSaveFolderNumber);
+                this->loadState(selectedSaveFolderNumber);
+            }
+        }
     }
 }
 void Gui::drawLeftPanel()
@@ -422,29 +440,32 @@ void Gui::saveState() {
             dirNames.push_back(entry.path().filename().string());
         }
     }
-    fs::path folderPath = fs::path("../data/after_game") / dirNames.back();
+    fs::path folderPath = fs::path("../data/after_game") / dirNames.front();
     /*
      * saving pattern:
      * 0 : page_number
      * 1 : current remaining actions count
      * 2 : round
      * 3 : mainpri data
+     * 4 : doNextPhase
      * */
     ofstream file(folderPath / "util.txt");
     if (file.is_open()) {
-        file << this->pageNumber << "\n";
+        file << 0 << "\n"; // should be hero phase page
         file << this->actions << "\n";
         file << this->round << '\n';
         for (auto& [ playerName , heroName] : this->mainPri){
             file << playerName << "_" << heroName << "_";
         }
         file << '\n';
+        file << (int)(this->doNextPhase) << '\n';
+        file << '\n';
         file.close();
     }
 }
 
 void Gui::loadState(const int folderNumber) {
-    const int DATA_ROW_COUNT {4};
+    constexpr int DATA_ROW_COUNT {5};
     fs::path folderPath = fs::path("../data/after_game") / to_string(folderNumber);
 
     // load data
@@ -466,6 +487,7 @@ void Gui::loadState(const int folderNumber) {
     for (int i {}; i < temp.size(); i += 2) {
         this->mainPri.emplace_back(temp[i], temp[i + 1]);
     }
+    doNextPhase = static_cast<bool>(stoi(loadedData[4]));
 }
 
 void Gui::MovePhase(std::shared_ptr<HeroBase>& hero, int &actions)

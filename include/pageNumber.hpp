@@ -15,7 +15,9 @@ enum PageNumbers {
     MONSTERPHASE_PAGE = 10,
     WELCOME_PAGE = 11,
     PLAYER_SETUP_PAGE = 12,
-    HERO_SELECTION_PAGE = 13
+    HERO_SELECTION_PAGE = 13,
+    LOAD_MATCH_PAGE = 14,
+    SAVE_MODE = 15
 };
 
 #endif
