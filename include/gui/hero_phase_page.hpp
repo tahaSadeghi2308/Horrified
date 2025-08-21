@@ -17,6 +17,7 @@ class HeroPhasePage final : public PageBase {
         Font font;
         Texture2D gameMapImg , coffins , smahsedCoffins;
         float pad , panelH , panelW , scroll;
+        float leftScroll;
         Rectangle moveRec;
         Rectangle PickRec;
         Rectangle GuidRec;
@@ -26,6 +27,7 @@ class HeroPhasePage final : public PageBase {
         Rectangle PerkRec;
         Rectangle exitANDsave;
         Rectangle Help;
+        Rectangle exitOnly;
         Rectangle firstHero;
         Rectangle secondHero;
         Color buttonColor;

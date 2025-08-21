@@ -8,7 +8,7 @@ HeroPhasePage::HeroPhasePage (
     System *s
         
 ) : font(f) , pad(20.f) , panelW(LEFT_PANEL_WIDTH - (2*pad)) , panelH((SCREEN_HEIGHT / 9) - 25),
-    buttonColor({ 230, 225, 200, 255 }) , sys(s)
+    buttonColor({ 230, 225, 200, 255 }) , sys(s) , leftScroll(0.0f)
 {
     gameMapImg = LoadTexture("../Horrified_Assets/map.png");
     coffins = LoadTexture("../Horrified_Assets/Items/Coffins/Coffin.png");
@@ -22,6 +22,7 @@ HeroPhasePage::HeroPhasePage (
     PerkRec = { pad , DefeatRec.y + pad + panelH , panelW ,panelH };
     exitANDsave = { pad , PerkRec.y + pad + panelH , panelW , panelH};
     Help = {pad , exitANDsave.y + pad + panelH , panelW , panelH };
+    exitOnly = { pad , Help.y + pad + panelH , panelW , panelH };
 }
 
 void HeroPhasePage::draw(shared_ptr<HeroBase> &cHero ,int &actions, PageNumbers &cPage) {
@@ -74,7 +75,12 @@ void HeroPhasePage::drawLeftPanel(){
     Rectangle rec {0 , 0 , (float)LEFT_PANEL_WIDTH , (float)SCREEN_HEIGHT};
     DrawRectangleRec(rec , DARKGRAY);
 
-    vector<pair<string, Rectangle>> buttons = { 
+    // Scroll handling
+    float scrollSpeed = 30.0f;
+    leftScroll += GetMouseWheelMove() * scrollSpeed;
+
+    // Build list of buttons (logical positions)
+    vector<pair<string, Rectangle>> logicalButtons = { 
         {"MOVE", moveRec},
         {"PICK", PickRec},
         {"GUIDE", GuidRec},
@@ -82,26 +88,40 @@ void HeroPhasePage::drawLeftPanel(){
         {"ADVANCE", AdvanceRec},
         {"DEFEAT", DefeatRec},
         {"PERK", PerkRec},
-        {"SAVE & EXIT", exitANDsave},
-        {"HELP" , Help}
+        {"SAVE GAME", exitANDsave},
+        {"HELP" , Help},
+        {"EXIT" , exitOnly}
     };
 
+    // Compute content height
+    float contentTop = moveRec.y;
+    Rectangle last = exitOnly;
+    float contentBottom = last.y + last.height;
+    float contentHeight = contentBottom - contentTop;
+    float viewportHeight = rec.height;
+    float minScroll = min(0.0f, viewportHeight - contentHeight - contentTop);
+    if (leftScroll > 0.0f) leftScroll = 0.0f;
+    if (leftScroll < minScroll) leftScroll = minScroll;
+
+    BeginScissorMode(rec.x, rec.y, rec.width, rec.height);
+
     float fontSize = 50;
-    for (auto& button : buttons){
+    for (auto& button : logicalButtons){
         string text = button.first;
-        Rectangle targetRec = button.second;
+        Rectangle base = button.second;
+        Rectangle targetRec = base;
+        targetRec.y += leftScroll;
+
+        if (targetRec.y + targetRec.height < rec.y || targetRec.y > rec.y + rec.height) continue;
 
         DrawRectangleRec(targetRec, buttonColor);
         Vector2 textSize = MeasureTextEx(font, text.c_str(), fontSize, 0);
         float centerX = (targetRec.width - textSize.x) / 2;
         float centerY = (targetRec.height - textSize.y) / 2;
-        DrawTextEx(
-            font,
-            text.c_str(),
-            {targetRec.x + centerX, targetRec.y + centerY}, 
-            fontSize, 0, BLACK
-        );
+        DrawTextEx(font, text.c_str(), {targetRec.x + centerX, targetRec.y + centerY}, fontSize, 0, BLACK);
     }
+
+    EndScissorMode();
 }
 
 void HeroPhasePage::drawCoffin() {
@@ -197,47 +217,70 @@ void HeroPhasePage::update(shared_ptr<HeroBase> &cHero ,int &actions , PageNumbe
             scroll = 0;
         }
     }
-    if(CheckCollisionPointRec(mouse, moveRec)){
-        DrawRectangleLinesEx(moveRec, 8 ,DARKGREEN);
+   
+    Vector2 logicalMouse = mouse;
+    if (mouse.x >= 0 && mouse.x <= LEFT_PANEL_WIDTH) {
+        logicalMouse.y -= leftScroll;
+    }
+
+    BeginScissorMode(0, 0, LEFT_PANEL_WIDTH, SCREEN_HEIGHT);
+    if(CheckCollisionPointRec(logicalMouse, moveRec)){
+        Rectangle hl = moveRec; hl.y += leftScroll;
+        DrawRectangleLinesEx(hl, 8 ,DARKGREEN);
         if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             cPage = PageNumbers::MOVE_PAGE;
     }
-    else if (CheckCollisionPointRec(mouse,PickRec)){
-        DrawRectangleLinesEx(PickRec, 8 ,DARKGREEN);
+    else if (CheckCollisionPointRec(logicalMouse,PickRec)){
+        Rectangle hl = PickRec; hl.y += leftScroll;
+        DrawRectangleLinesEx(hl, 8 ,DARKGREEN);
          if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
              cPage = PageNumbers::PICKUP_PAGE;
     }
-    else if(CheckCollisionPointRec(mouse , GuidRec)){
-        DrawRectangleLinesEx(GuidRec, 8 ,DARKGREEN);
+    else if(CheckCollisionPointRec(logicalMouse , GuidRec)){
+        Rectangle hl = GuidRec; hl.y += leftScroll;
+        DrawRectangleLinesEx(hl, 8 ,DARKGREEN);
          if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             cPage = PageNumbers::GUIDE_PAGE;
     }
-    else if(CheckCollisionPointRec(mouse , AdvanceRec)){
-        DrawRectangleLinesEx(AdvanceRec, 8 ,DARKGREEN);
+    else if(CheckCollisionPointRec(logicalMouse , AdvanceRec)){
+        Rectangle hl = AdvanceRec; hl.y += leftScroll;
+        DrawRectangleLinesEx(hl, 8 ,DARKGREEN);
         if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             cPage = PageNumbers::ADVANCED_PAGE;
     }
-    else if(CheckCollisionPointRec(mouse , DefeatRec)){
-         DrawRectangleLinesEx(DefeatRec, 8 ,DARKGREEN);
+    else if(CheckCollisionPointRec(logicalMouse , DefeatRec)){
+         Rectangle hl = DefeatRec; hl.y += leftScroll;
+         DrawRectangleLinesEx(hl, 8 ,DARKGREEN);
         if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             cPage = PageNumbers::DEFEAT_PAGE;
     }
-    else if(CheckCollisionPointRec(mouse , this->exitANDsave)){
-        DrawRectangleLinesEx(this->exitANDsave, 8 ,DARKGREEN);
+    else if(CheckCollisionPointRec(logicalMouse , this->exitANDsave)){
+        Rectangle hl = this->exitANDsave; hl.y += leftScroll;
+        DrawRectangleLinesEx(hl, 8 ,DARKGREEN);
          if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
             cPage = PageNumbers::SAVE_MODE;
          }
     }
-    else if(CheckCollisionPointRec(mouse , speciallRec)){
-         DrawRectangleLinesEx(speciallRec, 8 ,DARKGREEN);
+    else if(CheckCollisionPointRec(logicalMouse , speciallRec)){
+         Rectangle hl = speciallRec; hl.y += leftScroll;
+         DrawRectangleLinesEx(hl, 8 ,DARKGREEN);
         if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             cPage = PageNumbers::SPECIALACTION_PAGE;
     }
-    else if(CheckCollisionPointRec(mouse , PerkRec)){
-        DrawRectangleLinesEx(PerkRec, 8 ,DARKGREEN);
+    else if(CheckCollisionPointRec(logicalMouse , PerkRec)){
+        Rectangle hl = PerkRec; hl.y += leftScroll;
+        DrawRectangleLinesEx(hl, 8 ,DARKGREEN);
         if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             cPage = PageNumbers::PLAYPERK_PAGE;
     }
+    else if(CheckCollisionPointRec(logicalMouse , exitOnly)){
+        Rectangle hl = exitOnly; hl.y += leftScroll;
+        DrawRectangleLinesEx(hl, 8 ,DARKGREEN);
+        if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
+            cPage = PageNumbers::EXIT_PAGE;
+        }
+    }
+    EndScissorMode();
 }
 
 void HeroPhasePage::PlaceInfo(shared_ptr<Place> selected){
