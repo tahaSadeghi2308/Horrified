@@ -960,7 +960,7 @@ MonsterCard System::getRandomMonstCard() {
 int System::isEndGame() const {
     if (monsterDeck->size() == 0) return 1;
     else if (this->dracula == nullptr && this->invisibleMan == nullptr) return 2;
-    else if (this->terrorLevel == 5) return 3;
+    else if (this->terrorLevel >= 5) return 3;
     return -1;
 }
 

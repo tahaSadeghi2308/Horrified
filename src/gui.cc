@@ -63,18 +63,17 @@ void Gui::run() {
     while (!WindowShouldClose()) {
         PageNumbers prevPage = pageNumber;
         isEnd = sys->isEndGame();
-        if (isEnd != -1) {
-            auto endPage = static_pointer_cast<EndGamePage>(pages[PageNumbers::END_GAME_PAGE]);
-            endPage->setEndCode(isEnd);
-            pageNumber = PageNumbers::END_GAME_PAGE;
-            isEnd = -1;
-        }
         if (this->pageNumber == PageNumbers::EXIT_PAGE) {
             delete sys;
             sys = nullptr;
             break;
         }
-        else if (this->pageNumber == PageNumbers::SAVE_MODE){
+        if (isEnd != -1) {
+            auto endPage = static_pointer_cast<EndGamePage>(pages[PageNumbers::END_GAME_PAGE]);
+            endPage->setEndCode(isEnd);
+            pageNumber = PageNumbers::END_GAME_PAGE;
+        }
+        if (this->pageNumber == PageNumbers::SAVE_MODE){
             sys->saveState();
             this->saveState();
             this->pageNumber = PageNumbers::HERO_PHASE_PAGE;

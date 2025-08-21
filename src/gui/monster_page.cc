@@ -92,23 +92,29 @@ void MonsterPhasePage::draw(shared_ptr<HeroBase> &cHero ,int &actions , PageNumb
             for (auto st : currentCard.strikePriorities) {
                 if (st == "du") {
                     for (auto m : sys->getAllMonsters()) {
-                        if (m->getMonsterName() == "dracula") {
-                            pair p {"du", m};
-                            strikeMap.push_back(p);
+                        if (m){
+                            if (m->getMonsterName() == "dracula") {
+                                pair p {"du", m};
+                                strikeMap.push_back(p);
+                            }
                         }
                     }
                 } else if (st == "inm") {
                     for (auto m : sys->getAllMonsters()) {
-                        if (m->getMonsterName() == "invisibleMan") {
-                            pair p {"inm", m};
-                            strikeMap.push_back(p);
+                        if (m){
+                            if (m->getMonsterName() == "invisibleMan") {
+                                pair p {"inm", m};
+                                strikeMap.push_back(p);
+                            }
                         }
                     }
                 } else {
                     for (auto m : sys->getAllMonsters()) {
-                        if (m->getIsFrenzed()) {
-                            pair p {"fz", m};
-                            strikeMap.push_back(p);
+                        if (m) {
+                            if (m->getIsFrenzed()) {
+                                pair p {"fz", m};
+                                strikeMap.push_back(p);
+                            }
                         }
                     }
                 }
@@ -224,7 +230,7 @@ void MonsterPhasePage::draw(shared_ptr<HeroBase> &cHero ,int &actions , PageNumb
                     shared_ptr<HeroBase> attacedHero;
                         if (status == 2) attacedHero = cHero;
                         else {
-                            for (auto h : sys->getAllHeros()) {
+                            for (auto h : sys->getAllHerosAvailable()) {
                                 if (h->getHeroName() != cHero->getHeroName()) attacedHero = h;
                             }
                         }
@@ -300,7 +306,7 @@ void MonsterPhasePage::draw(shared_ptr<HeroBase> &cHero ,int &actions , PageNumb
                         shared_ptr<HeroBase> attacedHero;
                         if (status == 2) attacedHero = cHero;
                         else {
-                            for (auto h : sys->getAllHeros()) {
+                            for (auto h : sys->getAllHerosAvailable()) {
                                 if (h->getHeroName() != cHero->getHeroName()) attacedHero = h;
                             }
                         }
