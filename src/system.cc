@@ -349,6 +349,7 @@ void System::saveState() {
          * playerName or _ : 1
          * itemID or _ : 2
          * placeName or _ : 3
+         * lastPlayedPerk : 4
          */
         if (file.is_open()){
             // collect perk ids
@@ -385,6 +386,10 @@ void System::saveState() {
             } else {
                 file << "_";
             }
+            file << '\n';
+
+            // add last played perk card
+            file << h->getLastPlayedName();
             file << '\n';
             file.close();
         }
@@ -484,6 +489,7 @@ void System::loadState(const int folderNumber) {
      * playerName or _ : 1
      * itemID or _ : 2
      * placeName or _ : 3
+     * lastPlayedPerk : 4
      */
     // loading heroes
     unordered_map<int , bool> IDs;
@@ -511,8 +517,8 @@ void System::loadState(const int folderNumber) {
         fs::path fullPath = folderPath / "heroes" / filename;
         ifstream file(fullPath);
         if (file.is_open()){
-            string heroData[4];
-            for (int lineNumber {}; lineNumber < 4; lineNumber++){
+            string heroData[5];
+            for (int lineNumber {}; lineNumber < 5; lineNumber++){
                 getline(file , heroData[lineNumber]);
             }
 
@@ -590,6 +596,10 @@ void System::loadState(const int folderNumber) {
             if ( heroData[1] != "_" ){
                 h->setPlayerName(heroData[1]);
             }
+
+            // set last played perk
+            h->setLastPlayed(heroData[4]);
+
             file.close();
         }
     }

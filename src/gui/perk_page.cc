@@ -20,7 +20,9 @@ void PerkPage::movingAsset(shared_ptr<Place>& destination) {
 }
 
 void PerkPage::update(std::shared_ptr<HeroBase> &cHero, int &actions, PageNumbers &cPage) {
-
+    if (!selectedPerk.empty()){
+        cHero->setLastPlayed(selectedPerk);
+    }
 }
 
 void PerkPage::draw(std::shared_ptr<HeroBase> &cHero, int &actions, PageNumbers &cPage) {

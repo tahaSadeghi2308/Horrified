@@ -1,6 +1,6 @@
 dr.cranley _
 dr.reed _
-prof.pearson _
+prof.pearson cave
 maleva _
 fritz _
 wilbur&chick _

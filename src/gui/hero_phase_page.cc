@@ -59,17 +59,21 @@ void HeroPhasePage::drawRightPanel(shared_ptr<HeroBase>& hero){
  
     float Size = 50;
     float x = rightPanel.x + pad ,y = rightPanel.y + pad;
+    float itemsBottom = y; // will track bottom of the last row of items
     for(auto& it : items){
         Texture2D itemTex = it.address;
         Vector2 pos = {x,y};
         float scale = Size/rightPanel.width;
         DrawTextureEx(itemTex,pos,0.0,scale,WHITE);
+        if (y + Size > itemsBottom) itemsBottom = y + Size;
         x += (Size + padBetweenItems);
         if (x + Size + padBetweenItems  > rightPanel.x + rightPanel.width){
             x = rightPanel.x + pad;
             y += Size + padBetweenItems ;
         }
-    }    
+    }
+
+    // No longer draw last perk here; moved to top panel per latest request
 }
 
 void HeroPhasePage::drawLeftPanel(){
@@ -191,6 +195,29 @@ void HeroPhasePage::drawUpPanel(std::shared_ptr<HeroBase>& heroInfo, int actions
     DrawTextEx(font, "Hero Turn:", turn , fontSize, 0, BLACK);
     Vector2 turnPos = {turn.x + MeasureTextEx(font, "Hero turn :", fontSize, 0).x , turn.y};
     DrawTextEx(font, heroTurn.c_str(),turnPos, fontSize, 0, BLACK);
+
+    float infoFontSize = 24.0f;
+    float sepPadX = 10.0f;
+    float sepY = basePos.y + fontSize + 5.0f;
+    Vector2 sepStart = { rec.x + sepPadX, sepY };
+    Vector2 sepEnd   = { rec.x + rec.width - sepPadX, sepY };
+    DrawLineEx(sepStart, sepEnd, 2.0f, WHITE);
+
+    std::string lastPerk = heroInfo->getLastPlayedName();
+    if (lastPerk.empty()) lastPerk = "-";
+    Vector2 lastPerkLabelPos = { rec.x + 30.0f, sepY + 6.0f };
+    DrawTextEx(font, "Last Perk:", lastPerkLabelPos, infoFontSize, 0, BLACK);
+    Vector2 lastPerkValPos = { lastPerkLabelPos.x + MeasureTextEx(font, "Last Perk:", infoFontSize, 0).x + 10.0f, lastPerkLabelPos.y };
+    DrawTextEx(font, lastPerk.c_str(), lastPerkValPos, infoFontSize, 0, BLACK);
+
+    std::string frenzyName = "-";
+    for (auto &m : sys->getAllMonsters()) {
+        if (m && m->getIsFrenzed()) { frenzyName = m->getMonsterName(); break; }
+    }
+    Vector2 frenzyLabelPos = { rec.x + 30.0f, lastPerkLabelPos.y + infoFontSize + 6.0f };
+    DrawTextEx(font, "Frenzy:", frenzyLabelPos, infoFontSize, 0, BLACK);
+    Vector2 frenzyValPos = { frenzyLabelPos.x + MeasureTextEx(font, "Frenzy:", infoFontSize, 0).x + 10.0f, frenzyLabelPos.y };
+    DrawTextEx(font, frenzyName.c_str(), frenzyValPos, infoFontSize, 0, BLACK);
 }
 
 void HeroPhasePage::drawMap() {
