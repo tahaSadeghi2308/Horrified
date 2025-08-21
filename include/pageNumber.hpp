@@ -17,7 +17,8 @@ enum PageNumbers {
     PLAYER_SETUP_PAGE = 12,
     HERO_SELECTION_PAGE = 13,
     LOAD_MATCH_PAGE = 14,
-    SAVE_MODE = 15
+    SAVE_MODE = 15,
+    END_GAME_PAGE = 16
 };
 
 #endif

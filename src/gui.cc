@@ -12,6 +12,7 @@
 #include "gui/defeat_page.hpp"
 #include "gui/perk_page.hpp"
 #include "gui/load_match.hpp"
+#include "gui/end_game_page.hpp"
 #include <filesystem>
 #include <array>
 
@@ -53,13 +54,21 @@ Gui::Gui(System *s,const int width,const int height):sys(s),scroll(0.0f),SCREEN_
         { PageNumbers::ADVANCED_PAGE , make_shared<AdvancedPage>(GameFont , s)},
         { PageNumbers::DEFEAT_PAGE , make_shared<DefeatPage>(GameFont , s)} ,
         { PageNumbers::PLAYPERK_PAGE , make_shared<PerkPage>(GameFont , s , doNextPhase)},
-        { PageNumbers::LOAD_MATCH_PAGE , make_shared<LoadMatchPage>(selectedSaveFolderNumber)} 
+        { PageNumbers::LOAD_MATCH_PAGE , make_shared<LoadMatchPage>(selectedSaveFolderNumber)},
+        { PageNumbers::END_GAME_PAGE , make_shared<EndGamePage>(GameFont , s)}
     };
 }
 
 void Gui::run() {
     while (!WindowShouldClose()) {
         PageNumbers prevPage = pageNumber;
+        isEnd = sys->isEndGame();
+        if (isEnd != -1) {
+            auto endPage = static_pointer_cast<EndGamePage>(pages[PageNumbers::END_GAME_PAGE]);
+            endPage->setEndCode(isEnd);
+            pageNumber = PageNumbers::END_GAME_PAGE;
+            isEnd = -1;
+        }
         if (this->pageNumber == PageNumbers::EXIT_PAGE) {
             delete sys;
             sys = nullptr;
@@ -99,7 +108,7 @@ void Gui::run() {
             }
 
         }
-        else if (this->pageNumber == PageNumbers::WELCOME_PAGE || this->pageNumber == PageNumbers::PLAYER_SETUP_PAGE || this->pageNumber == PageNumbers::HERO_SELECTION_PAGE || this->pageNumber == PageNumbers::LOAD_MATCH_PAGE) {
+        else if (this->pageNumber == PageNumbers::WELCOME_PAGE || this->pageNumber == PageNumbers::PLAYER_SETUP_PAGE || this->pageNumber == PageNumbers::HERO_SELECTION_PAGE || this->pageNumber == PageNumbers::LOAD_MATCH_PAGE || this->pageNumber == PageNumbers::END_GAME_PAGE) {
             ClearBackground(BLACK);
             pages[this->pageNumber]->draw(currentHero , actions , pageNumber);
             pages[this->pageNumber]->update(currentHero , actions , pageNumber);
