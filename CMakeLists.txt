@@ -30,6 +30,7 @@ set(
     src/gui/pickup_page.cc
     src/gui/guide_page.cc
     src/gui/advanced_page.cc
+    src/gui/end_game_page.cc
     src/gui/welcome_page.cc
     src/gui/monster_page.cc
     src/gui/player_setup_page.cc
@@ -37,7 +38,6 @@ set(
     src/gui/perk_page.cc
     src/gui/hero_selection_page.cc
     src/gui/load_match.cc
-    src/gui/end_game_page.cc
 )
 
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})
