@@ -27,6 +27,7 @@ class HeroPhasePage final : public PageBase {
         Rectangle PerkRec;
         Rectangle exitANDsave;
         Rectangle Help;
+        Rectangle mainMenuBtn;
         Rectangle exitOnly;
         Rectangle firstHero;
         Rectangle secondHero;

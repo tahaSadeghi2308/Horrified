@@ -9,7 +9,9 @@ class HeroBase;
 class WelcomePage final : public PageBase {
     Font font;
     Texture2D bg;
-    Rectangle start , load , exit;
+    Rectangle start , load , exit , resume;
+    bool showBusyPopup;
+    double busyPopupStart;
 public:
     WelcomePage();
     ~WelcomePage();

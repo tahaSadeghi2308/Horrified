@@ -22,7 +22,8 @@ HeroPhasePage::HeroPhasePage (
     PerkRec = { pad , DefeatRec.y + pad + panelH , panelW ,panelH };
     exitANDsave = { pad , PerkRec.y + pad + panelH , panelW , panelH};
     Help = {pad , exitANDsave.y + pad + panelH , panelW , panelH };
-    exitOnly = { pad , Help.y + pad + panelH , panelW , panelH };
+    mainMenuBtn = { pad , Help.y + pad + panelH , panelW , panelH };
+    exitOnly = { pad , mainMenuBtn.y + pad + panelH , panelW , panelH };
 }
 
 void HeroPhasePage::draw(shared_ptr<HeroBase> &cHero ,int &actions, PageNumbers &cPage) {
@@ -90,6 +91,7 @@ void HeroPhasePage::drawLeftPanel(){
         {"PERK", PerkRec},
         {"SAVE GAME", exitANDsave},
         {"HELP" , Help},
+        {"MAIN MENU", mainMenuBtn},
         {"EXIT" , exitOnly}
     };
 
@@ -272,6 +274,13 @@ void HeroPhasePage::update(shared_ptr<HeroBase> &cHero ,int &actions , PageNumbe
         DrawRectangleLinesEx(hl, 8 ,DARKGREEN);
         if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             cPage = PageNumbers::PLAYPERK_PAGE;
+    }
+    else if(CheckCollisionPointRec(logicalMouse , mainMenuBtn)){
+        Rectangle hl = mainMenuBtn; hl.y += leftScroll;
+        DrawRectangleLinesEx(hl, 8 ,DARKGREEN);
+        if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
+            cPage = PageNumbers::WELCOME_PAGE;
+        }
     }
     else if(CheckCollisionPointRec(logicalMouse , exitOnly)){
         Rectangle hl = exitOnly; hl.y += leftScroll;
