@@ -62,6 +62,9 @@ class Gui final {
     Rectangle secondHero;
     std::unordered_map<PageNumbers , std::shared_ptr<PageBase>> pages;
     int selectedSaveFolderNumber;
+    // save-game toast state
+    bool showSavePopup;
+    double savePopupStart;
 public:
     explicit Gui(System *s, const int ,const int);
     void run();

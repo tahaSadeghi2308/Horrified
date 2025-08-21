@@ -42,6 +42,8 @@ Gui::Gui(System *s,const int width,const int height):sys(s),scroll(0.0f),SCREEN_
     exitANDsave = { pad , PerkRec.y + pad + panelH , panelW , panelH};
     Help = {pad , exitANDsave.y + pad + panelH , panelW , panelH };
     selectedSaveFolderNumber = -1;
+    showSavePopup = false;
+    savePopupStart = 0.0;
     pages = {
         { PageNumbers::HERO_PHASE_PAGE , make_shared<HeroPhasePage>(GameFont , s)},
         { PageNumbers::MOVE_PAGE , make_shared<MovePage>(GameFont , s)},
@@ -77,6 +79,8 @@ void Gui::run() {
             sys->saveState();
             this->saveState();
             this->pageNumber = PageNumbers::HERO_PHASE_PAGE;
+            showSavePopup = true;
+            savePopupStart = GetTime();
         }
         if (currentHero == nullptr && !mainPri.empty()) {
             if (!mainPri.empty()) {
@@ -137,6 +141,22 @@ void Gui::run() {
                 round++;
             }
         }
+        // draw save popup toast if active
+        if (showSavePopup) {
+            double elapsed = GetTime() - savePopupStart;
+            if (elapsed < 3.0) {
+                float panelW = 500 , panelH = 75;
+                Rectangle toast = { (SCREEN_WIDTH - panelW) / 2.0f , 20 , panelW , panelH };
+                DrawRectangleRec(toast, DARKGREEN);
+                const char *msg = "you saved game success fully";
+                Vector2 textSize = MeasureTextEx(GameFont, msg , 25, 0 );
+                DrawTextEx(GameFont, msg , { toast.x + (panelW - textSize.x) / 2.0f , toast.y + (panelH - textSize.y) / 2.0f } , 25, 0.0 , WHITE);
+            } else {
+                showSavePopup = false;
+                savePopupStart = 0.0;
+            }
+        }
+
         EndDrawing();
 
         if (prevPage == PageNumbers::LOAD_MATCH_PAGE && pageNumber == PageNumbers::HERO_PHASE_PAGE) {
