@@ -494,6 +494,18 @@ void System::loadState(const int folderNumber) {
             return make_pair(n++ , false);
         }
     );
+
+    // clear init perk which is given at the beginning of game
+    for (auto& h : this->getAllHerosAvailable()){
+        // -- clear init perks
+        vector<Perk> initPerks;
+        for (auto& p : h->getHeroPerks()) initPerks.push_back(p);
+        for (auto& p : initPerks) {
+            h->deletePerk(p.name);
+            perkDeck->push(p);
+        }
+    }
+
     for (auto &h : this->getAllHerosAvailable()) {
         string filename = h->getHeroName() + ".txt";
         fs::path fullPath = folderPath / "heroes" / filename;
@@ -521,14 +533,6 @@ void System::loadState(const int folderNumber) {
             }
 
             // process perks
-            // -- clear init perks
-            vector<Perk> initPerks;
-            for (auto& p : h->getHeroPerks()) initPerks.push_back(p);
-            for (auto& p : initPerks) {
-                h->deletePerk(p.name);
-                perkDeck->push(p);
-            }
-            cout << "done init perks!!\n";
             if (heroData[0] != "_"){
                 string x;
                 stringstream perkStream( heroData[0] );
