@@ -28,6 +28,7 @@ class MonsterPhasePage final : public PageBase
     std::deque<char> dices;
     int option {};
     float diceTime {};
+    bool powerANDattack {true};
 
     public:
     MonsterPhasePage(

@@ -22,6 +22,7 @@ void MonsterPhasePage::Reset_For_Next_Phase()
     option = 0;
     diceTime = 0;
     newCard = true;
+    powerANDattack = true;
 }
 
 void MonsterPhasePage::draw(shared_ptr<HeroBase> &cHero ,int &actions , PageNumbers &cPage)
@@ -149,6 +150,23 @@ void MonsterPhasePage::draw(shared_ptr<HeroBase> &cHero ,int &actions , PageNumb
         
         if (!dices.empty()) 
         {
+            if(powerANDattack)
+            {
+                for(int i{} ; i < dices.size() ; i++)
+                {
+                    if(dices[i] == '!')
+                    {
+                        for(int j{i} ; j < dices.size() ; j++)
+                        {
+                            if(dices[j] == '*')
+                            {
+                                swap(dices[i],dices[j]);
+                            }
+                        }
+                    }
+                }
+                powerANDattack = false;
+            }
             auto& d = dices.front();
 
             const char* monsterName = s.second->getMonsterName().c_str();
@@ -376,7 +394,6 @@ void MonsterPhasePage::draw(shared_ptr<HeroBase> &cHero ,int &actions , PageNumb
 
                             if (CheckCollisionPointRec(GetMousePosition(), noButton) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) 
                             {
-                                sys->increaseTerrorLevel();
                                 for (auto loc : sys->getAllLocations()) {
                                     if (loc->getName() == "hospital") {
                                         sys->moveHero(attacedHero, loc);

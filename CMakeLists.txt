@@ -23,7 +23,6 @@ set(
     src/system.cc
     src/villager.cc
     src/monster.cc
-    src/tui.cc
     src/gui.cc
     src/gui/hero_phase_page.cc
     src/gui/move_page.cc
