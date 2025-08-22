@@ -1,7 +1,7 @@
 0
-4
+2
 0
-taha_scientist_seyyed_mayor_
+seyyed_archaeologist_taha_scientist_
 1
 0
 

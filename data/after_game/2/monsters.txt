@@ -1,2 +1,2 @@
-dracula abbey 1
-invisibleMan abbey 0
+dracula crypt 1
+invisibleMan inn 0

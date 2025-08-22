@@ -1,2 +1,0 @@
-dracula crypt 0
-invisibleMan cave 1

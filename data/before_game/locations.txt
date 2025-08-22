@@ -1,10 +1,10 @@
-camp cave_mansion_precinct_ 550_250
-precinct inn_camp_ 700_250
-inn theatre_precinct_ 850_200
-theatre inn_shop_barn_tower_ 925_375
-shop theatre_museum_laboratory_ 850_600
+camp cave_mansion_precinct_inn_theatre_ 550_250
+precinct inn_camp_theatre_mansion_ 700_250
+inn theatre_precinct_camp_mansion_ 850_200
+theatre inn_shop_barn_tower_precinct_camp_mansion_ 925_375
+shop theatre_museum_laboratory_church_mansion_ 850_600
 museum church_mansion_shop_ 550_675
-mansion camp_abbey_museum_ 600_500
+mansion camp_abbey_museum_church_shop_precinct_inn_theatre_ 600_500
 cave camp_ 370_300
 tower theatre_docks_dungeon_ 1150_375
 docks tower_ 1200_500
@@ -12,7 +12,7 @@ dungeon tower_ 1200_250
 barn theatre_ 1025_225
 laboratory shop_institute_ 1000_700
 institute laboratory_ 1100_800
-church museum_hospital_graveyard_ 750_700
+church museum_hospital_graveyard_mansion_shop_ 750_700
 hospital church_ 700_825
 graveyard church_ 900_800
 abbey mansion_crypt 390_550

@@ -248,8 +248,13 @@ void MonsterPhasePage::draw(shared_ptr<HeroBase> &cHero ,int &actions , PageNumb
                     shared_ptr<HeroBase> attacedHero;
                         if (status == 2) attacedHero = cHero;
                         else {
-                            for (auto h : sys->getAllHeros()) {
-                                if (h->getHeroName() != cHero->getHeroName()) attacedHero = h;
+                            for (auto h : sys->getAllHerosAvailable()) {
+                                if (h->getCurrentPlace() != nullptr){
+                                    if (h->getHeroName() != cHero->getHeroName()) {
+                                        attacedHero = h;
+                                        break;
+                                    }
+                                }
                             }
                         }
                         float panelWidth = 600;
@@ -261,9 +266,11 @@ void MonsterPhasePage::draw(shared_ptr<HeroBase> &cHero ,int &actions , PageNumb
                             panelWidth,
                             panelHeight
                         };
-                        
-                        string attackText = attacedHero->getHeroName();
-                        attackText += " is under attack!";
+                        string attackText;
+                        if (attacedHero){
+                            attackText = attacedHero->getHeroName();
+                            attackText += " is under attack!";
+                        }
                         textSize = MeasureTextEx(GameFont, attackText.c_str(), 30 , 0);
                         Vector2 textPos 
                         {
@@ -325,7 +332,12 @@ void MonsterPhasePage::draw(shared_ptr<HeroBase> &cHero ,int &actions , PageNumb
                         if (status == 2) attacedHero = cHero;
                         else {
                             for (auto h : sys->getAllHerosAvailable()) {
-                                if (h->getHeroName() != cHero->getHeroName()) attacedHero = h;
+                                if (h->getCurrentPlace() != nullptr){
+                                    if (h->getHeroName() != cHero->getHeroName()) {
+                                        attacedHero = h;
+                                        break;
+                                    }
+                                }
                             }
                         }
                         

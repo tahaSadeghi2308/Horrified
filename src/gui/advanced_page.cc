@@ -34,7 +34,7 @@ void AdvancedPage::draw(std::shared_ptr<HeroBase> &cHero, int &actions, PageNumb
                     redItems.push_back(i); 
                     itemsPowerSum += i.power;
 
-                    if(cHero->getHeroName() == "scientist")
+                    if(cHero->getHeroName() == "courier")
                         ++itemsPowerSum;  
                 }
             }
@@ -66,7 +66,7 @@ void AdvancedPage::draw(std::shared_ptr<HeroBase> &cHero, int &actions, PageNumb
                         DrawRectangleLinesEx(rec, 2, YELLOW);
                         if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
                             redPower += item.power;
-                            if(cHero->getHeroName() == "scientist")
+                            if(cHero->getHeroName() == "courier")
                                 ++redPower;
 
                             cHero->deleteItem(item.name);

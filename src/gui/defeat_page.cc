@@ -43,7 +43,7 @@ void DefeatPage::draw(std::shared_ptr<HeroBase> &cHero, int &actions, PageNumber
                     if (i.color == card::Color::Y) { 
                         YellowItems.push_back(i); 
                         itemsPowerSum += i.power;
-                        if(cHero->getHeroName() == "scientist") 
+                        if(cHero->getHeroName() == "courier") 
                             ++itemsPowerSum; 
                     }
                 }
@@ -73,7 +73,7 @@ void DefeatPage::draw(std::shared_ptr<HeroBase> &cHero, int &actions, PageNumber
                             DrawRectangleLinesEx(rec, 2, YELLOW);
                             if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
                                 YellowPower += item.power;
-                                if(cHero->getHeroName() == "scientist")
+                                if(cHero->getHeroName() == "courier")
                                     ++YellowPower;
 
                                 cHero->deleteItem(item.name);
@@ -84,7 +84,7 @@ void DefeatPage::draw(std::shared_ptr<HeroBase> &cHero, int &actions, PageNumber
                                     cPage = PageNumbers::HERO_PHASE_PAGE;
                                     for(auto& mon : sys->getAllMonsters()) {
                                         if(mon->getMonsterName() == "dracula")
-                                        sys->killMonster(mon);
+                                            sys->killMonster(mon);
                                     }
                                     YellowPower = 0;
                                     PowerCheck = true;
@@ -132,7 +132,7 @@ void DefeatPage::draw(std::shared_ptr<HeroBase> &cHero, int &actions, PageNumber
                     if (i.color == card::Color::R) { 
                         redItems.push_back(i); 
                         itemsPowerSum += i.power;  
-                        if(cHero->getHeroName() == "scientist")
+                        if(cHero->getHeroName() == "courier")
                             ++itemsPowerSum;
                     }
                 }
@@ -165,7 +165,7 @@ void DefeatPage::draw(std::shared_ptr<HeroBase> &cHero, int &actions, PageNumber
                             if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
                             {
                                 redPower += item.power;
-                                if(cHero->getHeroName() == "scientist")
+                                if(cHero->getHeroName() == "courier")
                                     ++redPower;
 
                                 cHero->deleteItem(item.name);
@@ -177,7 +177,7 @@ void DefeatPage::draw(std::shared_ptr<HeroBase> &cHero, int &actions, PageNumber
                                     for(auto& mon : sys->getAllMonsters())
                                     {
                                         if(mon->getMonsterName() == "invisibleMan")
-                                        sys->killMonster(mon);
+                                            sys->killMonster(mon);
                                     }
                                     redPower = 0;
                                     PowerCheck = true;

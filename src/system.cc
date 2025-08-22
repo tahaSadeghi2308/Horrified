@@ -120,7 +120,7 @@ System::System(){
         throw FileOpenningExecption("couldn't open villager.txt");
     } 
 
-    for(int i{} ; i < 12 ; i++) {
+    for(int i{} ; i < 40 ; i++) {
         Item selectedItem = getRandomItem();
         putItemInPlace(selectedItem.place , selectedItem);
     }

@@ -60,3 +60,4 @@ Tips
 - Use the mouse wheel to scroll long panels, including this manual.
 - Many dialogs accept Backspace to go back.
 - Watch the frenzy and terror—these affect difficulty.
+- Everywhere you didn't know how to exit from a panel , press BACKSPACE !!!

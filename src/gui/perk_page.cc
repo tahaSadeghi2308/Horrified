@@ -3,7 +3,7 @@
 
 using namespace std;
 
-PerkPage::PerkPage(const Font &f, System *s, bool doPhase)
+PerkPage::PerkPage(const Font &f, System *s, bool &doPhase)
 : font(f) , sys(s) , count(0) , found(false) , doMonsterPhase(doPhase) , isThereVillager(false)
 {}
 
@@ -89,6 +89,7 @@ void PerkPage::draw(std::shared_ptr<HeroBase> &cHero, int &actions, PageNumbers 
         }
         else if (selectedPerk == "Repel") 
         {
+            // TODO : ask question about here !!!
             // NOTE : bug potential here !!!
             static string nameMon = sys->getAllMonsters()[0] ->getMonsterName();
 
@@ -96,6 +97,7 @@ void PerkPage::draw(std::shared_ptr<HeroBase> &cHero, int &actions, PageNumbers 
             {
                 for(auto& mon : sys->getAllMonsters())
                 {    
+                    if (mon == nullptr) continue;
                     if(nameMon == mon->getMonsterName()) {
                         float x = 0, y = 20 , pad = 20;
                         float panelH = 75;
@@ -136,6 +138,7 @@ void PerkPage::draw(std::shared_ptr<HeroBase> &cHero, int &actions, PageNumbers 
                     return;
                 }
                 for(auto& mon : sys->getAllMonsters()) {
+                    if (mon == nullptr) continue;
                     if(mon->getMonsterName() != nameMon) {
                         float x = 0, y = 20 , pad = 20;
                         float panelH = 75;

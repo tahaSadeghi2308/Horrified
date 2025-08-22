@@ -21,7 +21,7 @@ class PerkPage final : public PageBase {
     std::shared_ptr<Place> targetPlace;
     std::vector<std::shared_ptr<Villager>> selectedVillagers;
 public:
-    PerkPage(const Font &f , System *s , bool doPhase);
+    PerkPage(const Font &f , System *s , bool &doPhase);
     void draw(std::shared_ptr<HeroBase> &cHero ,int &actions , PageNumbers &cPage) override;
     void update(std::shared_ptr<HeroBase> &cHero ,int &actions , PageNumbers &cPage) override;
     void movingAsset(std::shared_ptr<Place>& destination);

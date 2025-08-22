@@ -193,9 +193,9 @@ void PlayerSetupPage::draw(shared_ptr<HeroBase> &cHero, int &actions, PageNumber
     DrawRectangleRec(numberInputBox, { 0, 0, 0, 150 });
     DrawRectangleLinesEx(numberInputBox, 3, numberBoxColor);
     
-    Vector2 numberLabelSize = MeasureTextEx(font, "Positive Number:", 30, 0);
+    Vector2 numberLabelSize = MeasureTextEx(font, "Last time you ate garlic : ", 30, 0);
     Vector2 numberLabelPos = { numberInputBox.x, numberInputBox.y - 40 };
-    DrawTextEx(font, "Positive Number:", numberLabelPos, 30, 0, WHITE);
+    DrawTextEx(font, "Last time you ate garlic :", numberLabelPos, 30, 0, WHITE);
     
     Vector2 numberTextPos = { numberInputBox.x + 10, numberInputBox.y + (numberInputBox.height - 30) / 2.0f };
     DrawTextEx(font, playerNumber.c_str(), numberTextPos, 30, 0, WHITE);
@@ -229,10 +229,10 @@ void PlayerSetupPage::draw(shared_ptr<HeroBase> &cHero, int &actions, PageNumber
         DrawRectangleRec(startGameButton, { 0, 0, 0, 150 });
         DrawRectangleLinesEx(startGameButton, 3, startGameColor);
         
-        Vector2 startGameTextSize = MeasureTextEx(font, "START GAME", 40, 0);
+        Vector2 startGameTextSize = MeasureTextEx(font, "Continue", 40, 0);
         Vector2 startGameTextPos = { startGameButton.x + (startGameButton.width - startGameTextSize.x) / 2.0f, 
                                    startGameButton.y + (startGameButton.height - startGameTextSize.y) / 2.0f };
-        DrawTextEx(font, "START GAME", startGameTextPos, 40, 0, startGameColor);
+        DrawTextEx(font, "Continue", startGameTextPos, 40, 0, startGameColor);
     }
 
     Vector2 playersTitlePos = { 50, SCREEN_HEIGHT - 300 };
