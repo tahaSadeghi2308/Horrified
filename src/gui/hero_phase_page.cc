@@ -389,3 +389,9 @@ void HeroPhasePage::PlaceInfo(shared_ptr<Place> selected){
     }
     EndScissorMode();
 }
+HeroPhasePage::~HeroPhasePage()
+{
+    UnloadTexture(gameMapImg);
+    UnloadTexture(coffins);
+    UnloadTexture(smahsedCoffins);   
+}

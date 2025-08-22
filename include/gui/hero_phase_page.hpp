@@ -47,4 +47,5 @@ public:
         void drawEvindence();
         void drawMap();
         void PlaceInfo(std::shared_ptr<Place> selected);
+        ~HeroPhasePage();
 };
