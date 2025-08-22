@@ -13,6 +13,7 @@
 #include "gui/perk_page.hpp"
 #include "gui/load_match.hpp"
 #include "gui/end_game_page.hpp"
+#include "gui/help_page.hpp"
 #include <filesystem>
 #include <array>
 
@@ -43,7 +44,8 @@ Gui::Gui(System *s,const int width,const int height):sys(s),SCREEN_WIDTH(width),
         { PageNumbers::DEFEAT_PAGE , make_shared<DefeatPage>(GameFont , s)} ,
         { PageNumbers::PLAYPERK_PAGE , make_shared<PerkPage>(GameFont , s , doNextPhase)},
         { PageNumbers::LOAD_MATCH_PAGE , make_shared<LoadMatchPage>(selectedSaveFolderNumber)},
-        { PageNumbers::END_GAME_PAGE , make_shared<EndGamePage>(GameFont , s)}
+        { PageNumbers::END_GAME_PAGE , make_shared<EndGamePage>(GameFont , s)},
+        { PageNumbers::HELP_PAGE , make_shared<HelpPage>(GameFont , s)}
     };
 }
 
@@ -97,7 +99,7 @@ void Gui::run() {
             }
 
         }
-        else if (this->pageNumber == PageNumbers::WELCOME_PAGE || this->pageNumber == PageNumbers::PLAYER_SETUP_PAGE || this->pageNumber == PageNumbers::HERO_SELECTION_PAGE || this->pageNumber == PageNumbers::LOAD_MATCH_PAGE || this->pageNumber == PageNumbers::END_GAME_PAGE) {
+        else if (this->pageNumber == PageNumbers::WELCOME_PAGE || this->pageNumber == PageNumbers::PLAYER_SETUP_PAGE || this->pageNumber == PageNumbers::HERO_SELECTION_PAGE || this->pageNumber == PageNumbers::LOAD_MATCH_PAGE || this->pageNumber == PageNumbers::END_GAME_PAGE || this->pageNumber == PageNumbers::HELP_PAGE) {
             ClearBackground(BLACK);
             pages[this->pageNumber]->draw(currentHero , actions , pageNumber);
             pages[this->pageNumber]->update(currentHero , actions , pageNumber);

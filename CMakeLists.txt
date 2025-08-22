@@ -37,6 +37,7 @@ set(
     src/gui/perk_page.cc
     src/gui/hero_selection_page.cc
     src/gui/load_match.cc
+    src/gui/help_page.cc
 )
 
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})

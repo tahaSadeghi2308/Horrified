@@ -309,6 +309,13 @@ void HeroPhasePage::update(shared_ptr<HeroBase> &cHero ,int &actions , PageNumbe
             cPage = PageNumbers::WELCOME_PAGE;
         }
     }
+    else if (CheckCollisionPointRec(logicalMouse , Help)){
+        Rectangle hl = Help; hl.y += leftScroll;
+        DrawRectangleLinesEx(hl, 8 ,DARKGREEN);
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
+            cPage = PageNumbers::HELP_PAGE;
+        }
+    }
     else if(CheckCollisionPointRec(logicalMouse , exitOnly)){
         Rectangle hl = exitOnly; hl.y += leftScroll;
         DrawRectangleLinesEx(hl, 8 ,DARKGREEN);

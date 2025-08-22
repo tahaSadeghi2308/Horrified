@@ -1,0 +1,62 @@
+HORRIFIED - In-Game Help
+
+Controls (Global)
+- Mouse Left: select, click buttons, choose tiles.
+- Mouse Wheel: scroll lists and panels.
+- Backspace: go back/close panels or return from sub-pages.
+- Esc / Window Close: quit app.
+
+Hero Phase
+- Actions: shown at top bar. When they reach 0, Monster Phase can start.
+- Map: center area shows locations. Click a location to view its contents.
+- Left Panel Buttons (scrollable):
+  - MOVE: move your hero to a neighboring location.
+  - PICK: pick up items at your current location.
+  - GUIDE: move villagers (bring to you or move to neighbors).
+  - SPECIAL: hero-specific special action (if available).
+  - ADVANCE: resolve advance actions for objectives.
+  - DEFEAT: attempt defeat/solve steps for active monsters.
+  - PERK: play a perk card from your hand.
+  - SAVE GAME: write current state to latest save slot.
+  - HELP: open this manual.
+  - MAIN MENU: return to welcome page.
+  - EXIT: close the game.
+
+Right Panel
+- Shows your inventory items laid out in rows.
+
+Top Bar
+- Terror level: current city panic status.
+- Actions: remaining actions this hero turn.
+- Hero Turn: whose turn it is.
+- Last Perk: the latest perk played.
+- Frenzy: monster currently frenzied (if any).
+
+Move Page
+- Highlighted neighbors are valid destinations. Click to move there and spend 1 action.
+- Press Backspace to cancel.
+
+Pickup Page
+- Shows items at your location; click to collect if allowed. Costs actions per rules.
+- Press Backspace to cancel.
+
+Guide Page
+- Option 1 (Bring): select a neighboring place, then pick a villager there to bring to you.
+- Option 2 (Put): select a villager at your place, then choose a neighboring destination.
+- Delivering a villager to their safe zone grants a perk card.
+- Press Backspace to step back/cancel.
+
+Advanced / Defeat Pages
+- Follow on-screen prompts to progress objectives or defeat monsters as rules allow.
+
+Perk Page
+- Select and play a perk. Last played perk is shown in the top bar.
+
+Saving & Loading
+- SAVE GAME writes into the most recent after_game folder.
+- LOAD MATCH is available from main menu to continue a saved game.
+
+Tips
+- Use the mouse wheel to scroll long panels, including this manual.
+- Many dialogs accept Backspace to go back.
+- Watch the frenzy and terror—these affect difficulty.
