@@ -65,12 +65,12 @@ public:
 class Courier final : public HeroBase {
     public :
     Courier(const int &_num , std::string_view _name , const Perk &perk);
-    void speciallAction(System *sys,PageNumbers &pageNumber,int& actions,const int SCREEN_WIDTH,const int SCREEN_HEIGHT) override;
 };
 
 class Scientist final : public HeroBase {
     public :
     Scientist(const int &_num , std::string_view _name , const Perk &perk);
+    void speciallAction(System *sys,PageNumbers &pageNumber,int& actions,const int SCREEN_WIDTH,const int SCREEN_HEIGHT) override;
 };
 
 #endif // HERO_HPP

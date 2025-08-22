@@ -90,14 +90,9 @@ void Gui::run() {
             pages[this->pageNumber]->update(currentHero , actions , pageNumber);
         }
         else if (this->pageNumber == PageNumbers::SPECIALACTION_PAGE) {
-            if (currentHero->getHeroName() == "archaeologist" || currentHero->getHeroName() == "scientist"){
                 ClearBackground(BLACK);
                 pages[PageNumbers::HERO_PHASE_PAGE]->draw(currentHero , actions , pageNumber);
                 currentHero->speciallAction(sys , this->pageNumber , actions , SCREEN_WIDTH , SCREEN_HEIGHT);
-            } else {
-                this->pageNumber = PageNumbers::HERO_PHASE_PAGE;
-            }
-
         }
         else if (this->pageNumber == PageNumbers::WELCOME_PAGE || this->pageNumber == PageNumbers::PLAYER_SETUP_PAGE || this->pageNumber == PageNumbers::HERO_SELECTION_PAGE || this->pageNumber == PageNumbers::LOAD_MATCH_PAGE || this->pageNumber == PageNumbers::END_GAME_PAGE || this->pageNumber == PageNumbers::HELP_PAGE) {
             ClearBackground(BLACK);

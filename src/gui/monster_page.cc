@@ -248,7 +248,7 @@ void MonsterPhasePage::draw(shared_ptr<HeroBase> &cHero ,int &actions , PageNumb
                     shared_ptr<HeroBase> attacedHero;
                         if (status == 2) attacedHero = cHero;
                         else {
-                            for (auto h : sys->getAllHerosAvailable()) {
+                            for (auto h : sys->getAllHeros()) {
                                 if (h->getHeroName() != cHero->getHeroName()) attacedHero = h;
                             }
                         }

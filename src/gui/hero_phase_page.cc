@@ -155,21 +155,21 @@ void HeroPhasePage::drawEvindence(){
         for(auto& loc : sys->getAllLocations()){
             if(evi == loc->getName()){
                 Vector2 target = loc->getPosition();
-                DrawCircleLinesV(target,60,RED);
+                DrawCircleLinesV(target,60,GREEN);
             }
         }
     }
 }
 
 void HeroPhasePage::drawUpPanel(std::shared_ptr<HeroBase>& heroInfo, int actions){ // must override{
-    const int fontSize = 40;
+    const int fontSize = 35;
     const int pad = 10;  
     string terror = to_string(sys->getTerrorLevel());
     string act = to_string(actions);
     string heroTurn = heroInfo->getHeroName();// this part is totally by testing diffrent parts
 
     Rectangle rec = {(float)LEFT_PANEL_WIDTH,0,(float)UP_PANEL_WIDTH,(float)UP_PANEL_HEIGHT};
-    DrawRectangleRec(rec, { 140, 255, 100, 100 });
+    DrawRectangleRec(rec, DARKGRAY);
 
     Vector2 basePos = { rec.x + 30, rec.y + (UP_PANEL_HEIGHT - fontSize) / 2 };
     DrawTextEx(font, "Terror level:", basePos, fontSize, 0, BLACK);
@@ -191,33 +191,36 @@ void HeroPhasePage::drawUpPanel(std::shared_ptr<HeroBase>& heroInfo, int actions
     Vector2 secondEnd   = { actionPos.x + fontSize, actionPos.y - pad };
     DrawLineEx(secondStart, secondEnd, 4, WHITE);
 
-    Vector2 turn = {action.x + fontSize + (16*pad) , basePos.y};
-    DrawTextEx(font, "Hero Turn:", turn , fontSize, 0, BLACK);
-    Vector2 turnPos = {turn.x + MeasureTextEx(font, "Hero turn :", fontSize, 0).x , turn.y};
-    DrawTextEx(font, heroTurn.c_str(),turnPos, fontSize, 0, BLACK);
+        // Hero Turn
+    Vector2 turnLabel = { actionPos.x + fontSize + (  pad), basePos.y };
+    DrawTextEx(font, "Hero Turn:", turnLabel, fontSize, 0, BLACK);
+    Vector2 turnVal = { turnLabel.x + MeasureTextEx(font, "Hero Turn:", fontSize, 0).x + pad, turnLabel.y };
+    DrawTextEx(font, heroTurn.c_str(), turnVal, fontSize, 0, BLACK);
 
-    float infoFontSize = 24.0f;
-    float sepPadX = 10.0f;
-    float sepY = basePos.y + fontSize + 5.0f;
-    Vector2 sepStart = { rec.x + sepPadX, sepY };
-    Vector2 sepEnd   = { rec.x + rec.width - sepPadX, sepY };
-    DrawLineEx(sepStart, sepEnd, 2.0f, WHITE);
+    // Vertical separator line
+    float lineX = turnVal.x + MeasureTextEx(font, heroTurn.c_str(), fontSize, 0).x + (2 * pad);
+    float lineTop = turnLabel.y - 5.0f;
+    float lineBottom = turnLabel.y + fontSize + 10.0f;
+    DrawLineEx({ lineX, lineTop }, { lineX, lineBottom }, 2.0f, WHITE);
 
+    // Perk (same line as Hero Turn, right of separator)
     std::string lastPerk = heroInfo->getLastPlayedName();
     if (lastPerk.empty()) lastPerk = "-";
-    Vector2 lastPerkLabelPos = { rec.x + 30.0f, sepY + 6.0f };
-    DrawTextEx(font, "Last Perk:", lastPerkLabelPos, infoFontSize, 0, BLACK);
-    Vector2 lastPerkValPos = { lastPerkLabelPos.x + MeasureTextEx(font, "Last Perk:", infoFontSize, 0).x + 10.0f, lastPerkLabelPos.y };
-    DrawTextEx(font, lastPerk.c_str(), lastPerkValPos, infoFontSize, 0, BLACK);
+    float infoFontSize = 24.0f;
+    Vector2 perkLabel = { lineX + (2 * pad), turnLabel.y + 25 };
+    DrawTextEx(font, "Perk:", perkLabel, infoFontSize, 0, BLACK);
+    Vector2 perkVal = { perkLabel.x + MeasureTextEx(font, "Perk:", infoFontSize, 0).x + pad, perkLabel.y };
+    DrawTextEx(font, lastPerk.c_str(), perkVal, infoFontSize, 0, BLACK);
 
+    // Frenzy (above Hero Turn line)
     std::string frenzyName = "-";
     for (auto &m : sys->getAllMonsters()) {
         if (m && m->getIsFrenzed()) { frenzyName = m->getMonsterName(); break; }
     }
-    Vector2 frenzyLabelPos = { rec.x + 30.0f, lastPerkLabelPos.y + infoFontSize + 6.0f };
-    DrawTextEx(font, "Frenzy:", frenzyLabelPos, infoFontSize, 0, BLACK);
-    Vector2 frenzyValPos = { frenzyLabelPos.x + MeasureTextEx(font, "Frenzy:", infoFontSize, 0).x + 10.0f, frenzyLabelPos.y };
-    DrawTextEx(font, frenzyName.c_str(), frenzyValPos, infoFontSize, 0, BLACK);
+    Vector2 frenzyLabel = { perkLabel.x, turnLabel.y - 5 };
+    DrawTextEx(font, "Frenzy:", frenzyLabel, infoFontSize, 0, BLACK);
+    Vector2 frenzyVal = { frenzyLabel.x + MeasureTextEx(font, "Frenzy:", infoFontSize, 0).x + pad, frenzyLabel.y };
+    DrawTextEx(font, frenzyName.c_str(), frenzyVal, infoFontSize, 0, BLACK);
 }
 
 void HeroPhasePage::drawMap() {

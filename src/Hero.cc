@@ -207,7 +207,7 @@ void Archaeologist::speciallAction(System* sys,PageNumbers& pageNumber, int &act
     }
 }
 
-void Courier::speciallAction(System* sys,PageNumbers& pageNumber, int &actions,const int SCREEN_WIDTH,const int SCREEN_HEIGHT)
+void Scientist::speciallAction(System* sys,PageNumbers& pageNumber, int &actions,const int SCREEN_WIDTH,const int SCREEN_HEIGHT)
 {
     
     Vector2 mouse = GetMousePosition(); 
