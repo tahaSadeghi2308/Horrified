@@ -1,0 +1,6 @@
+**/.vscode/
+**/build/
+**/cmake-build-debug/
+**/.idea/
+.gitignore
+**/Dockerfile
